@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { AuthService } from './auth.service';
+import { environment } from '../../environments/environment';
 
 export interface Membership {
   id: number;
@@ -42,7 +43,7 @@ export interface MembershipStatistics {
   providedIn: 'root'
 })
 export class MembershipService {
-  private apiUrl = 'http://localhost:8000/memberships';
+  private apiUrl = `${environment.apiUrl}/memberships`;
 
   constructor(
     private http: HttpClient,

@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { AuthService } from './auth.service';
+import { environment } from '../../environments/environment';
 
 export interface Client {
   id: number;
@@ -26,7 +27,7 @@ export interface CreateClientRequest {
   providedIn: 'root'
 })
 export class ClientService {
-  private apiUrl = 'http://localhost:8000/clients';
+  private apiUrl = `${environment.apiUrl}/clients`;
 
   constructor(
     private http: HttpClient,
