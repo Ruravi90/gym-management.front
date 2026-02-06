@@ -1,0 +1,93 @@
+<header class="main-header">
+    <div class="header-info">
+        <h1 class="page-title">Panorámica del Gimnasio</h1>
+        <p class="page-subtitle">Indicadores clave de rendimiento y salud de tu comunidad</p>
+    </div>
+    <div class="header-actions">
+        <button class="app-btn app-btn-secondary" (click)="loadDashboardData()">
+            🔄 Actualizar Datos
+        </button>
+    </div>
+</header>
+
+<div *ngIf="loading" class="loading-overlay">
+    <div class="loader-premium"></div>
+    <p>Analizando datos de los guerreros...</p>
+</div>
+
+<div *ngIf="!loading" class="dashboard-grid">
+    <!-- Primary Stats Row -->
+    <div class="stats-row">
+        <div class="app-card stat-card primary">
+            <div class="stat-icon-wrapper">👥</div>
+            <div class="stat-details">
+                <span class="label">Total Guerrero</span>
+                <span class="value">{{totalClients}}</span>
+                <p class="trend-text">Miembros activos</p>
+            </div>
+        </div>
+
+        <div class="app-card stat-card success" *ngIf="stats">
+            <div class="stat-icon-wrapper">💳</div>
+            <div class="stat-details">
+                <span class="label">Membresías Activas</span>
+                <span class="value">{{stats.active_memberships}}</span>
+                <p class="trend-text">Ingresos estables</p>
+            </div>
+        </div>
+
+        <div class="app-card stat-card warning" *ngIf="stats">
+            <div class="stat-icon-wrapper">⌛</div>
+            <div class="stat-details">
+                <span class="label">Vencimientos Próximos</span>
+                <span class="value">{{stats.upcoming_expirations}}</span>
+                <p class="trend-text warning">Atención necesaria</p>
+            </div>
+        </div>
+
+        <div class="app-card stat-card danger" *ngIf="stats">
+            <div class="stat-icon-wrapper">🚫</div>
+            <div class="stat-details">
+                <span class="label">Planes Expirados</span>
+                <span class="value">{{stats.expired_memberships}}</span>
+                <p class="trend-text danger">Potencial de recuperación</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Analytics Section -->
+    <div class="analytics-content">
+        <div class="charts-area">
+            <div class="app-card section-card">
+                <div class="section-header">
+                    <h3>Próximas Expiraciones</h3>
+                    <span class="badge warning">{{stats?.upcoming_expirations}} Críticas</span>
+                </div>
+                <div class="expirations-list" *ngIf="stats?.upcoming_expirations_list?.length">
+                    <div *ngFor="let m of stats?.upcoming_expirations_list" class="exp-item">
+                        <div class="exp-info">
+                            <span class="client-name">{{m.client_id}} (ID)</span>
+                            <span class="expiry-date">Vence: {{m.end_date | date:'shortDate'}}</span>
+                        </div>
+                        <span class="status-pill warning">Pronto</span>
+                    </div>
+                </div>
+                <div class="no-data" *ngIf="!stats?.upcoming_expirations_list?.length">
+                    No hay membresías por vencer en los próximos días.
+                </div>
+            </div>
+        </div>
+
+        <div class="side-widgets">
+            <div class="app-card profile-preview">
+                <div class="avatar-large">PW</div>
+                <h3>Staff Admin</h3>
+                <p class="access-level">Nivel de Acceso: Superior</p>
+                <div class="quick-actions">
+                    <a routerLink="/clients" class="app-btn app-btn-secondary">Gestionar Socios</a>
+                    <a routerLink="/memberships" class="app-btn app-btn-secondary">Ver Planes</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

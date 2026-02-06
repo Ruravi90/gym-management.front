@@ -1,0 +1,54 @@
+<div class="dashboard-layout" [class.sidebar-collapsed]="sidebarCollapsed">
+  <aside class="sidebar-premium" [class.collapsed]="sidebarCollapsed">
+    <div class="brand-container">
+      <div class="logo-circle" (click)="toggleSidebar()">PW</div>
+      <span class="brand-text" *ngIf="!sidebarCollapsed">Panther Warriors</span>
+    </div>
+    
+    <button class="mobile-toggle" (click)="toggleSidebar()">
+      {{ sidebarCollapsed ? '☰' : '✕' }}
+    </button>
+
+    <nav class="nav-menu">
+      <a routerLink="/dashboard" routerLinkActive="active" class="nav-item" [title]="sidebarCollapsed ? 'Estadísticas' : ''">
+        <span class="nav-icon">📊</span>
+        <span class="nav-label" *ngIf="!sidebarCollapsed">Estadísticas</span>
+      </a>
+      <a routerLink="/clients" routerLinkActive="active" class="nav-item" [title]="sidebarCollapsed ? 'Clientes' : ''">
+        <span class="nav-icon">👥</span>
+        <span class="nav-label" *ngIf="!sidebarCollapsed">Clientes</span>
+      </a>
+      <a routerLink="/checkin" class="nav-item" [title]="sidebarCollapsed ? 'Check-in Facial' : ''">
+        <span class="nav-icon">📷</span>
+        <span class="nav-label" *ngIf="!sidebarCollapsed">Check-in Facial</span>
+      </a>
+      <a routerLink="/memberships" routerLinkActive="active" class="nav-item" [title]="sidebarCollapsed ? 'Membresías' : ''">
+        <span class="nav-icon">💳</span>
+        <span class="nav-label" *ngIf="!sidebarCollapsed">Membresías</span>
+      </a>
+      
+      <div class="nav-divider" *ngIf="!sidebarCollapsed">Centro de Control</div>
+      
+      <a href="#" class="nav-item disabled" [title]="sidebarCollapsed ? 'Clases' : ''">
+        <span class="nav-icon">🏋️</span>
+        <span class="nav-label" *ngIf="!sidebarCollapsed">Clases</span>
+      </a>
+      <a href="#" class="nav-item disabled" [title]="sidebarCollapsed ? 'Reportes' : ''">
+        <span class="nav-icon">📈</span>
+        <span class="nav-label" *ngIf="!sidebarCollapsed">Reportes</span>
+      </a>
+    </nav>
+
+    <div class="sidebar-footer">
+      <div class="status-indicator" *ngIf="!sidebarCollapsed">Sistema Activo</div>
+      <button class="btn-logout-premium" (click)="logout()" [title]="sidebarCollapsed ? 'Cerrar Sesión' : ''">
+        <span class="logout-icon">🚪</span> 
+        <span class="logout-label" *ngIf="!sidebarCollapsed">Cerrar Sesión</span>
+      </button>
+    </div>
+  </aside>
+
+  <main class="content-area" [class.full-width]="sidebarCollapsed">
+    <router-outlet></router-outlet>
+  </main>
+</div>

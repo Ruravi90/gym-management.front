@@ -1,0 +1,26 @@
+<nav class="navbar" *ngIf="!isPremiumPage()">
+  <div class="nav-brand">
+    <a routerLink="/checkin">Gym Management</a>
+  </div>
+
+  <div class="nav-menu" [class.active]="menuOpen">
+    <ul>
+      <li><a routerLink="/checkin" routerLinkActive="active">Check-in Facial</a></li>
+      <li *ngIf="!isOnCheckinPage()"><a routerLink="/dashboard" routerLinkActive="active">Usuarios</a></li>
+      <li *ngIf="!isOnCheckinPage()"><a routerLink="/memberships" routerLinkActive="active">Membresías</a></li>
+    </ul>
+  </div>
+
+  <div class="nav-user" *ngIf="isLoggedIn()">
+    <span class="user-info" *ngIf="getCurrentUser()">
+      {{ getCurrentUser()?.name }}
+    </span>
+    <button class="logout-btn" (click)="logout()">Cerrar Sesión</button>
+  </div>
+
+  <div class="nav-toggle" (click)="toggleMenu()">
+    <span class="bar"></span>
+    <span class="bar"></span>
+    <span class="bar"></span>
+  </div>
+</nav>

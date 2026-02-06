@@ -1,0 +1,142 @@
+<div class="checkin-page">
+    <div class="checkin-header">
+        <h1 class="page-title">PANTHER WARRIORS</h1>
+        <p class="page-subtitle">Sistema de acceso con reconocimiento facial</p>
+    </div>
+
+    <!-- Main Card with state-based background -->
+    <div class="app-card checkin-main-card" 
+         [class.state-granted]="state === 'granted'" 
+         [class.state-denied]="state === 'denied'">
+        
+        <!-- INITIAL STATE: Only buttons -->
+        <div class="initial-actions" *ngIf="state === 'idle' && !streaming">
+            <button (click)="startCamera()" class="app-btn app-btn-primary app-btn-kiosk">
+                📷 INICIAR CÁMARA
+            </button>
+            <button class="app-btn app-btn-secondary app-btn-kiosk" (click)="toggleManualMode()">
+                ⌨️ ACCESO MANUAL
+            </button>
+        </div>
+
+        <div class="checkin-grid" *ngIf="state !== 'idle' || streaming">
+            <!-- Left Side: Camera Panel (Visible during scan/verify) -->
+            <div class="camera-section" *ngIf="streaming">
+                <div class="camera-container">
+                    <video #videoElement autoplay playsinline></video>
+                    
+                    <!-- Visual Guidance Overlay -->
+                    <div class="face-guide-overlay">
+                        <div class="face-guide-oval"></div>
+                        <div class="face-guide-label">Centra tu rostro aquí</div>
+                    </div>
+                    
+                    <div class="scan-bar"></div>
+                    <canvas #canvas style="display:none;"></canvas>
+                    <!-- Top indicator light -->
+                    <div class="status-indicator">
+                        <div class="status-dot" [class]="state"></div>
+                    </div>
+                </div>
+
+                <div class="checkin-actions-compact">
+                    <button (click)="stopCamera()" class="app-btn app-btn-secondary">
+                        🛑 CANCELAR
+                    </button>
+                </div>
+            </div>
+
+            <!-- Right Side: Status/Information -->
+            <div class="info-section" [class.full-width]="!streaming">
+                <div class="section-badge" *ngIf="state !== 'verifying' && state !== 'scanning'">
+                    <span class="icon-user">👤</span>
+                    <h3>{{ state === 'granted' ? 'Acceso Autorizado' : state === 'denied' ? 'Acceso Restringido' : 'Verificación Biométrica' }}</h3>
+                </div>
+
+                <!-- Status badge and progress (Visible during process) -->
+                <div class="status-display" *ngIf="state === 'scanning' || state === 'verifying'">
+                    <div class="status-row">
+                        <span class="label">Estado:</span>
+                        <span class="status-badge" [class]="state">
+                            {{ state === 'scanning' ? 'Escaneando...' : 'Verificando...' }}
+                        </span>
+                    </div>
+                    <div class="progress-track">
+                        <div class="progress-bar" 
+                             [style.width.%]="state === 'scanning' ? 40 : 80"
+                             [class]="state">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Result Message (Visible after result) -->
+                <div class="result-message" *ngIf="state === 'granted' || state === 'denied'">
+                    <div class="result-icon-big" [class]="state">
+                        {{ state === 'granted' ? '✅' : '❌' }}
+                    </div>
+                    <p class="main-msg">{{ message }}</p>
+                </div>
+
+                <!-- Client Info Panel (Visible after success) -->
+                <div class="client-info-panel-modern" *ngIf="clientInfo && !streaming">
+                    <div class="info-group">
+                        <span class="info-label">GUERRERO</span>
+                        <span class="info-value name">{{ clientInfo.name }}</span>
+                    </div>
+                    
+                    <div class="info-row-grid">
+                        <div class="info-group">
+                            <span class="info-label">MEMBRESÍA</span>
+                            <span class="info-value" [class.active-text]="isMembershipActive(membershipInfo?.end_date)" [class.expired-text]="!isMembershipActive(membershipInfo?.end_date)">
+                                {{ membershipInfo ? (membershipInfo.type | uppercase) : 'VACANTE' }}
+                            </span>
+                        </div>
+                        <div class="info-group" *ngIf="membershipInfo">
+                            <span class="info-label">VENCIMIENTO</span>
+                            <span class="info-value">{{ membershipInfo.end_date | date:'dd MMM yyyy':'':'es' }}</span>
+                        </div>
+                    </div>
+
+                    <div class="info-footer" *ngIf="lastVisit">
+                        <span>Último acceso: {{ lastVisit.check_in | date:'dd/MM HH:mm' }}</span>
+                    </div>
+                </div>
+
+                <!-- Empty/Scanning Message -->
+                <div class="scanning-placeholder" *ngIf="streaming && state === 'scanning'">
+                    <p>Por favor, mire a la cámara...</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- Manual Access Modal -->
+    <div class="modal-backdrop" *ngIf="manualMode">
+        <div class="app-card modal-card">
+            <div class="modal-header">
+                <h3>Ingreso Manual de Socio</h3>
+                <button class="btn-close" (click)="toggleManualMode()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="modal-search-group">
+                    <input type="text" [(ngModel)]="searchTerm" placeholder="Nombre o email..." (keyup.enter)="searchClients()" class="app-input">
+                    <button class="app-btn app-btn-primary" (click)="searchClients()">Buscar</button>
+                </div>
+                
+                <div class="form-group" style="margin-top: 1rem;">
+                    <label>Seleccionar Guerrero</label>
+                    <select [(ngModel)]="manualClientId" class="app-input">
+                        <option [ngValue]="null">-- Seleccione un socio --</option>
+                        <option *ngFor="let client of clients" [ngValue]="client.id">{{ client.name }}</option>
+                    </select>
+                </div>
+
+                <div class="modal-actions-manual">
+                    <button class="app-btn app-btn-secondary" (click)="toggleManualMode()">Cancelar</button>
+                    <button class="app-btn app-btn-primary" (click)="checkInManual()" [disabled]="!manualClientId">Confirmar Acceso</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

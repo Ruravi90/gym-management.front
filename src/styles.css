@@ -1,0 +1,207 @@
+/* Global Design System: Friendly Professional Light Theme */
+:root {
+  /* Color Palette */
+  --app-bg: #f1f5f9;       /* Slate 100 - Main background */
+  --app-surface: #ffffff;  /* Pure White - Cards & Containers */
+  --app-sidebar: #0f172a;  /* Slate 900 - Sidebar background */
+  --app-border: #e2e8f0;   /* Slate 200 - Borders */
+  
+  /* Brand Colors */
+  --app-primary: #2563eb;  /* Blue 600 - Main action color */
+  --app-primary-hover: #1d4ed8;
+  --app-success: #16a34a;  /* Green 600 - Positive actions */
+  --app-danger: #dc2626;   /* Red 600 - Destructive actions */
+  --app-warning: #f59e0b;  /* Amber 500 - Alerts */
+  
+  /* Text Colors */
+  --text-main: #1e293b;    /* Slate 800 - Body text */
+  --text-muted: #64748b;   /* Slate 500 - Secondary text */
+  --text-inverse: #ffffff; /* White text on dark backgrounds */
+  
+  /* Shadows & Radius */
+  --radius-lg: 12px;
+  --radius-md: 8px;
+  --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+  --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+  --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  background-color: var(--app-bg);
+  color: var(--text-main);
+  height: 100vh;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* --- Shared Layout Components --- */
+
+.app-card {
+  background: var(--app-surface);
+  border: 1px solid var(--app-border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-md);
+  padding: 1.5rem;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.table-responsive-wrapper {
+  background: var(--app-surface);
+  border: 1px solid var(--app-border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-sm);
+  overflow-x: auto;
+}
+
+.app-table {
+  width: 100%;
+  border-collapse: collapse;
+  background: var(--app-surface);
+}
+
+.app-table th {
+  background: #f8fafc;
+  padding: 1rem 1.25rem;
+  text-align: left;
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  border-bottom: 2px solid var(--app-border);
+}
+
+.app-table td {
+  padding: 1rem 1.25rem;
+  border-bottom: 1px solid var(--app-border);
+  vertical-align: middle;
+  font-size: 0.95rem;
+}
+
+.app-table tr:last-child td {
+  border-bottom: none;
+}
+
+.app-table tr:hover {
+  background: #f8fafc;
+}
+
+/* --- Inputs & Buttons --- */
+
+.app-input {
+  width: 100%;
+  padding: 10px 14px;
+  background: var(--app-surface);
+  border: 1px solid var(--app-border);
+  border-radius: var(--radius-md);
+  color: var(--text-main);
+  font-size: 0.95rem;
+  transition: all 0.2s;
+}
+
+.app-input:focus {
+  outline: none;
+  border-color: var(--app-primary);
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+}
+
+.app-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 10px 20px;
+  border-radius: var(--radius-md);
+  font-weight: 600;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: all 0.2s;
+  border: 1px solid transparent;
+}
+
+.app-btn-primary {
+  background: var(--app-primary);
+  color: white;
+}
+
+.app-btn-primary:hover {
+  background: var(--app-primary-hover);
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-md);
+}
+
+.app-btn-secondary {
+  background: var(--app-surface);
+  border-color: var(--app-border);
+  color: var(--text-main);
+}
+
+.app-btn-secondary:hover {
+  background: #f8fafc;
+  border-color: var(--text-muted);
+}
+
+/* --- Standard Modals --- */
+
+.modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.4);
+  backdrop-filter: blur(4px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1100;
+  padding: 1rem;
+}
+
+.modal-card {
+  width: 100%;
+  max-width: 600px;
+  padding: 0 !important; /* Reset app-card padding for better header/body separation */
+  overflow: hidden;
+}
+
+.modal-header {
+  padding: 1.25rem 1.5rem;
+  border-bottom: 1px solid var(--app-border);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.modal-header h3 {
+  margin: 0;
+  font-size: 1.25rem;
+  font-weight: 700;
+}
+
+.btn-close {
+  background: none;
+  border: none;
+  font-size: 1.5rem;
+  cursor: pointer;
+  color: var(--text-muted);
+  line-height: 1;
+}
+
+.modal-body {
+  padding: 1.5rem;
+}
+
+.modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  margin-top: 1rem;
+  padding: 1.25rem 1.5rem;
+  border-top: 1px solid var(--app-border);
+  background: #f8fafc;
+}

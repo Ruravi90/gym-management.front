@@ -1,0 +1,218 @@
+<header class="main-header">
+  <div class="header-info">
+    <h1 class="page-title">Administración de Membresías</h1>
+    <p class="page-subtitle">Control total sobre los planes de tus guerreros</p>
+  </div>
+  <div class="header-actions">
+    <button class="app-btn app-btn-secondary btn-sm" (click)="loadStatistics()" title="Actualizar estadísticas">🔄</button>
+    <button class="app-btn app-btn-primary" (click)="openNewMembershipModal()">
+      <span>+</span> Nueva Membresía
+    </button>
+  </div>
+</header>
+
+<!-- Statistics Overview -->
+<div *ngIf="statistics" class="stats-row">
+  <div class="app-card stat-card total">
+    <div class="stat-icon-wrapper">📊</div>
+    <div class="stat-details">
+      <span class="label">Total Planes</span>
+      <span class="value">{{ statistics.total_memberships }}</span>
+    </div>
+  </div>
+  <div class="app-card stat-card success">
+    <div class="stat-icon-wrapper">✅</div>
+    <div class="stat-details">
+      <span class="label">Activas</span>
+      <span class="value">{{ statistics.active_memberships }}</span>
+    </div>
+  </div>
+  <div class="app-card stat-card danger">
+    <div class="stat-icon-wrapper">⌛</div>
+    <div class="stat-details">
+      <span class="label">Expiradas</span>
+      <span class="value">{{ statistics.expired_memberships }}</span>
+    </div>
+  </div>
+  <div class="app-card stat-card warning">
+    <div class="stat-icon-wrapper">⚠️</div>
+    <div class="stat-details">
+      <span class="label">Expiran pronto</span>
+      <span class="value">{{ statistics.upcoming_expirations }}</span>
+    </div>
+  </div>
+</div>
+
+<!-- Advanced Filters Area -->
+<div class="app-card filters-container">
+  <div class="filters-grid">
+    <div class="form-group">
+      <label>Estado del Plan</label>
+      <select class="app-input" [(ngModel)]="filters.status" (change)="applyFilters()">
+        <option value="">Cualquier estado</option>
+        <option value="available">Disponible</option>
+        <option value="active">Activa</option>
+        <option value="expired">Expirada</option>
+        <option value="suspended">Suspendida</option>
+        <option value="cancelled">Cancelada</option>
+      </select>
+    </div>
+
+    <div class="form-group">
+      <label>Estado de Pago</label>
+      <select class="app-input" [(ngModel)]="filters.paymentStatus" (change)="applyFilters()">
+        <option value="">Cualquier pago</option>
+        <option value="paid">Pagado</option>
+        <option value="pending">Pendiente</option>
+        <option value="overdue">Atrasado</option>
+      </select>
+    </div>
+
+    <div class="form-group search-group">
+      <label>Socio</label>
+      <select class="app-input" [(ngModel)]="filters.clientId" (change)="applyFilters()">
+        <option value="">Todos los clientes</option>
+        <option *ngFor="let client of clients" [value]="client.id">{{ client.name }}</option>
+      </select>
+    </div>
+
+    <div class="filter-actions">
+      <button class="app-btn app-btn-secondary" (click)="clearFilters()">Limpiar Filtros</button>
+    </div>
+  </div>
+</div>
+
+<!-- Data Table Section -->
+<div class="table-responsive-wrapper">
+  <table class="app-table">
+    <thead>
+      <tr>
+        <th>ID</th>
+        <th>Guerrero / Socio</th>
+        <th>Tipo de Plan</th>
+        <th>Vigencia</th>
+        <th>Estado</th>
+        <th class="text-center">Pagos</th>
+        <th class="text-right">Acciones</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let membership of memberships">
+        <td class="id-cell">#{{ membership.id }}</td>
+        <td>
+          <div class="client-link" (click)="viewClientHistory(membership.client_id)">
+            {{ getClientName(membership.client_id) }}
+          </div>
+        </td>
+        <td>
+          <span class="membership-badge" [attr.data-type]="membership.type">
+            {{ membership.type | uppercase }}
+          </span>
+        </td>
+        <td>
+          <div class="date-range">
+            <span class="date">{{ formatDate(membership.start_date) }}</span>
+            <span class="divider">→</span>
+            <span class="date bold">{{ formatDate(membership.end_date) }}</span>
+          </div>
+        </td>
+        <td>
+          <span class="status-badge" [style.color]="getStatusColor(membership.status)" [style.background]="getStatusColor(membership.status) + '15'">
+            {{ membership.status | titlecase }}
+          </span>
+        </td>
+        <td class="text-center">
+          <span class="payment-badge" [class]="membership.payment_status">
+            {{ membership.payment_status | titlecase }}
+          </span>
+        </td>
+        <td class="text-right">
+          <div class="action-buttons">
+            <button class="btn-action-icon edit" (click)="openEditModal(membership)">✏️</button>
+            <button class="btn-action-icon delete" (click)="deleteMembership(membership.id)">🗑️</button>
+          </div>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- Unified Premium Modal -->
+<div class="modal-backdrop" *ngIf="showMembershipModal">
+  <div class="app-card modal-card">
+    <div class="modal-header">
+      <h3>{{ editingMembership ? 'Modificar Membresía' : 'Nueva Alta de Membresía' }}</h3>
+      <button class="btn-close" (click)="closeMembershipModal()">&times;</button>
+    </div>
+    <div class="modal-body">
+      <form (ngSubmit)="saveMembership()" #membershipFormRef="ngForm" class="compact-form">
+        <div class="form-group">
+          <label>Selección de Cliente</label>
+          <select class="app-input" [(ngModel)]="membershipForm.client_id" name="client_id" required>
+            <option value="">Seleccione un socio...</option>
+            <option *ngFor="let client of clients" [value]="client.id">{{ client.name }}</option>
+          </select>
+        </div>
+
+        <div class="form-grid">
+          <div class="form-group">
+            <label>Tipo de Plan</label>
+            <select class="app-input" [(ngModel)]="membershipForm.type" name="type" required>
+              <option value="basic">Básica</option>
+              <option value="premium">Premium</option>
+              <option value="VIP">VIP</option>
+              <option value="student">Estudiante</option>
+              <option value="family">Familiar</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label>Importe ($)</label>
+            <input type="number" class="app-input" [(ngModel)]="membershipForm.price" name="price" required min="0" step="0.01">
+          </div>
+        </div>
+
+        <div class="form-grid">
+          <div class="form-group">
+            <label>Fecha de Inicio</label>
+            <input type="date" class="app-input" [(ngModel)]="membershipForm.start_date" name="start_date" (change)="onStartDateChange()" required>
+          </div>
+
+          <div class="form-group">
+            <label>Vencimiento</label>
+            <input type="date" class="app-input" [(ngModel)]="membershipForm.end_date" name="end_date" required>
+          </div>
+        </div>
+
+        <div class="form-grid">
+          <div class="form-group">
+            <label>Estado Administración</label>
+            <select class="app-input" [(ngModel)]="membershipForm.status" name="status" required>
+              <option value="available">Disponible</option>
+              <option value="active">Activa</option>
+              <option value="expired">Expirada</option>
+              <option value="suspended">Suspendida</option>
+              <option value="cancelled">Cancelada</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label>Estado del Pago</label>
+            <select class="app-input" [(ngModel)]="membershipForm.payment_status" name="payment_status" required>
+              <option value="pending">Pendiente</option>
+              <option value="paid">Pagado</option>
+              <option value="overdue">Atrasado</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="modal-actions">
+          <button type="button" class="app-btn app-btn-secondary" (click)="closeMembershipModal()">Descartar</button>
+          <button type="submit" class="app-btn app-btn-primary" [disabled]="!membershipFormRef.form.valid">
+            {{ editingMembership ? 'Actualizar Cambios' : 'Confirmar Registro' }}
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>

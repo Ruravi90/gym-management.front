@@ -1,0 +1,156 @@
+<header class="main-header">
+    <div class="header-info">
+        <h1 class="page-title">Administración de Clientes</h1>
+        <p class="page-subtitle">Gestiona tu comunidad de guerreros en tiempo real</p>
+    </div>
+    <div class="header-actions">
+        <button class="app-btn app-btn-primary" (click)="openRegisterModal()">
+            <span>+</span> Nuevo Socio
+        </button>
+    </div>
+</header>
+
+<div class="dashboard-actions">
+    <div class="search-bar">
+        <span class="search-icon">🔍</span>
+        <input type="text" class="app-input" placeholder="Buscar socios por nombre o email..." (input)="onSearch($event)">
+    </div>
+</div>
+
+<div class="table-responsive-wrapper">
+    <table class="app-table">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Información del Socio</th>
+                <th>Plan / Membresía</th>
+                <th>Estado</th>
+                <th class="text-right">Centro de Acción</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr *ngFor="let client of filteredClients" class="client-row">
+                <td class="id-cell">#{{client.id}}</td>
+                <td>
+                    <div class="client-info">
+                        <span class="client-name">{{client.name}}</span>
+                        <span class="client-email">{{client.email}}</span>
+                    </div>
+                </td>
+                <td>
+                    <span class="membership-badge" [attr.data-type]="getClientMembershipType(client)">
+                        {{getClientMembershipType(client) | uppercase}}
+                    </span>
+                </td>
+                <td>
+                    <div class="status-badge" [class.active]="client.status">
+                        {{client.status ? 'ACTIVO' : 'INACTIVO'}}
+                    </div>
+                </td>
+                <td class="text-right">
+                    <div class="action-buttons">
+                        <button class="btn-action-icon edit" (click)="openEditModal(client)" title="Editar">✏️</button>
+                        <button class="btn-action-icon delete" (click)="confirmDelete(client)" title="Eliminar">🗑️</button>
+                        <button class="app-btn app-btn-secondary btn-sm" (click)="openFaceScanModal(client)">
+                            📷 Rostro
+                        </button>
+                    </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+
+<!-- Unified Modal: Registro / Edición -->
+<div class="modal-backdrop" *ngIf="showClientModal">
+    <div class="app-card modal-card">
+        <div class="modal-header">
+            <h3>{{editingClient ? 'Modificar Guerrero' : 'Registro de Nuevo Socio'}}</h3>
+            <button class="btn-close" (click)="closeClientModal()">&times;</button>
+        </div>
+        <div class="modal-body">
+            <form (ngSubmit)="saveClient()" class="compact-form">
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label>Nombre Completo</label>
+                        <input type="text" [(ngModel)]="clientForm.name" name="name" class="app-input" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Correo Electrónico</label>
+                        <input type="email" [(ngModel)]="clientForm.email" name="email" class="app-input" required>
+                    </div>
+                </div>
+                <div class="form-group full-width" *ngIf="!editingClient">
+                    <label>Contraseña Inicial</label>
+                    <input type="password" [(ngModel)]="clientForm.password" name="password" class="app-input" required>
+                </div>
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label>Teléfono</label>
+                        <input type="text" [(ngModel)]="clientForm.phone" name="phone" class="app-input">
+                    </div>
+                    <div class="form-group">
+                        <label>Estado de Cuenta</label>
+                        <select [(ngModel)]="clientForm.status" name="status" class="app-input">
+                            <option [ngValue]="true">Activo</option>
+                            <option [ngValue]="false">Inactivo</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="modal-actions">
+                    <button type="button" class="app-btn app-btn-secondary" (click)="closeClientModal()">Cancelar</button>
+                    <button type="submit" class="app-btn app-btn-primary">{{editingClient ? 'Actualizar' : 'Registrar'}}</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Face Scan Modal -->
+<div class="modal-backdrop" *ngIf="showFaceScanModal">
+    <div class="app-card modal-card tech-modal">
+        <div class="modal-header">
+            <h3>Identidad Biométrica: {{scanningClient?.name}}</h3>
+            <button class="btn-close" (click)="closeFaceScanModal()">&times;</button>
+        </div>
+        <div class="modal-body centered">
+            <div class="viewfinder-wrapper">
+                <video #video class="video-preview" autoplay playsinline [class.hidden]="!streaming"></video>
+                
+                <!-- Visual Guidance Overlay -->
+                <div class="face-guide-overlay">
+                    <div class="face-guide-oval"></div>
+                    <div class="face-guide-label">Centra el rostro aquí</div>
+                </div>
+                
+                <div class="scan-bar"></div>
+            </div>
+            <p class="hint" *ngIf="!registrationMessage">Asegúrate de que el rostro encaje en la guía y esté bien iluminado.</p>
+            
+            <!-- Dynamic Status Message -->
+            <div class="registration-status" *ngIf="registrationMessage" [class.success]="registrationSuccess" [class.error]="!registrationSuccess && !isRegistering">
+                <span class="status-icon">{{ registrationSuccess ? '✅' : isRegistering ? '⌛' : '⚠️' }}</span>
+                {{ registrationMessage }}
+            </div>
+
+            <button class="app-btn app-btn-primary" (click)="captureFace()" [disabled]="isRegistering || registrationSuccess">
+                {{ isRegistering ? 'Procesando...' : registrationSuccess ? 'Completado' : 'Capturar e Identificar' }}
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- Delete Confirmation Modal -->
+<div class="modal-backdrop" *ngIf="showDeleteConfirm">
+    <div class="app-card modal-card alert-modal">
+        <div class="modal-body centered">
+            <span class="alert-icon">⚠️</span>
+            <h3>¿Eliminar Guerrero?</h3>
+            <p>¿Estás seguro de que deseas eliminar permanentemente a <strong class="highlight">{{deletingClient?.name}}</strong>?</p>
+            <div class="modal-actions centered">
+                <button class="app-btn app-btn-secondary" (click)="closeDeleteConfirmation()">Conservar</button>
+                <button class="app-btn app-btn-danger" (click)="deleteClient()">Sí, Eliminar</button>
+            </div>
+        </div>
+    </div>
+</div>
