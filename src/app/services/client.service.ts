@@ -18,7 +18,6 @@ export interface Client {
 export interface CreateClientRequest {
   name: string;
   email: string;
-  password: string;
   phone?: string;
   membership_type?: string;
 }

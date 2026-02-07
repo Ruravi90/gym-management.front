@@ -80,10 +80,7 @@
                         <input type="email" [(ngModel)]="clientForm.email" name="email" class="app-input" required>
                     </div>
                 </div>
-                <div class="form-group full-width" *ngIf="!editingClient">
-                    <label>Contraseña Inicial</label>
-                    <input type="password" [(ngModel)]="clientForm.password" name="password" class="app-input" required>
-                </div>
+                <!-- Password removed for clients (not required) -->
                 <div class="form-grid">
                     <div class="form-group">
                         <label>Teléfono</label>

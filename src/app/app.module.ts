@@ -15,9 +15,9 @@ import { DashboardComponent } from './components/dashboard/dashboard.component';
 import { FacialCheckinComponent } from './components/facial-checkin/facial-checkin.component';
 import { MembershipComponent } from './components/membership/membership.component';
 import { ClientMembershipHistoryComponent } from './components/client-membership-history/client-membership-history.component';
-import { NavbarComponent } from './components/navbar/navbar.component';
 import { MainLayoutComponent } from './components/main-layout/main-layout.component';
 import { ClientsComponent } from './components/clients/clients.component';
+import { UsersAdminComponent } from './components/users-admin/users-admin.component';
 
 @NgModule({
   declarations: [
@@ -27,9 +27,9 @@ import { ClientsComponent } from './components/clients/clients.component';
     FacialCheckinComponent,
     MembershipComponent,
     ClientMembershipHistoryComponent,
-    NavbarComponent,
     MainLayoutComponent,
     ClientsComponent
+    ,UsersAdminComponent
   ],
   imports: [
     BrowserModule,

@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { AuthService } from './auth.service';
+import { environment } from '../../environments/environment';
 
 export interface User {
   id: number;
@@ -25,7 +26,7 @@ export interface CreateUserRequest {
   providedIn: 'root'
 })
 export class UserService {
-  private apiUrl = 'http://localhost:8000/users';
+  private apiUrl = `${environment.apiUrl}/users`;
 
   constructor(
     private http: HttpClient,
@@ -59,4 +60,13 @@ export class UserService {
   deleteUser(id: number): Observable<User> {
     return this.http.delete<User>(`${this.apiUrl}/${id}`, { headers: this.getAuthHeaders() });
   }
+
+  changeUserRole(id: number, role: string) {
+    return this.http.patch<User>(`${this.apiUrl}/${id}/role`, { role }, { headers: this.getAuthHeaders() });
+  }
+
+  changeUserStatus(id: number, status: boolean) {
+    return this.http.patch<User>(`${this.apiUrl}/${id}/status`, { status }, { headers: this.getAuthHeaders() });
+  }
+
 }

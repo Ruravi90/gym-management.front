@@ -25,4 +25,8 @@ export class MainLayoutComponent implements OnInit {
   logout() {
     this.authService.logout();
   }
+
+  getCurrentUser() {
+    return this.authService.getCurrentUser();
+  }
 }

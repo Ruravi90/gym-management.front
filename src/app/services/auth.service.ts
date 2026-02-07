@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
 import { BehaviorSubject, Observable, of } from 'rxjs';
-import { map } from 'rxjs/operators';
+import { map, switchMap } from 'rxjs/operators';
 import { environment } from '../../environments/environment';
 
 export interface User {
@@ -102,17 +102,22 @@ export class AuthService {
       return of(null as any);
     }
 
-    // In a real app, we'd have an endpoint like /users/me
-    // For now, we'll just return the stored user, but ideally we'd fetch from API
-    // This would require a new endpoint in the backend
+    // If we already have a stored user, return it
     const storedUser = localStorage.getItem('currentUser');
     if (storedUser) {
+      this.currentUserSubject.next(JSON.parse(storedUser));
       return of(JSON.parse(storedUser));
     }
 
-    // If no stored user, we'd need to fetch from API
-    // This would require a new endpoint in the backend
-    return of(null as any);
+    // Otherwise fetch from API (/users/me)
+    return this.http.get<User>(`${environment.apiUrl}/users/me`, {
+      headers: { 'Authorization': `Bearer ${token}` }
+    }).pipe(
+      map(user => {
+        if (user) this.setCurrentUser(user);
+        return user;
+      })
+    );
   }
 
   // Method to fetch user info from API

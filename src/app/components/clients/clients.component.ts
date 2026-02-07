@@ -19,7 +19,6 @@ export class ClientsComponent implements OnInit, OnDestroy {
   clientForm = {
     name: '',
     email: '',
-    password: '',
     phone: '',
     membership_type: 'basic',
     status: true as boolean
@@ -93,7 +92,6 @@ export class ClientsComponent implements OnInit, OnDestroy {
     this.clientForm = {
       name: client.name,
       email: client.email,
-      password: '', 
       phone: client.phone || '',
       membership_type: client.membership_type,
       status: client.status
@@ -154,7 +152,6 @@ export class ClientsComponent implements OnInit, OnDestroy {
     this.clientForm = {
       name: '',
       email: '',
-      password: '',
       phone: '',
       membership_type: 'basic',
       status: true

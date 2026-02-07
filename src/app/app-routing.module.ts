@@ -7,6 +7,8 @@ import { MembershipComponent } from './components/membership/membership.componen
 import { ClientMembershipHistoryComponent } from './components/client-membership-history/client-membership-history.component';
 import { MainLayoutComponent } from './components/main-layout/main-layout.component';
 import { AuthGuard } from './guards/auth.guard';
+import { AdminGuard } from './guards/admin.guard';
+import { UsersAdminComponent } from './components/users-admin/users-admin.component';
 import { ClientsComponent } from './components/clients/clients.component';
 
 const routes: Routes = [
@@ -19,6 +21,7 @@ const routes: Routes = [
     children: [
       { path: 'dashboard', component: DashboardComponent },
       { path: 'memberships', component: MembershipComponent },
+      { path: 'admin/users', component: UsersAdminComponent, canActivate: [AuthGuard, AdminGuard] },
       { path: 'clients', component: ClientsComponent },
       { path: 'client-membership-history/:id', component: ClientMembershipHistoryComponent },
       { path: '', redirectTo: 'dashboard', pathMatch: 'full' }

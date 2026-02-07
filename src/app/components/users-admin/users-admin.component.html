@@ -1,0 +1,78 @@
+<div class="users-admin">
+	<div class="header-actions">
+		<div class="header-actions-left">
+			<!-- removed main header to match request; keeping action button aligned like clients -->
+		</div>
+		<div class="header-actions-right">
+			<button class="app-btn app-btn-primary" (click)="startCreate()">+ Nuevo Usuario</button>
+		</div>
+	</div>
+
+	<div class="dashboard-actions">
+		<div class="search-bar">
+			<span class="search-icon">🔍</span>
+			<input type="text" class="app-input" placeholder="Buscar usuarios por nombre o email..." (input)="onSearch($event)">
+		</div>
+	</div>
+
+	<div *ngIf="loading">Cargando...</div>
+	<div *ngIf="error" class="error">{{ error }}</div>
+
+	<div *ngIf="creating" class="create-form">
+		<h3>Nuevo Usuario</h3>
+		<label>Nombre: <input [(ngModel)]="newUser.name" /></label>
+		<label>Email: <input [(ngModel)]="newUser.email" /></label>
+		<label>Contraseña: <input type="password" [(ngModel)]="newUser.password" /></label>
+		<label>Rol:
+			<select [(ngModel)]="newUser.role">
+				<option *ngFor="let r of roles" [value]="r.value">{{ r.label }}</option>
+			</select>
+		</label>
+		<div>
+			<button (click)="createUser()">Crear</button>
+			<button (click)="cancelCreate()">Cancelar</button>
+		</div>
+	</div>
+
+	<div class="table-responsive-wrapper">
+		<div class="table-card">
+			<table *ngIf="!loading && filteredUsers.length" class="app-table">
+				<thead>
+					<tr>
+						<th>ID</th>
+						<th>INFORMACIÓN DEL USUARIO</th>
+						<th>ROL</th>
+						<th>ESTADO</th>
+						<th class="text-right">CENTRO DE ACCIÓN</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr *ngFor="let u of filteredUsers" class="user-row">
+						<td class="id-cell">#{{u.id}}</td>
+						<td>
+							<div class="user-info">
+								<span class="user-name">{{u.name}}</span>
+								<span class="user-email">{{u.email}}</span>
+							</div>
+						</td>
+						<td>
+							<span class="role-badge" [attr.data-role]="u.role">{{ getRoleLabel(u.role) }}</span>
+						</td>
+						<td>
+							<div class="status-badge" [class.active]="u.status">{{ u.status ? 'ACTIVO' : 'INACTIVO' }}</div>
+						</td>
+						<td class="text-right">
+							<div class="action-buttons">
+								<button class="btn-action-icon" (click)="toggleStatus(u)" title="Alternar Estado">🔁</button>
+								<button class="btn-action-icon delete" (click)="deleteUser(u.id)" title="Eliminar">🗑️</button>
+							</div>
+						</td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+	</div>
+
+	<div *ngIf="!loading && !filteredUsers.length">No hay usuarios.</div>
+</div>
+
