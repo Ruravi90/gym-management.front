@@ -1,13 +1,27 @@
 const fs = require('fs');
 const path = require('path');
-const packageJson = require('../package.json');
+const packageJsonPath = path.join(__dirname, '../package.json');
+const packageJson = require(packageJsonPath);
 
-const version = packageJson.version;
+// Parse current version
+let [major, minor, patch] = packageJson.version.split('.').map(Number);
+
+// Increment patch version
+patch++;
+const newVersion = `${major}.${minor}.${patch}`;
+
+// Update package.json object
+packageJson.version = newVersion;
+
+// Write updated package.json back to file
+fs.writeFileSync(packageJsonPath, JSON.stringify(packageJson, null, 2) + '\n');
+console.log(`Updated package.json version to ${newVersion}`);
+
 const timestamp = new Date().toISOString();
 const hash = Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
 
 const versionData = {
-  version: version,
+  version: newVersion,
   timestamp: timestamp,
   hash: hash
 };
@@ -22,6 +36,6 @@ if (!fs.existsSync(dir)){
 
 fs.writeFileSync(filePath, JSON.stringify(versionData, null, 2));
 
-console.log(`Version ${version} generated at ${filePath}`);
+console.log(`Version ${newVersion} generated at ${filePath}`);
 console.log(`Timestamp: ${timestamp}`);
 console.log(`Hash: ${hash}`);
