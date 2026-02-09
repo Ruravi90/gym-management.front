@@ -123,3 +123,62 @@
 .btn-action-icon.delete { color: #ef4444; }
 
 
+
+/* Error State */
+.error-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem;
+    background: rgba(255, 0, 0, 0.05);
+    border: 1px solid rgba(255, 0, 0, 0.2);
+    border-radius: 12px;
+    margin: 1rem 0;
+    text-align: center;
+}
+
+.error-icon {
+    font-size: 3rem;
+    margin-bottom: 1rem;
+}
+
+.error-content h3 {
+    margin: 0;
+    color: #d32f2f;
+    font-size: 1.2rem;
+}
+
+.error-content p {
+    color: #666;
+    margin: 0.5rem 0;
+}
+
+.error-details {
+    display: block;
+    margin-top: 1rem;
+    padding: 0.5rem;
+    background: rgba(0,0,0,0.05);
+    border-radius: 4px;
+    font-family: monospace;
+    font-size: 0.8rem;
+    color: #d32f2f;
+    max-width: 100%;
+    overflow-wrap: break-word;
+}
+
+.retry-btn {
+    margin-top: 1.5rem;
+    padding: 0.75rem 1.5rem;
+    background-color: #d32f2f;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: 500;
+    transition: background 0.2s;
+}
+
+.retry-btn:hover {
+    background-color: #b71c1c;
+}

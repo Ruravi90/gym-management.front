@@ -216,3 +216,28 @@ button, .nav-item, .btn-icon-modern {
 .app-table tr:hover {
     background: #f8fafc;
 }
+
+/* Version Display */
+.status-indicator {
+  font-size: 0.75rem;
+  color: #a7f3d0;
+  margin-bottom: 0.75rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.status-dot {
+  color: #10b981;
+  font-size: 1.2em;
+  line-height: 0;
+}
+
+.version-text {
+  color: #94a3b8;
+  font-size: 0.7em;
+  margin-left: auto;
+  opacity: 0.8;
+  font-family: 'JetBrains Mono', monospace;
+}

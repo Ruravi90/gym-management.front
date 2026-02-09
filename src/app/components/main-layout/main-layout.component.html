@@ -44,7 +44,10 @@
     </nav>
 
     <div class="sidebar-footer">
-      <div class="status-indicator" *ngIf="!sidebarCollapsed">Sistema Activo</div>
+      <div class="status-indicator" *ngIf="!sidebarCollapsed">
+        <span class="status-dot">●</span> Sistema Activo
+        <small class="version-text" *ngIf="versionService.currentVersion">v{{ versionService.currentVersion }}</small>
+      </div>
       <button class="btn-logout-premium" (click)="logout()" [title]="sidebarCollapsed ? 'Cerrar Sesión' : ''">
         <span class="logout-icon">🚪</span> 
         <span class="logout-label" *ngIf="!sidebarCollapsed">Cerrar Sesión</span>
