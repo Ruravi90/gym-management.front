@@ -181,7 +181,12 @@ export class ClientsComponent implements OnInit, OnDestroy {
 
   async startCamera() {
     try {
-      this.stream = await navigator.mediaDevices.getUserMedia({ video: true });
+      const constraints = {
+        video: {
+          aspectRatio: { ideal: 1.333333 } // 4:3
+        }
+      };
+      this.stream = await navigator.mediaDevices.getUserMedia(constraints);
       if (this.videoElement) {
         this.videoElement.nativeElement.srcObject = this.stream;
         this.streaming = true;
@@ -209,11 +214,35 @@ export class ClientsComponent implements OnInit, OnDestroy {
     this.registrationMessage = 'Analizando biometría...';
 
     const video = this.videoElement.nativeElement;
+    
+    // --- CROP LOGIC (WYSIWYG) ---
+    // Same logic as check-in to ensure registration matches checks
+    const videoRatio = video.videoWidth / video.videoHeight;
+    const targetRatio = 4/3;
+    
+    let sourceWidth = video.videoWidth;
+    let sourceHeight = video.videoHeight;
+    let sourceX = 0;
+    let sourceY = 0;
+    
+    if (videoRatio > targetRatio) {
+      sourceWidth = sourceHeight * targetRatio;
+      sourceX = (video.videoWidth - sourceWidth) / 2;
+    } else {
+      sourceHeight = sourceWidth / targetRatio;
+      sourceY = (video.videoHeight - sourceHeight) / 2;
+    }
+
     const canvas = document.createElement('canvas');
-    canvas.width = video.videoWidth;
-    canvas.height = video.videoHeight;
+    canvas.width = 640;
+    canvas.height = 480;
     const context = canvas.getContext('2d');
-    context?.drawImage(video, 0, 0, canvas.width, canvas.height);
+    
+    context?.drawImage(
+      video, 
+      sourceX, sourceY, sourceWidth, sourceHeight, 
+      0, 0, canvas.width, canvas.height
+    );
 
     canvas.toBlob((blob: Blob | null) => {
       if (!blob) {

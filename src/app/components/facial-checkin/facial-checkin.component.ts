@@ -66,7 +66,14 @@ export class FacialCheckinComponent implements OnInit, OnDestroy {
     
     console.log('Starting camera...');
     try {
-      this.stream = await navigator.mediaDevices.getUserMedia({ video: true });
+      // Solicitar 4:3 aspect ratio
+      const constraints = {
+        video: {
+          aspectRatio: { ideal: 1.333333 } // 4:3
+        }
+      };
+      
+      this.stream = await navigator.mediaDevices.getUserMedia(constraints);
       
       // Update state FIRST so *ngIf renders the video element in the DOM
       this.streaming = true;
@@ -108,11 +115,41 @@ export class FacialCheckinComponent implements OnInit, OnDestroy {
       return;
     }
 
-    canvas.width = video.videoWidth;
-    canvas.height = video.videoHeight;
+    // --- CROP LOGIC (WYSIWYG) ---
+    // Calculate the source dimensions to crop from the center of the video
+    // that match a 4:3 aspect ratio (which is what the UI shows)
+    const videoRatio = video.videoWidth / video.videoHeight;
+    const targetRatio = 4/3;
+    
+    let sourceWidth = video.videoWidth;
+    let sourceHeight = video.videoHeight;
+    let sourceX = 0;
+    let sourceY = 0;
+    
+    // If video is wider than target, crop width
+    if (videoRatio > targetRatio) {
+      sourceWidth = sourceHeight * targetRatio;
+      sourceX = (video.videoWidth - sourceWidth) / 2;
+    } 
+    // If video is taller than target, crop height
+    else {
+      sourceHeight = sourceWidth / targetRatio;
+      sourceY = (video.videoHeight - sourceHeight) / 2;
+    }
+
+    // Set canvas to a standard resolution (e.g. 640x480) or the cropped size
+    canvas.width = 640;
+    canvas.height = 480;
+    
     const context = canvas.getContext('2d');
     if (!context) return;
-    context.drawImage(video, 0, 0, canvas.width, canvas.height);
+    
+    // Draw only the cropped area to the canvas
+    context.drawImage(
+      video, 
+      sourceX, sourceY, sourceWidth, sourceHeight, // Source crop
+      0, 0, canvas.width, canvas.height        // Destination (full canvas)
+    );
 
     canvas.toBlob((blob: Blob | null) => {
       if (!blob) {

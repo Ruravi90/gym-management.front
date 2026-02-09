@@ -102,48 +102,27 @@
 }
 
 .face-guide-oval {
-    width: 70%; /* Responsive width */
-    max-width: 240px; /* Max size for larger screens */
-    aspect-ratio: 3/4; /* Maintain 3:4 ratio similar to 240x320 */
-    border: 2px dashed rgba(255,255,255,0.5);
-    border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%; /* Face shape */
+    /* Changed logic: constrain by height to fit in 4:3 container */
+    height: 75%;
+    width: auto; 
+    aspect-ratio: 3/4;
+    border: 2px dashed rgba(255,255,255,0.8);
+    border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%;
     position: relative;
     transition: all 0.3s ease;
     display: flex;
     align-items: center;
     justify-content: center;
-    height: auto; /* Allow height to be calculated from aspect-ratio */
-    /* Adjust for proper distance guidance */
-    max-height: 320px; /* Limit height for proper distance */
 }
 
-/* Device-specific face guide adjustments for optimal distance */
+/* Device-specific face guide adjustments */
 @media (max-width: 768px) {
-    /* Mobile devices - closer distance */
+    /* Mobile devices */
     .face-guide-oval {
-        width: 80%;
-        max-width: 200px;
-        max-height: 260px;
+        height: 70%;
     }
 }
 
-@media (min-width: 769px) and (max-width: 1024px) {
-    /* Tablets - medium distance */
-    .face-guide-oval {
-        width: 75%;
-        max-width: 220px;
-        max-height: 290px;
-    }
-}
-
-@media (min-width: 1025px) {
-    /* Desktop/laptops - farther distance */
-    .face-guide-oval {
-        width: 70%;
-        max-width: 240px;
-        max-height: 320px;
-    }
-}
 
 .face-guide-label {
     margin-top: 15px; /* Smaller margin on smaller screens */

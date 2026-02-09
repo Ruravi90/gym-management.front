@@ -4,7 +4,7 @@
     display: flex;
     flex-direction: column;
     align-items: center;
-    padding: 2rem 1rem; /* Reduced padding for better fit */
+    padding: 2rem 1rem;
 }
 
 .checkin-header {
@@ -28,16 +28,17 @@
 }
 
 .checkin-main-card {
-    max-width: 1200px; /* Increased for desktop */
+    max-width: 1200px;
     width: 100%;
     padding: 24px !important;
     transition: all 0.3s ease;
     margin: 0 auto;
 }
 
+/* Base Grid Layout - Corrected Order */
 .checkin-grid {
     display: grid;
-    grid-template-columns: 320px 1fr; /* Increased camera section for desktop */
+    grid-template-columns: 480px 1fr; /* Standard desktop sizing */
     gap: 30px;
     width: 100%;
 }
@@ -45,7 +46,7 @@
 /* Large Desktop screens */
 @media (min-width: 1400px) {
     .checkin-grid {
-        grid-template-columns: 380px 1fr; /* Even wider for large screens */
+        grid-template-columns: 520px 1fr;
         gap: 40px;
     }
     
@@ -71,13 +72,12 @@
 .camera-section {
     display: flex;
     flex-direction: column;
-    gap: 24px; /* Base gap for smaller screens */
+    gap: 24px;
 }
 
-/* Larger desktop screens - increase spacing for better visual hierarchy */
 @media (min-width: 1024px) {
     .camera-section {
-        gap: 32px; /* More spacious on desktop */
+        gap: 32px;
     }
 }
 
@@ -85,8 +85,8 @@
     background-color: #0f172a;
     border-radius: 12px;
     width: 100%;
-    max-width: 100%; /* Allow it to fill the container */
-    aspect-ratio: 1/1; /* Square camera for compactness */
+    max-width: 100%;
+    aspect-ratio: 1/1;
     position: relative;
     overflow: hidden;
     display: flex;
@@ -94,14 +94,13 @@
     justify-content: center;
     border: 3px solid var(--app-border);
     transition: all 0.3s ease;
-    min-height: 280px; /* Ensure minimum size on larger screens */
+    min-height: 280px;
 }
 
-/* On larger desktop screens, make the video container more prominent */
 @media (min-width: 1024px) {
     .video-container {
         min-height: 320px;
-        border-width: 4px; /* Slightly thicker border on desktop */
+        border-width: 4px;
     }
 }
 
@@ -109,12 +108,11 @@
     border-color: var(--app-primary);
 }
 
-/* Video element inside video-container */
 .video-container video {
     width: 100%;
     height: 100%;
     object-fit: cover;
-    display: block; /* Ensures no extra spacing */
+    display: block;
 }
 
 .camera-empty {
@@ -150,21 +148,19 @@
 
 .checkin-actions {
     display: flex;
-    flex-direction: column; /* Stacked large buttons */
+    flex-direction: column;
     gap: 20px;
 }
 
-/* On desktop screens, potentially arrange buttons differently if needed */
 @media (min-width: 1024px) {
     .checkin-actions {
         gap: 24px;
     }
 }
 
-/* --- Kiosk Action Buttons --- */
 .app-btn-kiosk {
-    height: 80px; /* Taller */
-    border-radius: 12px; /* More square-ish but still modern */
+    height: 80px;
+    border-radius: 12px;
     font-size: 1.25rem;
     font-weight: 800;
     text-transform: uppercase;
@@ -174,14 +170,13 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 10px; /* Better spacing for icons */
+    gap: 10px;
 }
 
-/* On larger desktop screens, make buttons more prominent */
 @media (min-width: 1024px) {
     .app-btn-kiosk {
-        height: 90px; /* Slightly taller on desktop */
-        font-size: 1.35rem; /* Slightly larger text */
+        height: 90px;
+        font-size: 1.35rem;
     }
 }
 
@@ -189,7 +184,6 @@
     transform: scale(0.98);
 }
 
-/* --- Info Section --- */
 .info-section {
     background-color: var(--app-surface);
     border-radius: 20px;
@@ -200,14 +194,13 @@
     border: 1px solid var(--app-border);
     box-shadow: var(--shadow-sm);
     transition: all 0.4s ease;
-    min-width: 0; /* Allows flex items to shrink below their content size */
+    min-width: 0;
 }
 
-/* On larger desktop screens, make the info section more spacious */
 @media (min-width: 1024px) {
     .info-section {
-        padding: 40px; /* More padding on desktop */
-        gap: 40px; /* More spacing between elements */
+        padding: 40px;
+        gap: 40px;
     }
 }
 
@@ -237,10 +230,9 @@
     border: 1px solid var(--app-border);
 }
 
-/* On desktop screens, make status display more prominent */
 @media (min-width: 1024px) {
     .status-display {
-        padding: 24px; /* More padding on desktop */
+        padding: 24px;
     }
 }
 
@@ -265,6 +257,7 @@
 .status-badge.granted { background: #f0fdf4; color: var(--app-success); }
 .status-badge.denied { background: #fef2f2; color: var(--app-danger); }
 
+/* --- Camera Container (Critical for overlay containment) --- */
 .camera-container {
     position: relative;
     width: 100%;
@@ -278,7 +271,6 @@
     justify-content: center;
 }
 
-/* Video element inside camera-container */
 .camera-container video {
     width: 100%;
     height: 100%;
@@ -302,66 +294,40 @@
     content: '';
     position: absolute;
     inset: 0;
-    background: radial-gradient(circle at center, transparent 40%, rgba(0,0,0,0.6) 70%);
-    z-index: -1; /* Behind the oval */
+    background: radial-gradient(circle at center, transparent 35%, rgba(0,0,0,0.7) 80%);
+    z-index: -1;
 }
 
 .face-guide-oval {
-    width: 70%; /* Responsive width */
-    max-width: 240px; /* Max size for larger screens */
-    aspect-ratio: 3/4; /* Maintain 3:4 ratio similar to 240x320 */
-    border: 2px dashed rgba(255,255,255,0.5);
-    border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%; /* Face shape */
+    height: 75%;
+    width: auto;
+    aspect-ratio: 3/4;
+    border: 2px dashed rgba(255,255,255,0.8);
+    border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%;
     position: relative;
     transition: all 0.3s ease;
     display: flex;
     align-items: center;
     justify-content: center;
-    height: auto; /* Allow height to be calculated from aspect-ratio */
-    /* Adjust for proper distance guidance */
-    max-height: 320px; /* Limit height for proper distance */
 }
 
-/* Device-specific face guide adjustments for optimal distance */
 @media (max-width: 768px) {
-    /* Mobile devices - closer distance */
     .face-guide-oval {
-        width: 80%;
-        max-width: 200px;
-        max-height: 260px;
-    }
-}
-
-@media (min-width: 769px) and (max-width: 1024px) {
-    /* Tablets - medium distance */
-    .face-guide-oval {
-        width: 75%;
-        max-width: 220px;
-        max-height: 290px;
-    }
-}
-
-@media (min-width: 1025px) {
-    /* Desktop/laptops - farther distance */
-    .face-guide-oval {
-        width: 70%;
-        max-width: 240px;
-        max-height: 320px;
+        height: 70%;
     }
 }
 
 .face-guide-label {
-    margin-top: 15px; /* Smaller margin on smaller screens */
+    margin-top: 15px;
     color: #fff;
-    font-size: 1rem; /* Responsive font size */
+    font-size: 1rem;
     font-weight: 500;
     text-shadow: 0 2px 4px rgba(0,0,0,0.8);
     background: rgba(0,0,0,0.5);
-    padding: 4px 12px; /* Smaller padding on smaller screens */
+    padding: 4px 12px;
     border-radius: 20px;
 }
 
-/* Larger screens */
 @media (min-width: 1024px) {
     .face-guide-label {
         font-size: 1.1rem;
@@ -370,12 +336,12 @@
     }
 }
 
-/* Scan Bar Animation - positioned to overlay the face-guide-oval */
+/* Scan Bar Animation */
 .scan-bar {
     position: absolute;
     top: 0;
     left: 0;
-    width: 100%; /* Full width of container */
+    width: 100%;
     height: 3px;
     background: linear-gradient(to bottom, transparent, var(--app-primary), transparent);
     z-index: 15;
@@ -383,25 +349,11 @@
 }
 
 @keyframes scanMove {
-    0% { 
-        top: 0%; 
-        opacity: 0; 
-    }
-    10% { 
-        opacity: 1; 
-    }
-    90% { 
-        opacity: 1; 
-    }
-    100% { 
-        top: 100%; 
-        opacity: 0; 
-    }
+    0% { top: 0%; opacity: 0; }
+    10% { opacity: 1; }
+    90% { opacity: 1; }
+    100% { top: 100%; opacity: 0; }
 }
-
-/* The scan bar moves across the entire camera container, but only the portion over the oval is visible */
-/* To make it appear over the oval, we could add a mask or clip-path, but for simplicity */
-/* the current animation will sweep across the whole area */
 
 .progress-track {
     height: 8px;
@@ -418,7 +370,6 @@
 .progress-bar.granted { background: var(--app-success); }
 .progress-bar.denied { background: var(--app-danger); }
 
-/* --- Result Message --- */
 .result-message {
     text-align: center;
     padding: 1rem 0;
@@ -439,7 +390,6 @@
 .state-granted .main-msg { color: var(--app-success); }
 .state-denied .main-msg { color: var(--app-danger); }
 
-/* --- Modern Client Info --- */
 .client-info-panel-modern {
     background: #f8fafc;
     border-radius: 16px;
@@ -450,11 +400,10 @@
     border: 1px solid var(--app-border);
 }
 
-/* On desktop screens, make client info panel more spacious */
 @media (min-width: 1024px) {
     .client-info-panel-modern {
-        padding: 32px; /* More padding on desktop */
-        gap: 32px; /* More spacing between elements */
+        padding: 32px;
+        gap: 32px;
     }
 }
 
@@ -482,10 +431,9 @@
     color: var(--app-primary);
 }
 
-/* On desktop screens, make name more prominent */
 @media (min-width: 1024px) {
     .info-value.name {
-        font-size: 2rem; /* Larger font on desktop */
+        font-size: 2rem;
     }
 }
 
@@ -495,10 +443,9 @@
     gap: 20px;
 }
 
-/* On smaller screens, stack the info rows */
 @media (max-width: 640px) {
     .info-row-grid {
-        grid-template-columns: 1fr; /* Stack on top of each other */
+        grid-template-columns: 1fr;
         gap: 16px;
     }
 }
@@ -518,7 +465,6 @@
     animation: pulse 2s infinite;
 }
 
-/* --- Modal Adjustments --- */
 .modal-search-group {
     display: grid;
     grid-template-columns: 1fr auto;
@@ -534,7 +480,6 @@
 
 .hidden { display: none; }
 
-/* --- Responsive Adjustments --- */
 @media (max-width: 1200px) {
     .checkin-grid {
         grid-template-columns: 300px 1fr;

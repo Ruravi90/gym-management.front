@@ -19,6 +19,9 @@ import { MainLayoutComponent } from './components/main-layout/main-layout.compon
 import { ClientsComponent } from './components/clients/clients.component';
 import { UsersAdminComponent } from './components/users-admin/users-admin.component';
 
+import { HTTP_INTERCEPTORS } from '@angular/common/http';
+import { AuthInterceptor } from './interceptors/auth.interceptor';
+
 @NgModule({
   declarations: [
     AppComponent,
@@ -28,8 +31,8 @@ import { UsersAdminComponent } from './components/users-admin/users-admin.compon
     MembershipComponent,
     ClientMembershipHistoryComponent,
     MainLayoutComponent,
-    ClientsComponent
-    ,UsersAdminComponent
+    ClientsComponent,
+    UsersAdminComponent
   ],
   imports: [
     BrowserModule,
@@ -38,7 +41,12 @@ import { UsersAdminComponent } from './components/users-admin/users-admin.compon
     FormsModule
   ],
   providers: [
-    { provide: LOCALE_ID, useValue: 'es' }
+    { provide: LOCALE_ID, useValue: 'es' },
+    {
+      provide: HTTP_INTERCEPTORS,
+      useClass: AuthInterceptor,
+      multi: true
+    }
   ],
   bootstrap: [AppComponent]
 })
