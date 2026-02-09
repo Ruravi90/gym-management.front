@@ -14,8 +14,12 @@ const newVersion = `${major}.${minor}.${patch}`;
 packageJson.version = newVersion;
 
 // Write updated package.json back to file
-fs.writeFileSync(packageJsonPath, JSON.stringify(packageJson, null, 2) + '\n');
-console.log(`Updated package.json version to ${newVersion}`);
+try {
+  fs.writeFileSync(packageJsonPath, JSON.stringify(packageJson, null, 2) + '\n');
+  console.log(`Updated package.json version to ${newVersion}`);
+} catch (error) {
+  console.warn('Could not write to package.json (likely in a read-only environment). Skipping version increment in file.', error.message);
+}
 
 const timestamp = new Date().toISOString();
 const hash = Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
