@@ -1,113 +1,142 @@
-<div class="users-admin">
-  <div class="header-actions">
-    <div class="header-actions-left">
-      <!-- removed main header to match request; keeping action button aligned like clients -->
+<header class="main-header">
+    <div class="header-info">
+        <h1 class="page-title">Administración de Usuarios</h1>
+        <p class="page-subtitle">Gestiona los usuarios del sistema</p>
     </div>
-    <div class="header-actions-right">
-      <button class="app-btn app-btn-primary" (click)="startCreate()">
-        + Nuevo Usuario
-      </button>
+    <div class="header-actions">
+        <button class="app-btn app-btn-primary" (click)="openRegisterModal()">
+            <span>+</span> Nuevo Usuario
+        </button>
     </div>
-  </div>
+</header>
 
-  <div class="dashboard-actions">
+<div class="dashboard-actions">
     <div class="search-bar">
-      <span class="search-icon">🔍</span>
-      <input
-        type="text"
-        class="app-input"
-        placeholder="Buscar usuarios por nombre o email..."
-        (input)="onSearch($event)"
-      />
+        <span class="search-icon">🔍</span>
+        <input type="text" class="app-input" placeholder="Buscar usuarios por nombre o email..." (input)="onSearch($event)">
     </div>
-  </div>
+</div>
 
-  <div *ngIf="loading">Cargando...</div>
-  <div *ngIf="error" class="error-container">
+<div *ngIf="loading">Cargando...</div>
+<div *ngIf="error" class="error-container">
     <div class="error-icon">⚠️</div>
     <div class="error-content">
-      <h3>No se pudieron cargar los usuarios</h3>
-      <p>
-        Por favor, verifica tu conexión a internet o intenta nuevamente más
-        tarde.
-      </p>
+        <h3>No se pudieron cargar los usuarios</h3>
+        <p>
+            Por favor, verifica tu conexión a internet o intenta nuevamente más
+            tarde.
+        </p>
     </div>
     <button (click)="loadUsers()" class="retry-btn">Reintentar</button>
-  </div>
+</div>
 
-  <div *ngIf="creating" class="create-form">
-    <h3>Nuevo Usuario</h3>
-    <label>Nombre: <input [(ngModel)]="newUser.name" /></label>
-    <label>Email: <input [(ngModel)]="newUser.email" /></label>
-    <label
-      >Contraseña: <input type="password" [(ngModel)]="newUser.password"
-    /></label>
-    <label
-      >Rol:
-      <select [(ngModel)]="newUser.role">
-        <option *ngFor="let r of roles" [value]="r.value">{{ r.label }}</option>
-      </select>
-    </label>
-    <div>
-      <button (click)="createUser()">Crear</button>
-      <button (click)="cancelCreate()">Cancelar</button>
-    </div>
-  </div>
-
-  <div class="table-responsive-wrapper">
-    <div class="table-card">
-      <table *ngIf="!loading && filteredUsers.length" class="app-table">
+<div class="table-responsive-wrapper">
+    <table class="app-table">
         <thead>
-          <tr>
-            <th>ID</th>
-            <th>INFORMACIÓN DEL USUARIO</th>
-            <th>ROL</th>
-            <th>ESTADO</th>
-            <th class="text-right">CENTRO DE ACCIÓN</th>
-          </tr>
+            <tr>
+                <th>ID</th>
+                <th>Información del Usuario</th>
+                <th>Rol</th>
+                <th>Estado</th>
+                <th class="text-right">Centro de Acción</th>
+            </tr>
         </thead>
         <tbody>
-          <tr *ngFor="let u of filteredUsers" class="user-row">
-            <td class="id-cell">#{{ u.id }}</td>
-            <td>
-              <div class="user-info">
-                <span class="user-name">{{ u.name }}</span>
-                <span class="user-email">{{ u.email }}</span>
-              </div>
-            </td>
-            <td>
-              <span class="role-badge" [attr.data-role]="u.role">{{
-                getRoleLabel(u.role)
-              }}</span>
-            </td>
-            <td>
-              <div class="status-badge" [class.active]="u.status">
-                {{ u.status ? "ACTIVO" : "INACTIVO" }}
-              </div>
-            </td>
-            <td class="text-right">
-              <div class="action-buttons">
-                <button
-                  class="btn-action-icon"
-                  (click)="toggleStatus(u)"
-                  title="Alternar Estado"
-                >
-                  🔁
-                </button>
-                <button
-                  class="btn-action-icon delete"
-                  (click)="deleteUser(u.id)"
-                  title="Eliminar"
-                >
-                  🗑️
-                </button>
-              </div>
-            </td>
-          </tr>
+            <tr *ngFor="let user of filteredUsers" class="user-row">
+                <td class="id-cell">#{{user.id}}</td>
+                <td>
+                    <div class="user-info">
+                        <span class="user-name">{{user.name}}</span>
+                        <span class="user-email">{{user.email}}</span>
+                    </div>
+                </td>
+                <td>
+                    <span class="role-badge" [attr.data-type]="user.role">
+                        {{getRoleLabel(user.role) | uppercase}}
+                    </span>
+                </td>
+                <td>
+                    <div class="status-badge" [class.active]="user.status">
+                        {{user.status ? 'ACTIVO' : 'INACTIVO'}}
+                    </div>
+                </td>
+                <td class="text-right">
+                    <div class="action-buttons">
+                        <button class="btn-action-icon edit" (click)="openEditModal(user)" title="Editar">✏️</button>
+                        <button class="btn-action-icon delete" (click)="confirmDelete(user)" title="Eliminar">🗑️</button>
+                    </div>
+                </td>
+            </tr>
         </tbody>
-      </table>
-    </div>
-  </div>
+    </table>
+</div>
 
-  <div *ngIf="!loading && !filteredUsers.length">No hay usuarios.</div>
+<!-- Unified Modal: Registro / Edición -->
+<div class="modal-backdrop" *ngIf="showUserModal">
+    <div class="app-card modal-card">
+        <div class="modal-header">
+            <h3>{{editingUser ? 'Modificar Usuario' : 'Registro de Nuevo Usuario'}}</h3>
+            <button class="btn-close" (click)="closeUserModal()">&times;</button>
+        </div>
+        <div class="modal-body">
+            <form (ngSubmit)="saveUser()" class="compact-form">
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label>Nombre Completo</label>
+                        <input type="text" [(ngModel)]="userForm.name" name="name" class="app-input" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Correo Electrónico</label>
+                        <input type="email" [(ngModel)]="userForm.email" name="email" class="app-input" required>
+                    </div>
+                </div>
+                <div class="form-grid" *ngIf="!editingUser">
+                    <div class="form-group">
+                        <label>Contraseña</label>
+                        <input type="password" [(ngModel)]="userForm.password" name="password" class="app-input" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Rol</label>
+                        <select [(ngModel)]="userForm.role" name="role" class="app-input">
+                            <option *ngFor="let r of roles" [value]="r.value">{{ r.label }}</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-grid" *ngIf="editingUser">
+                    <div class="form-group">
+                        <label>Rol</label>
+                        <select [(ngModel)]="userForm.role" name="role" class="app-input">
+                            <option *ngFor="let r of roles" [value]="r.value">{{ r.label }}</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Estado de Cuenta</label>
+                        <select [(ngModel)]="userForm.status" name="status" class="app-input">
+                            <option [ngValue]="true">Activo</option>
+                            <option [ngValue]="false">Inactivo</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="modal-actions">
+                    <button type="button" class="app-btn app-btn-secondary" (click)="closeUserModal()">Cancelar</button>
+                    <button type="submit" class="app-btn app-btn-primary">{{editingUser ? 'Actualizar' : 'Registrar'}}</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Delete Confirmation Modal -->
+<div class="modal-backdrop" *ngIf="showDeleteConfirm">
+    <div class="app-card modal-card alert-modal">
+        <div class="modal-body centered">
+            <span class="alert-icon">⚠️</span>
+            <h3>¿Eliminar Usuario?</h3>
+            <p>¿Estás seguro de que deseas eliminar permanentemente a <strong class="highlight">{{deletingUser?.name}}</strong>?</p>
+            <div class="modal-actions centered">
+                <button class="app-btn app-btn-secondary" (click)="closeDeleteConfirmation()">Conservar</button>
+                <button class="app-btn app-btn-danger" (click)="deleteUser(deletingUser?.id)">Sí, Eliminar</button>
+            </div>
+        </div>
+    </div>
 </div>

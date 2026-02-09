@@ -3,77 +3,205 @@ import { UserService } from '../../services/user.service';
 
 interface RoleOption { value: string; label: string }
 
+interface User {
+  id: number;
+  name: string;
+  email: string;
+  role: string;
+  status: boolean;
+  created_at?: string;
+  updated_at?: string;
+}
+
 @Component({
-	selector: 'app-users-admin',
-	templateUrl: './users-admin.component.html',
-	styleUrls: ['./users-admin.component.css']
+  selector: 'app-users-admin',
+  templateUrl: './users-admin.component.html',
+  styleUrls: ['./users-admin.component.css']
 })
 export class UsersAdminComponent implements OnInit {
-	users: any[] = [];
-	filteredUsers: any[] = [];
-	loading = false;
-	error: string | null = null;
+  users: User[] = [];
+  filteredUsers: User[] = [];
+  loading = false;
+  error: string | null = null;
 
-	// Minimal create form state
-	creating = false;
-	newUser: any = { name: '', email: '', password: '', role: 'receptionist' };
+  // Unified Modal State: Registro / Edición
+  showUserModal = false;
+  editingUser: User | null = null;
+  userForm = {
+    name: '',
+    email: '',
+    password: '',
+    role: 'receptionist',
+    status: true as boolean
+  };
 
-	roles: RoleOption[] = [
-		{ value: 'super_admin', label: 'Super Admin' },
-		{ value: 'admin', label: 'Admin' },
-		{ value: 'receptionist', label: 'Receptionist' },
-		{ value: 'manager', label: 'Manager' },
-		{ value: 'member', label: 'Member' }
-	];
+  // Delete Confirmation State
+  showDeleteConfirm = false;
+  deletingUser: User | null = null;
 
-	getRoleLabel(value: string): string {
-		const found = this.roles.find(r => r.value === value);
-		return found ? found.label : (value || '').toUpperCase();
-	}
+  roles: RoleOption[] = [
+    { value: 'super_admin', label: 'Super Admin' },
+    { value: 'admin', label: 'Admin' },
+    { value: 'receptionist', label: 'Receptionist' },
+    { value: 'manager', label: 'Manager' },
+    { value: 'member', label: 'Member' }
+  ];
 
-	constructor(private userService: UserService) { }
+  getRoleLabel(value: string): string {
+    const found = this.roles.find(r => r.value === value);
+    return found ? found.label : (value || '').toUpperCase();
+  }
 
-	ngOnInit(): void {
-		this.loadUsers();
-	}
+  constructor(private userService: UserService) { }
 
-	loadUsers(): void {
-		this.loading = true;
-		this.userService.getUsers().subscribe({
-			next: (res) => { this.users = res; this.filteredUsers = [...res]; this.loading = false; },
-			error: (err) => { this.error = err?.message || 'Error fetching users'; this.loading = false; }
-		});
-	}
+  ngOnInit(): void {
+    this.loadUsers();
+  }
 
-	onSearch(event: any): void {
-		const q = (event?.target?.value || '').toLowerCase();
-		if (!q) { this.filteredUsers = [...this.users]; return; }
-		this.filteredUsers = this.users.filter(u => {
-			const name = (u.name || '').toLowerCase();
-			const email = (u.email || '').toLowerCase();
-			return name.includes(q) || email.includes(q);
-		});
-	}
+  loadUsers(): void {
+    this.loading = true;
+    this.userService.getUsers().subscribe({
+      next: (res) => { 
+        this.users = res; 
+        this.filteredUsers = [...res]; 
+        this.loading = false; 
+      },
+      error: (err) => { 
+        this.error = err?.message || 'Error fetching users'; 
+        this.loading = false; 
+      }
+    });
+  }
 
-	startCreate(): void { this.creating = true; }
-	cancelCreate(): void { this.creating = false; this.newUser = { name: '', email: '', password: '', role: 'receptionist' }; }
+  onSearch(event: any): void {
+    const q = (event?.target?.value || '').toLowerCase();
+    if (!q) { 
+      this.filteredUsers = [...this.users]; 
+      return; 
+    }
+    this.filteredUsers = this.users.filter(u => {
+      const name = (u.name || '').toLowerCase();
+      const email = (u.email || '').toLowerCase();
+      return name.includes(q) || email.includes(q);
+    });
+  }
 
-	createUser(): void {
-		if (!this.newUser.email || !this.newUser.password) { alert('Email and password required'); return; }
-		this.userService.createUser(this.newUser).subscribe({ next: () => { this.cancelCreate(); this.loadUsers(); }, error: (e) => alert('Error creating user') });
-	}
+  // --- User Modal Controls ---
+  openRegisterModal() {
+    this.editingUser = null;
+    this.resetForm();
+    this.showUserModal = true;
+  }
 
-	deleteUser(id: number): void {
-		if (!confirm('¿Eliminar usuario?')) return;
-		this.userService.deleteUser(id).subscribe({ next: () => this.loadUsers(), error: (e) => alert('Error deleting user') });
-	}
+  openEditModal(user: User) {
+    this.editingUser = { ...user };
+    this.userForm = {
+      name: user.name,
+      email: user.email,
+      password: '', // Don't prefill password for security
+      role: user.role,
+      status: user.status
+    };
+    this.showUserModal = true;
+  }
 
-	toggleStatus(user: any): void {
-		this.userService.changeUserStatus(user.id, !user.status).subscribe({ next: () => this.loadUsers(), error: () => alert('Error updating status') });
-	}
+  closeUserModal() {
+    this.showUserModal = false;
+    this.editingUser = null;
+    this.resetForm();
+  }
 
-	changeRole(user: any, role: string): void {
-		this.userService.changeUserRole(user.id, role).subscribe({ next: () => this.loadUsers(), error: () => alert('Error changing role') });
-	}
+  saveUser() {
+    if (this.editingUser) {
+      this.updateUser();
+    } else {
+      this.registerUser();
+    }
+  }
+
+  registerUser() {
+    if (!this.userForm.email || !this.userForm.password) {
+      alert('Email y contraseña son obligatorios');
+      return;
+    }
+
+    this.userService.createUser(this.userForm).subscribe({
+      next: (res) => {
+        alert('Usuario registrado exitosamente');
+        this.closeUserModal();
+        this.loadUsers();
+      },
+      error: (err) => {
+        console.error(err);
+        alert('Error al registrar usuario: ' + (err.error?.detail || err.message));
+      }
+    });
+  }
+
+  updateUser() {
+    if (!this.editingUser) return;
+
+    // Prepare update data - don't send password if not changed
+    const updateData: any = {
+      name: this.userForm.name,
+      email: this.userForm.email,
+      role: this.userForm.role,
+      status: this.userForm.status
+    };
+
+    // Only include password if it was entered
+    if (this.userForm.password) {
+      updateData.password = this.userForm.password;
+    }
+
+    this.userService.updateUser(this.editingUser.id, updateData).subscribe({
+      next: (res) => {
+        alert('Usuario actualizado exitosamente');
+        this.closeUserModal();
+        this.loadUsers();
+      },
+      error: (err) => {
+        console.error(err);
+        alert('Error actualizando usuario: ' + (err.error?.detail || err.message));
+      }
+    });
+  }
+
+  resetForm() {
+    this.userForm = {
+      name: '',
+      email: '',
+      password: '',
+      role: 'receptionist',
+      status: true
+    };
+  }
+
+  // --- Delete Controls ---
+  confirmDelete(user: User) {
+    this.deletingUser = user;
+    this.showDeleteConfirm = true;
+  }
+
+  closeDeleteConfirmation() {
+    this.showDeleteConfirm = false;
+    this.deletingUser = null;
+  }
+
+  deleteUser(id: number | undefined) {
+    if (!id) return;
+
+    this.userService.deleteUser(id).subscribe({
+      next: (res) => {
+        alert('Usuario eliminado exitosamente');
+        this.closeDeleteConfirmation();
+        this.loadUsers();
+      },
+      error: (err) => {
+        console.error(err);
+        alert('Error eliminando usuario: ' + (err.error?.detail || err.message));
+      }
+    });
+  }
 }
 
