@@ -1,29 +1,30 @@
 /* Global Design System: Friendly Professional Light Theme */
 :root {
   /* Color Palette */
-  --app-bg: #f1f5f9;       /* Slate 100 - Main background */
-  --app-surface: #ffffff;  /* Pure White - Cards & Containers */
-  --app-sidebar: #0f172a;  /* Slate 900 - Sidebar background */
-  --app-border: #e2e8f0;   /* Slate 200 - Borders */
-  
+  --app-bg: #f1f5f9; /* Slate 100 - Main background */
+  --app-surface: #ffffff; /* Pure White - Cards & Containers */
+  --app-sidebar: #0f172a; /* Slate 900 - Sidebar background */
+  --app-border: #e2e8f0; /* Slate 200 - Borders */
+
   /* Brand Colors */
-  --app-primary: #2563eb;  /* Blue 600 - Main action color */
+  --app-primary: #2563eb; /* Blue 600 - Main action color */
   --app-primary-hover: #1d4ed8;
-  --app-success: #16a34a;  /* Green 600 - Positive actions */
-  --app-danger: #dc2626;   /* Red 600 - Destructive actions */
-  --app-warning: #f59e0b;  /* Amber 500 - Alerts */
-  
+  --app-success: #16a34a; /* Green 600 - Positive actions */
+  --app-danger: #dc2626; /* Red 600 - Destructive actions */
+  --app-warning: #f59e0b; /* Amber 500 - Alerts */
+
   /* Text Colors */
-  --text-main: #1e293b;    /* Slate 800 - Body text */
-  --text-muted: #64748b;   /* Slate 500 - Secondary text */
+  --text-main: #1e293b; /* Slate 800 - Body text */
+  --text-muted: #64748b; /* Slate 500 - Secondary text */
   --text-inverse: #ffffff; /* White text on dark backgrounds */
-  
+
   /* Shadows & Radius */
   --radius-lg: 12px;
   --radius-md: 8px;
   --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
   --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
-  --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+  --shadow-lg:
+    0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
 }
 
 * {
@@ -33,7 +34,11 @@
 body {
   margin: 0;
   padding: 0;
-  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  font-family:
+    "Inter",
+    system-ui,
+    -apple-system,
+    sans-serif;
   background-color: var(--app-bg);
   color: var(--text-main);
   height: 100vh;
@@ -49,7 +54,9 @@ body {
   border-radius: var(--radius-lg);
   box-shadow: var(--shadow-md);
   padding: 1.5rem;
-  transition: transform 0.2s, box-shadow 0.2s;
+  transition:
+    transform 0.2s,
+    box-shadow 0.2s;
 }
 
 .table-responsive-wrapper {
@@ -165,8 +172,11 @@ body {
 .modal-card {
   width: 100%;
   max-width: 600px;
+  max-height: calc(100vh - 40px);
   padding: 0 !important; /* Reset app-card padding for better header/body separation */
   overflow: hidden;
+  display: flex;
+  flex-direction: column;
 }
 
 .modal-header {
@@ -194,6 +204,8 @@ body {
 
 .modal-body {
   padding: 1.5rem;
+  overflow-y: auto;
+  flex: 1;
 }
 
 .modal-actions {

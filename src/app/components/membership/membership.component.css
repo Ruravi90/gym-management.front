@@ -133,17 +133,19 @@
 .modal-card { 
     width: 100%; 
     max-width: 600px; 
-    padding: 0; 
-    background: white;
-    border: 1px solid var(--app-border);
-    border-radius: 12px;
-    box-shadow: var(--shadow-lg);
+}
+
+@media (max-width: 640px) {
+    .modal-card {
+        max-width: 100%;
+        margin: 0 10px;
+    }
 }
 .modal-header { padding: 1.5rem; border-bottom: 1px solid var(--app-border); display: flex; justify-content: space-between; align-items: center; }
 .modal-header h3 { margin: 0; font-size: 1.25rem; font-weight: 700; }
 .btn-close { background: none; border: none; font-size: 1.5rem; cursor: pointer; color: var(--text-muted); }
 
-.modal-body { padding: 1.5rem; }
+/* modal-body handled by global styles */
 .compact-form { display: flex; flex-direction: column; gap: 1.25rem; }
 .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.25rem; }
 .form-group label { display: block; font-size: 0.75rem; font-weight: 700; color: var(--text-muted); margin-bottom: 6px; }
