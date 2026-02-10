@@ -314,8 +314,10 @@
               name="end_date"
               required
               readonly
+              [disabled]="!!editingMembership"
               title="El vencimiento se calcula automáticamente según la duración del plan"
             />
+
           </div>
         </div>
 
