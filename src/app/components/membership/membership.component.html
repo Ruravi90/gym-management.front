@@ -76,6 +76,14 @@
       </select>
     </div>
 
+    <div class="form-group">
+      <label>Tipo de Membresía</label>
+      <select class="app-input" [(ngModel)]="filters.membershipTypeId" (change)="applyFilters()">
+        <option value="">Todos los tipos</option>
+        <option *ngFor="let type of membershipTypes" [value]="type.id">{{ type.name }}</option>
+      </select>
+    </div>
+
     <div class="filter-actions">
       <button class="app-btn app-btn-secondary" (click)="clearFilters()">Limpiar Filtros</button>
     </div>
@@ -90,6 +98,7 @@
         <th>ID</th>
         <th>Guerrero / Socio</th>
         <th>Tipo de Plan</th>
+        <th>Detalles</th>
         <th>Vigencia</th>
         <th>Estado</th>
         <th class="text-center">Pagos</th>
@@ -105,15 +114,31 @@
           </div>
         </td>
         <td>
-          <span class="membership-badge" [attr.data-type]="membership.type">
-            {{ membership.type | uppercase }}
+          <span class="membership-badge" [attr.data-type]="getMembershipTypeName(membership.membership_type_id)">
+            {{ getMembershipTypeName(membership.membership_type_id) }}
           </span>
+        </td>
+        <td>
+          <div class="membership-details">
+            <div class="detail-item">
+              <strong>Precio:</strong> ${{ membership.price_paid || membership.price }}
+            </div>
+            <div class="detail-item" *ngIf="membership.accesses_used !== undefined">
+              <strong>Accesos:</strong> {{ getAccessesRemaining(membership) }}
+            </div>
+          </div>
         </td>
         <td>
           <div class="date-range">
             <span class="date">{{ formatDate(membership.start_date) }}</span>
             <span class="divider">→</span>
             <span class="date bold">{{ formatDate(membership.end_date) }}</span>
+          </div>
+          <div class="time-left" *ngIf="!isMembershipExpired(membership)">
+            <span class="days-count">{{ daysUntilExpiration(membership) }}</span> días restantes
+          </div>
+          <div class="time-left expired" *ngIf="isMembershipExpired(membership)">
+            Expiró hace {{ -daysUntilExpiration(membership) }} días
           </div>
         </td>
         <td>
@@ -157,18 +182,15 @@
         <div class="form-grid">
           <div class="form-group">
             <label>Tipo de Plan</label>
-            <select class="app-input" [(ngModel)]="membershipForm.type" name="type" required>
-              <option value="basic">Básica</option>
-              <option value="premium">Premium</option>
-              <option value="VIP">VIP</option>
-              <option value="student">Estudiante</option>
-              <option value="family">Familiar</option>
+            <select class="app-input" [(ngModel)]="membershipForm.membership_type_id" name="membership_type_id" (change)="onMembershipTypeChange()">
+              <option value="">Seleccione un tipo...</option>
+              <option *ngFor="let type of membershipTypes" [value]="type.id">{{ type.name }}</option>
             </select>
           </div>
 
           <div class="form-group">
             <label>Importe ($)</label>
-            <input type="number" class="app-input" [(ngModel)]="membershipForm.price" name="price" required min="0" step="0.01">
+            <input type="number" class="app-input" [(ngModel)]="membershipForm.price_paid" name="price_paid" required min="0" step="0.01">
           </div>
         </div>
 
@@ -204,6 +226,22 @@
               <option value="overdue">Atrasado</option>
             </select>
           </div>
+        </div>
+
+        <div class="form-group">
+          <label>Método de Pago</label>
+          <select class="app-input" [(ngModel)]="membershipForm.payment_method" name="payment_method">
+            <option value="">Seleccione método...</option>
+            <option value="cash">Efectivo</option>
+            <option value="card">Tarjeta</option>
+            <option value="bank_transfer">Transferencia bancaria</option>
+            <option value="online">Pago en línea</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label>Notas Adicionales</label>
+          <textarea class="app-input" [(ngModel)]="membershipForm.notes" name="notes" rows="3"></textarea>
         </div>
 
         <div class="modal-actions">

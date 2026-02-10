@@ -14,6 +14,7 @@ import { LoginComponent } from './components/login/login.component';
 import { DashboardComponent } from './components/dashboard/dashboard.component';
 import { FacialCheckinComponent } from './components/facial-checkin/facial-checkin.component';
 import { MembershipComponent } from './components/membership/membership.component';
+import { MembershipTypesComponent } from './components/membership-types/membership-types.component';
 import { ClientMembershipHistoryComponent } from './components/client-membership-history/client-membership-history.component';
 import { MainLayoutComponent } from './components/main-layout/main-layout.component';
 import { ClientsComponent } from './components/clients/clients.component';
@@ -29,6 +30,7 @@ import { AuthInterceptor } from './interceptors/auth.interceptor';
     DashboardComponent,
     FacialCheckinComponent,
     MembershipComponent,
+    MembershipTypesComponent,
     ClientMembershipHistoryComponent,
     MainLayoutComponent,
     ClientsComponent,

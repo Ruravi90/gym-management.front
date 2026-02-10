@@ -4,6 +4,7 @@ import { LoginComponent } from './components/login/login.component';
 import { DashboardComponent } from './components/dashboard/dashboard.component';
 import { FacialCheckinComponent } from './components/facial-checkin/facial-checkin.component';
 import { MembershipComponent } from './components/membership/membership.component';
+import { MembershipTypesComponent } from './components/membership-types/membership-types.component';
 import { ClientMembershipHistoryComponent } from './components/client-membership-history/client-membership-history.component';
 import { MainLayoutComponent } from './components/main-layout/main-layout.component';
 import { AuthGuard } from './guards/auth.guard';
@@ -21,6 +22,7 @@ const routes: Routes = [
     children: [
       { path: 'dashboard', component: DashboardComponent },
       { path: 'memberships', component: MembershipComponent },
+      { path: 'membership-types', component: MembershipTypesComponent, canActivate: [AuthGuard, AdminGuard] },
       { path: 'admin/users', component: UsersAdminComponent, canActivate: [AuthGuard, AdminGuard] },
       { path: 'clients', component: ClientsComponent },
       { path: 'client-membership-history/:id', component: ClientMembershipHistoryComponent },

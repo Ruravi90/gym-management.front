@@ -30,7 +30,11 @@
         <span class="nav-icon">💳</span>
         <span class="nav-label" *ngIf="!sidebarCollapsed">Membresías</span>
       </a>
-      
+      <a routerLink="/membership-types" routerLinkActive="active" class="nav-item" *ngIf="getCurrentUser() && (getCurrentUser()?.role === 'admin' || getCurrentUser()?.role === 'super_admin' || getCurrentUser()?.role === 'manager')" [title]="sidebarCollapsed ? 'Tipos de Membresía' : ''">
+        <span class="nav-icon">📋</span>
+        <span class="nav-label" *ngIf="!sidebarCollapsed">Tipos de Membresía</span>
+      </a>
+
       <div class="nav-divider" *ngIf="!sidebarCollapsed">Centro de Control</div>
       
       <a href="#" class="nav-item disabled" [title]="sidebarCollapsed ? 'Clases' : ''">

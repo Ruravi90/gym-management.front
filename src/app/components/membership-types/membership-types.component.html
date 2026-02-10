@@ -1,0 +1,140 @@
+<header class="main-header">
+  <div class="header-info">
+    <h1 class="page-title">Tipos de Membresía</h1>
+    <p class="page-subtitle">Gestiona los diferentes tipos de planes disponibles</p>
+  </div>
+  <div class="header-actions">
+    <button class="app-btn app-btn-primary" (click)="openNewTypeModal()">
+      <span>+</span> Nuevo Tipo
+    </button>
+  </div>
+</header>
+
+<!-- Advanced Filters Area -->
+<div class="app-card filters-container">
+  <div class="filters-grid">
+    <div class="form-group">
+      <label>Estado</label>
+      <select class="app-input" [(ngModel)]="filters.isActive" (change)="applyFilters()">
+        <option value="">Todos los estados</option>
+        <option value="true">Activos</option>
+        <option value="false">Inactivos</option>
+      </select>
+    </div>
+
+    <div class="filter-actions">
+      <button class="app-btn app-btn-secondary" (click)="clearFilters()">Limpiar Filtros</button>
+    </div>
+  </div>
+</div>
+
+<!-- Data Table Section -->
+<div class="table-responsive-wrapper">
+  <table class="app-table">
+    <thead>
+      <tr>
+        <th>ID</th>
+        <th>Nombre</th>
+        <th>Detalles</th>
+        <th>Duración</th>
+        <th>Accesos</th>
+        <th>Precio</th>
+        <th>Estado</th>
+        <th class="text-right">Acciones</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let type of membershipTypes">
+        <td class="id-cell">#{{ type.id }}</td>
+        <td>
+          <span class="type-name">{{ type.name }}</span>
+        </td>
+        <td>
+          <div class="type-description" *ngIf="type.description">{{ type.description }}</div>
+          <div class="type-description empty" *ngIf="!type.description">Sin descripción</div>
+        </td>
+        <td>
+          <span class="duration-info" *ngIf="type.duration_days">{{ type.duration_days }} días</span>
+          <span class="duration-info empty" *ngIf="!type.duration_days">Ilimitado</span>
+        </td>
+        <td>
+          <span class="accesses-info" *ngIf="type.accesses_allowed !== null">{{ type.accesses_allowed }} accesos</span>
+          <span class="accesses-info empty" *ngIf="type.accesses_allowed === null">Ilimitados</span>
+        </td>
+        <td>
+          <span class="price-info">${{ type.price }}</span>
+        </td>
+        <td>
+          <span class="status-badge" [class.active]="type.is_active" [class.inactive]="!type.is_active">
+            {{ type.is_active ? 'Activo' : 'Inactivo' }}
+          </span>
+        </td>
+        <td class="text-right">
+          <div class="action-buttons">
+            <button class="btn-action-icon edit" (click)="openEditModal(type)">✏️</button>
+            <button class="btn-action-icon delete" (click)="deleteType(type.id)">🗑️</button>
+          </div>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- Type Modal -->
+<div class="modal-backdrop" *ngIf="showTypeModal">
+  <div class="app-card modal-card">
+    <div class="modal-header">
+      <h3>{{ editingType ? 'Editar Tipo de Membresía' : 'Nuevo Tipo de Membresía' }}</h3>
+      <button class="btn-close" (click)="closeTypeModal()">&times;</button>
+    </div>
+    <div class="modal-body">
+      <form (ngSubmit)="saveType()" #typeFormRef="ngForm" class="compact-form">
+        <div class="form-group">
+          <label>Nombre del Tipo *</label>
+          <input type="text" class="app-input" [(ngModel)]="typeForm.name" name="name" required>
+        </div>
+
+        <div class="form-group">
+          <label>Descripción</label>
+          <textarea class="app-input" [(ngModel)]="typeForm.description" name="description" rows="3"></textarea>
+        </div>
+
+        <div class="form-grid">
+          <div class="form-group">
+            <label>Duración (días)</label>
+            <input type="number" class="app-input" [(ngModel)]="typeForm.duration_days" name="duration_days" min="0">
+            <small class="form-help">Dejar vacío para duración ilimitada</small>
+          </div>
+
+          <div class="form-group">
+            <label>Accesos Permitidos</label>
+            <input type="number" class="app-input" [(ngModel)]="typeForm.accesses_allowed" name="accesses_allowed" min="0">
+            <small class="form-help">Dejar vacío para accesos ilimitados</small>
+          </div>
+        </div>
+
+        <div class="form-grid">
+          <div class="form-group">
+            <label>Precio ($)</label>
+            <input type="number" class="app-input" [(ngModel)]="typeForm.price" name="price" required min="0" step="0.01">
+          </div>
+
+          <div class="form-group">
+            <label>Estado</label>
+            <select class="app-input" [(ngModel)]="typeForm.is_active" name="is_active">
+              <option [value]="true">Activo</option>
+              <option [value]="false">Inactivo</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="modal-actions">
+          <button type="button" class="app-btn app-btn-secondary" (click)="closeTypeModal()">Cancelar</button>
+          <button type="submit" class="app-btn app-btn-primary" [disabled]="!typeFormRef.form.valid">
+            {{ editingType ? 'Actualizar Tipo' : 'Crear Tipo' }}
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>

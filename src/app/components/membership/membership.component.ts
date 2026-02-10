@@ -1,24 +1,16 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { MembershipService, Membership as ServiceMembership, MembershipStatistics } from '../../services/membership.service';
+import { 
+  MembershipService, 
+  Membership as ServiceMembership, 
+  MembershipWithClient as ServiceMembershipWithClient,
+  MembershipStatistics,
+  MembershipType,
+  CreateMembershipRequest,
+  UpdateMembershipRequest
+} from '../../services/membership.service';
 import { ClientService } from '../../services/client.service';
 import { AuthService } from '../../services/auth.service';
-
-export interface Membership {
-  id: number;
-  client_id: number;
-  type: string;
-  start_date: string;
-  end_date: string;
-  price: number;
-  status: string;
-  payment_status: string;
-  payment_method?: string;
-  notes?: string;
-  created_at: string;
-  updated_at?: string;
-  client?: any; // Client object
-}
 
 @Component({
   selector: 'app-membership',
@@ -26,20 +18,23 @@ export interface Membership {
   styleUrls: ['./membership.component.css']
 })
 export class MembershipComponent implements OnInit {
-  memberships: ServiceMembership[] = [];
+  memberships: ServiceMembershipWithClient[] = [];
   clients: any[] = [];
+  membershipTypes: MembershipType[] = [];
   statistics: MembershipStatistics | null = null;
   loading = true;
 
   // Form state
   showMembershipModal = false;
-  editingMembership: ServiceMembership | null = null;
-  membershipForm = {
+  editingMembership: ServiceMembershipWithClient | null = null;
+  membershipForm: CreateMembershipRequest = {
     client_id: 0,
+    membership_type_id: undefined,
     type: 'basic',
     start_date: new Date().toISOString().split('T')[0],
     end_date: '',
     price: 0,
+    price_paid: 0,
     status: 'active',
     payment_status: 'pending',
     payment_method: '',
@@ -50,7 +45,8 @@ export class MembershipComponent implements OnInit {
   filters = {
     status: '',
     paymentStatus: '',
-    clientId: ''
+    clientId: '',
+    membershipTypeId: ''
   };
 
   constructor(
@@ -66,11 +62,12 @@ export class MembershipComponent implements OnInit {
 
   loadData(): void {
     this.loading = true;
-    
-    // Load memberships, clients, and statistics in parallel
+
+    // Load memberships, clients, membership types, and statistics in parallel
     Promise.all([
       this.loadMemberships(),
       this.loadClients(),
+      this.loadMembershipTypes(),
       this.loadStatistics()
     ]).then(() => {
       this.loading = false;
@@ -112,6 +109,21 @@ export class MembershipComponent implements OnInit {
     });
   }
 
+  loadMembershipTypes(): Promise<void> {
+    return new Promise((resolve, reject) => {
+      this.membershipService.getMembershipTypes(0, 100, false).subscribe({
+        next: (data) => {
+          this.membershipTypes = data;
+          resolve();
+        },
+        error: (error) => {
+          console.error('Error loading membership types:', error);
+          reject(error);
+        }
+      });
+    });
+  }
+
   loadStatistics(): Promise<void> {
     return new Promise((resolve, reject) => {
       this.membershipService.getMembershipStatistics().subscribe({
@@ -129,7 +141,7 @@ export class MembershipComponent implements OnInit {
 
   loadClientDetailsForMemberships(): void {
     // For each membership, get the client details
-    this.memberships.forEach((membership: Membership) => {
+    this.memberships.forEach((membership: ServiceMembershipWithClient) => {
       const client = this.clients.find(c => c.id === membership.client_id);
       if (client) {
         membership.client = client;
@@ -143,14 +155,16 @@ export class MembershipComponent implements OnInit {
     this.showMembershipModal = true;
   }
 
-  openEditModal(membership: ServiceMembership): void {
+  openEditModal(membership: ServiceMembershipWithClient): void {
     this.editingMembership = { ...membership };
     this.membershipForm = {
       client_id: membership.client_id,
+      membership_type_id: membership.membership_type_id,
       type: membership.type,
       start_date: membership.start_date ? membership.start_date.split('T')[0] : '',
       end_date: membership.end_date ? membership.end_date.split('T')[0] : '',
       price: membership.price,
+      price_paid: membership.price_paid || membership.price,
       status: membership.status,
       payment_status: membership.payment_status,
       payment_method: membership.payment_method || '',
@@ -167,7 +181,18 @@ export class MembershipComponent implements OnInit {
   saveMembership(): void {
     if (this.editingMembership) {
       // Update existing membership
-      this.membershipService.updateMembership(this.editingMembership.id, this.membershipForm).subscribe(
+      const updateData: UpdateMembershipRequest = {
+        membership_type_id: this.membershipForm.membership_type_id,
+        type: this.membershipForm.type,
+        end_date: this.membershipForm.end_date,
+        price_paid: this.membershipForm.price_paid,
+        status: this.membershipForm.status,
+        payment_status: this.membershipForm.payment_status,
+        payment_method: this.membershipForm.payment_method,
+        notes: this.membershipForm.notes
+      };
+
+      this.membershipService.updateMembership(this.editingMembership.id, updateData).subscribe(
         response => {
           console.log('Membership updated successfully', response);
           this.loadData();
@@ -215,6 +240,24 @@ export class MembershipComponent implements OnInit {
     }
   }
 
+  onMembershipTypeChange(): void {
+    if (this.membershipForm.membership_type_id) {
+      const selectedType = this.membershipTypes.find(mt => mt.id === this.membershipForm.membership_type_id);
+      if (selectedType) {
+        // Set price based on membership type
+        this.membershipForm.price = selectedType.price;
+        this.membershipForm.price_paid = selectedType.price;
+        
+        // Calculate end date based on duration
+        if (selectedType.duration_days) {
+          const startDate = new Date(this.membershipForm.start_date);
+          const endDate = new Date(startDate.getTime() + (selectedType.duration_days * 24 * 60 * 60 * 1000));
+          this.membershipForm.end_date = endDate.toISOString().split('T')[0];
+        }
+      }
+    }
+  }
+
   calculateEndDate(startDateStr: string): string {
     const startDate = new Date(startDateStr);
     // Add 30 days (manually to avoid timezone shifts)
@@ -226,10 +269,12 @@ export class MembershipComponent implements OnInit {
     const today = new Date().toISOString().split('T')[0];
     this.membershipForm = {
       client_id: 0,
+      membership_type_id: undefined,
       type: 'basic',
       start_date: today,
       end_date: this.calculateEndDate(today),
       price: 0,
+      price_paid: 0,
       status: 'active',
       payment_status: 'pending',
       payment_method: '',
@@ -259,6 +304,12 @@ export class MembershipComponent implements OnInit {
     return client ? client.name : 'Cliente Desconocido';
   }
 
+  getMembershipTypeName(membershipTypeId: number | undefined): string {
+    if (!membershipTypeId) return 'Tipo no definido';
+    const membershipType = this.membershipTypes.find(mt => mt.id === membershipTypeId);
+    return membershipType ? membershipType.name : 'Tipo desconocido';
+  }
+
   viewClientHistory(clientId: number): void {
     this.router.navigate(['/client-membership-history', clientId]);
   }
@@ -273,7 +324,8 @@ export class MembershipComponent implements OnInit {
     this.filters = {
       status: '',
       paymentStatus: '',
-      clientId: ''
+      clientId: '',
+      membershipTypeId: ''
     };
     this.loadMemberships();
   }
@@ -287,17 +339,29 @@ export class MembershipComponent implements OnInit {
     });
   }
 
-  isMembershipExpired(membership: ServiceMembership): boolean {
+  isMembershipExpired(membership: ServiceMembershipWithClient): boolean {
     const endDate = new Date(membership.end_date);
     const today = new Date();
     return endDate < today;
   }
 
-  daysUntilExpiration(membership: ServiceMembership): number {
+  daysUntilExpiration(membership: ServiceMembershipWithClient): number {
     const endDate = new Date(membership.end_date);
     const today = new Date();
     const diffTime = endDate.getTime() - today.getTime();
     return Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+  }
+
+  getAccessesRemaining(membership: ServiceMembershipWithClient): string {
+    if (membership.accesses_used === undefined) return 'Ilimitado';
+    
+    const membershipType = this.membershipTypes.find(mt => mt.id === membership.membership_type_id);
+    if (!membershipType || membershipType.accesses_allowed === null) {
+      return 'Ilimitado';
+    }
+    
+    const remaining = membershipType.accesses_allowed - membership.accesses_used;
+    return `${remaining} de ${membershipType.accesses_allowed}`;
   }
 
   logout() {
