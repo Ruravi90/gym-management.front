@@ -236,32 +236,36 @@ export class MembershipComponent implements OnInit {
 
   onStartDateChange(): void {
     if (this.membershipForm.start_date) {
-      this.membershipForm.end_date = this.calculateEndDate(this.membershipForm.start_date);
+      let duration = 30;
+      if (this.membershipForm.membership_type_id) {
+        const selectedType = this.membershipTypes.find(mt => mt.id == this.membershipForm.membership_type_id);
+        if (selectedType && selectedType.duration_days) {
+          duration = selectedType.duration_days;
+        }
+      }
+      this.membershipForm.end_date = this.calculateEndDate(this.membershipForm.start_date, duration);
     }
   }
 
   onMembershipTypeChange(): void {
     if (this.membershipForm.membership_type_id) {
-      const selectedType = this.membershipTypes.find(mt => mt.id === this.membershipForm.membership_type_id);
+      const selectedType = this.membershipTypes.find(mt => mt.id == this.membershipForm.membership_type_id);
       if (selectedType) {
         // Set price based on membership type
         this.membershipForm.price = selectedType.price;
         this.membershipForm.price_paid = selectedType.price;
         
         // Calculate end date based on duration
-        if (selectedType.duration_days) {
-          const startDate = new Date(this.membershipForm.start_date);
-          const endDate = new Date(startDate.getTime() + (selectedType.duration_days * 24 * 60 * 60 * 1000));
-          this.membershipForm.end_date = endDate.toISOString().split('T')[0];
-        }
+        const duration = selectedType.duration_days || 30;
+        this.membershipForm.end_date = this.calculateEndDate(this.membershipForm.start_date, duration);
       }
     }
   }
 
-  calculateEndDate(startDateStr: string): string {
+  calculateEndDate(startDateStr: string, durationDays: number = 30): string {
     const startDate = new Date(startDateStr);
-    // Add 30 days (manually to avoid timezone shifts)
-    const endDate = new Date(startDate.getTime() + (30 * 24 * 60 * 60 * 1000));
+    // Add days (manually to avoid timezone shifts)
+    const endDate = new Date(startDate.getTime() + (durationDays * 24 * 60 * 60 * 1000));
     return endDate.toISOString().split('T')[0];
   }
 

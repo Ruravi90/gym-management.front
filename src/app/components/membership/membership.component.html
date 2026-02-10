@@ -4,7 +4,13 @@
     <p class="page-subtitle">Control total sobre los planes de tus guerreros</p>
   </div>
   <div class="header-actions">
-    <button class="app-btn app-btn-secondary btn-sm" (click)="loadStatistics()" title="Actualizar estadísticas">🔄</button>
+    <button
+      class="app-btn app-btn-secondary btn-sm"
+      (click)="loadStatistics()"
+      title="Actualizar estadísticas"
+    >
+      🔄
+    </button>
     <button class="app-btn app-btn-primary" (click)="openNewMembershipModal()">
       <span>+</span> Nueva Membresía
     </button>
@@ -48,7 +54,11 @@
   <div class="filters-grid">
     <div class="form-group">
       <label>Estado del Plan</label>
-      <select class="app-input" [(ngModel)]="filters.status" (change)="applyFilters()">
+      <select
+        class="app-input"
+        [(ngModel)]="filters.status"
+        (change)="applyFilters()"
+      >
         <option value="">Cualquier estado</option>
         <option value="available">Disponible</option>
         <option value="active">Activa</option>
@@ -60,7 +70,11 @@
 
     <div class="form-group">
       <label>Estado de Pago</label>
-      <select class="app-input" [(ngModel)]="filters.paymentStatus" (change)="applyFilters()">
+      <select
+        class="app-input"
+        [(ngModel)]="filters.paymentStatus"
+        (change)="applyFilters()"
+      >
         <option value="">Cualquier pago</option>
         <option value="paid">Pagado</option>
         <option value="pending">Pendiente</option>
@@ -70,22 +84,36 @@
 
     <div class="form-group search-group">
       <label>Socio</label>
-      <select class="app-input" [(ngModel)]="filters.clientId" (change)="applyFilters()">
+      <select
+        class="app-input"
+        [(ngModel)]="filters.clientId"
+        (change)="applyFilters()"
+      >
         <option value="">Todos los clientes</option>
-        <option *ngFor="let client of clients" [value]="client.id">{{ client.name }}</option>
+        <option *ngFor="let client of clients" [value]="client.id">
+          {{ client.name }}
+        </option>
       </select>
     </div>
 
     <div class="form-group">
       <label>Tipo de Membresía</label>
-      <select class="app-input" [(ngModel)]="filters.membershipTypeId" (change)="applyFilters()">
+      <select
+        class="app-input"
+        [(ngModel)]="filters.membershipTypeId"
+        (change)="applyFilters()"
+      >
         <option value="">Todos los tipos</option>
-        <option *ngFor="let type of membershipTypes" [value]="type.id">{{ type.name }}</option>
+        <option *ngFor="let type of membershipTypes" [value]="type.id">
+          {{ type.name }}
+        </option>
       </select>
     </div>
 
     <div class="filter-actions">
-      <button class="app-btn app-btn-secondary" (click)="clearFilters()">Limpiar Filtros</button>
+      <button class="app-btn app-btn-secondary" (click)="clearFilters()">
+        Limpiar Filtros
+      </button>
     </div>
   </div>
 </div>
@@ -109,21 +137,34 @@
       <tr *ngFor="let membership of memberships">
         <td class="id-cell">#{{ membership.id }}</td>
         <td>
-          <div class="client-link" (click)="viewClientHistory(membership.client_id)">
+          <div
+            class="client-link"
+            (click)="viewClientHistory(membership.client_id)"
+          >
             {{ getClientName(membership.client_id) }}
           </div>
         </td>
         <td>
-          <span class="membership-badge" [attr.data-type]="getMembershipTypeName(membership.membership_type_id)">
+          <span
+            class="membership-badge"
+            [attr.data-type]="
+              getMembershipTypeName(membership.membership_type_id)
+            "
+          >
             {{ getMembershipTypeName(membership.membership_type_id) }}
           </span>
         </td>
         <td>
           <div class="membership-details">
             <div class="detail-item">
-              <strong>Precio:</strong> ${{ membership.price_paid || membership.price }}
+              <strong>Precio:</strong> ${{
+                membership.price_paid || membership.price
+              }}
             </div>
-            <div class="detail-item" *ngIf="membership.accesses_used !== undefined">
+            <div
+              class="detail-item"
+              *ngIf="membership.accesses_used !== undefined"
+            >
               <strong>Accesos:</strong> {{ getAccessesRemaining(membership) }}
             </div>
           </div>
@@ -135,14 +176,24 @@
             <span class="date bold">{{ formatDate(membership.end_date) }}</span>
           </div>
           <div class="time-left" *ngIf="!isMembershipExpired(membership)">
-            <span class="days-count">{{ daysUntilExpiration(membership) }}</span> días restantes
+            <span class="days-count">{{
+              daysUntilExpiration(membership)
+            }}</span>
+            días restantes
           </div>
-          <div class="time-left expired" *ngIf="isMembershipExpired(membership)">
+          <div
+            class="time-left expired"
+            *ngIf="isMembershipExpired(membership)"
+          >
             Expiró hace {{ -daysUntilExpiration(membership) }} días
           </div>
         </td>
         <td>
-          <span class="status-badge" [style.color]="getStatusColor(membership.status)" [style.background]="getStatusColor(membership.status) + '15'">
+          <span
+            class="status-badge"
+            [style.color]="getStatusColor(membership.status)"
+            [style.background]="getStatusColor(membership.status) + '15'"
+          >
             {{ membership.status | titlecase }}
           </span>
         </td>
@@ -153,8 +204,18 @@
         </td>
         <td class="text-right">
           <div class="action-buttons">
-            <button class="btn-action-icon edit" (click)="openEditModal(membership)">✏️</button>
-            <button class="btn-action-icon delete" (click)="deleteMembership(membership.id)">🗑️</button>
+            <button
+              class="btn-action-icon edit"
+              (click)="openEditModal(membership)"
+            >
+              ✏️
+            </button>
+            <button
+              class="btn-action-icon delete"
+              (click)="deleteMembership(membership.id)"
+            >
+              🗑️
+            </button>
           </div>
         </td>
       </tr>
@@ -166,50 +227,104 @@
 <div class="modal-backdrop" *ngIf="showMembershipModal">
   <div class="app-card modal-card">
     <div class="modal-header">
-      <h3>{{ editingMembership ? 'Modificar Membresía' : 'Nueva Alta de Membresía' }}</h3>
-      <button class="btn-close" (click)="closeMembershipModal()">&times;</button>
+      <h3>
+        {{
+          editingMembership ? "Modificar Membresía" : "Nueva Alta de Membresía"
+        }}
+      </h3>
+      <button class="btn-close" (click)="closeMembershipModal()">
+        &times;
+      </button>
     </div>
     <div class="modal-body">
-      <form (ngSubmit)="saveMembership()" #membershipFormRef="ngForm" class="compact-form">
+      <form
+        (ngSubmit)="saveMembership()"
+        #membershipFormRef="ngForm"
+        class="compact-form"
+      >
         <div class="form-group">
           <label>Selección de Cliente</label>
-          <select class="app-input" [(ngModel)]="membershipForm.client_id" name="client_id" required>
+          <select
+            class="app-input"
+            [(ngModel)]="membershipForm.client_id"
+            name="client_id"
+            required
+          >
             <option value="">Seleccione un socio...</option>
-            <option *ngFor="let client of clients" [value]="client.id">{{ client.name }}</option>
+            <option *ngFor="let client of clients" [value]="client.id">
+              {{ client.name }}
+            </option>
           </select>
         </div>
 
         <div class="form-grid">
           <div class="form-group">
             <label>Tipo de Plan</label>
-            <select class="app-input" [(ngModel)]="membershipForm.membership_type_id" name="membership_type_id" (change)="onMembershipTypeChange()">
+            <select
+              class="app-input"
+              [(ngModel)]="membershipForm.membership_type_id"
+              name="membership_type_id"
+              (change)="onMembershipTypeChange()"
+            >
               <option value="">Seleccione un tipo...</option>
-              <option *ngFor="let type of membershipTypes" [value]="type.id">{{ type.name }}</option>
+              <option *ngFor="let type of membershipTypes" [value]="type.id">
+                {{ type.name }}
+              </option>
             </select>
           </div>
 
           <div class="form-group">
             <label>Importe ($)</label>
-            <input type="number" class="app-input" [(ngModel)]="membershipForm.price_paid" name="price_paid" required min="0" step="0.01">
+            <input
+              type="number"
+              class="app-input"
+              [(ngModel)]="membershipForm.price_paid"
+              name="price_paid"
+              required
+              min="0"
+              step="0.01"
+              readonly
+              title="El importe se calcula automáticamente según el tipo de plan"
+            />
           </div>
         </div>
 
         <div class="form-grid">
           <div class="form-group">
             <label>Fecha de Inicio</label>
-            <input type="date" class="app-input" [(ngModel)]="membershipForm.start_date" name="start_date" (change)="onStartDateChange()" required>
+            <input
+              type="date"
+              class="app-input"
+              [(ngModel)]="membershipForm.start_date"
+              name="start_date"
+              (change)="onStartDateChange()"
+              required
+            />
           </div>
 
           <div class="form-group">
             <label>Vencimiento</label>
-            <input type="date" class="app-input" [(ngModel)]="membershipForm.end_date" name="end_date" required>
+            <input
+              type="date"
+              class="app-input"
+              [(ngModel)]="membershipForm.end_date"
+              name="end_date"
+              required
+              readonly
+              title="El vencimiento se calcula automáticamente según la duración del plan"
+            />
           </div>
         </div>
 
         <div class="form-grid">
           <div class="form-group">
             <label>Estado Administración</label>
-            <select class="app-input" [(ngModel)]="membershipForm.status" name="status" required>
+            <select
+              class="app-input"
+              [(ngModel)]="membershipForm.status"
+              name="status"
+              required
+            >
               <option value="available">Disponible</option>
               <option value="active">Activa</option>
               <option value="expired">Expirada</option>
@@ -220,7 +335,12 @@
 
           <div class="form-group">
             <label>Estado del Pago</label>
-            <select class="app-input" [(ngModel)]="membershipForm.payment_status" name="payment_status" required>
+            <select
+              class="app-input"
+              [(ngModel)]="membershipForm.payment_status"
+              name="payment_status"
+              required
+            >
               <option value="pending">Pendiente</option>
               <option value="paid">Pagado</option>
               <option value="overdue">Atrasado</option>
@@ -230,7 +350,11 @@
 
         <div class="form-group">
           <label>Método de Pago</label>
-          <select class="app-input" [(ngModel)]="membershipForm.payment_method" name="payment_method">
+          <select
+            class="app-input"
+            [(ngModel)]="membershipForm.payment_method"
+            name="payment_method"
+          >
             <option value="">Seleccione método...</option>
             <option value="cash">Efectivo</option>
             <option value="card">Tarjeta</option>
@@ -241,13 +365,30 @@
 
         <div class="form-group">
           <label>Notas Adicionales</label>
-          <textarea class="app-input" [(ngModel)]="membershipForm.notes" name="notes" rows="3"></textarea>
+          <textarea
+            class="app-input"
+            [(ngModel)]="membershipForm.notes"
+            name="notes"
+            rows="3"
+          ></textarea>
         </div>
 
         <div class="modal-actions">
-          <button type="button" class="app-btn app-btn-secondary" (click)="closeMembershipModal()">Descartar</button>
-          <button type="submit" class="app-btn app-btn-primary" [disabled]="!membershipFormRef.form.valid">
-            {{ editingMembership ? 'Actualizar Cambios' : 'Confirmar Registro' }}
+          <button
+            type="button"
+            class="app-btn app-btn-secondary"
+            (click)="closeMembershipModal()"
+          >
+            Descartar
+          </button>
+          <button
+            type="submit"
+            class="app-btn app-btn-primary"
+            [disabled]="!membershipFormRef.form.valid"
+          >
+            {{
+              editingMembership ? "Actualizar Cambios" : "Confirmar Registro"
+            }}
           </button>
         </div>
       </form>
