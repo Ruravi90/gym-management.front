@@ -60,15 +60,12 @@ export interface CreateMembershipRequest {
 }
 
 export interface UpdateMembershipRequest {
-  membership_type_id?: number;
-  type?: string;
-  end_date?: string;
-  price_paid?: number;
   status?: string;
   payment_status?: string;
   payment_method?: string;
   notes?: string;
 }
+
 
 export interface CreateMembershipTypeRequest {
   name: string;

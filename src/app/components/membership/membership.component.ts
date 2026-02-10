@@ -182,15 +182,12 @@ export class MembershipComponent implements OnInit {
     if (this.editingMembership) {
       // Update existing membership
       const updateData: UpdateMembershipRequest = {
-        membership_type_id: this.membershipForm.membership_type_id,
-        type: this.membershipForm.type,
-        end_date: this.membershipForm.end_date,
-        price_paid: this.membershipForm.price_paid,
         status: this.membershipForm.status,
         payment_status: this.membershipForm.payment_status,
         payment_method: this.membershipForm.payment_method,
         notes: this.membershipForm.notes
       };
+
 
       this.membershipService.updateMembership(this.editingMembership.id, updateData).subscribe(
         response => {
