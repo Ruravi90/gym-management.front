@@ -1,12 +1,12 @@
 {
   "name": "gym-management-frontend",
-  "version": "0.0.0",
+  "version": "1.0.1",
   "scripts": {
     "ng": "ng",
-    "start": "ng serve",
+    "start": "npm run generate-version && ng serve",
     "generate-version": "node scripts/generate-version.js",
     "build": "npm run generate-version && ng build --configuration=production",
-    "watch": "ng build --watch --configuration development",
+    "watch": "npm run generate-version && ng build --watch --configuration development",
     "test": "ng test",
     "vercel-build": "npm run generate-version && ng build --configuration=production"
   },

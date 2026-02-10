@@ -1,27 +1,53 @@
-# GymManagementFrontend
+# GymControl — Frontend 🎨
 
-This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 16.2.16.
+Interfaz de usuario moderna para la gestión de gimnasios, desarrollada con **Angular 16** y **PrimeNG**.
 
-## Development server
+## ✨ Características del Frontend
 
-Run `ng serve` for a dev server. Navigate to `http://localhost:4200/`. The application will automatically reload if you change any of the source files.
+- **Glassmorphism Desktop:** Estética premium con transparencias y desenfoques.
+- **Responsivo:** Adaptado para quioscos de registro facial y administración desde móviles.
+- **Automatización de Membresías:**
+  - Cálculo instantáneo de vencimiento y precio al seleccionar el plan.
+  - Bloqueo de campos automáticos para evitar errores humanos.
+- **Control de Versiones:** Sistema automático que incrementa el número de versión (`package.json` y `assets/version.json`) en cada arranque de desarrollo o build de producción.
 
-## Code scaffolding
+## 🛠️ Desarrollo
 
-Run `ng generate component component-name` to generate a new component. You can also use `ng generate directive|pipe|service|class|guard|interface|enum|module`.
+### Pre-requisitos
 
-## Build
+- Node.js (v16+)
+- Angular CLI (`npm install -g @angular/cli`)
 
-Run `ng build` to build the project. The build artifacts will be stored in the `dist/` directory.
+### Instalación
 
-## Running unit tests
+```bash
+npm install
+```
 
-Run `ng test` to execute the unit tests via [Karma](https://karma-runner.github.io).
+### Servidor de Desarrollo
 
-## Running end-to-end tests
+Ejecuta el siguiente comando para iniciar el servidor de desarrollo. La versión se incrementará automáticamente.
 
-Run `ng e2e` to execute the end-to-end tests via a platform of your choice. To use this command, you need to first add a package that implements end-to-end testing capabilities.
+```bash
+npm start
+```
 
-## Further help
+Navega a `http://localhost:4200/`.
 
-To get more help on the Angular CLI use `ng help` or go check out the [Angular CLI Overview and Command Reference](https://angular.io/cli) page.
+### Producción (Build)
+
+```bash
+npm run build
+```
+
+Los archivos se generarán en la carpeta `dist/`.
+
+## 📁 Estructura
+
+- `src/app/components`: Componentes principales (Membresías, Clientes, Facial Check-in).
+- `src/app/services`: Servicios para comunicación con la API.
+- `src/assets`: Recursos estáticos y archivo de versión.
+
+---
+
+_GymControl — Warrior Spirit_
