@@ -118,12 +118,17 @@ export class MembershipComponent implements OnInit {
 
   loadClientDetailsForMemberships(): void {
     // For each membership, get the client details
-    this.memberships.forEach((membership: ServiceMembershipWithClient) => {
-      const client = this.clients.find(c => c.id === membership.client_id);
-      if (client) {
-        membership.client = client;
+    // Usar bucle for en lugar de forEach y find para mayor compatibilidad
+    for (let i = 0; i < this.memberships.length; i++) {
+      const membership = this.memberships[i];
+      for (let j = 0; j < this.clients.length; j++) {
+        const client = this.clients[j];
+        if (client.id === membership.client_id) {
+          membership.client = client;
+          break;
+        }
       }
-    });
+    }
   }
 
   openNewMembershipModal(): void {
@@ -133,7 +138,8 @@ export class MembershipComponent implements OnInit {
   }
 
   openEditModal(membership: ServiceMembershipWithClient): void {
-    this.editingMembership = { ...membership };
+    // Usar Object.assign en lugar del operador spread para mayor compatibilidad
+    this.editingMembership = Object.assign({}, membership);
     this.membershipForm = {
       client_id: membership.client_id,
       membership_type_id: membership.membership_type_id,
@@ -174,7 +180,9 @@ export class MembershipComponent implements OnInit {
         },
         error => {
           console.error('Error updating membership:', error);
-          alert('Error updating membership: ' + (error.error?.detail || error.message));
+          // Usar sintaxis compatible en lugar de encadenamiento opcional
+          const errorMessage = error.error && error.error.detail ? error.error.detail : error.message;
+          alert('Error updating membership: ' + errorMessage);
         }
       );
     } else {
@@ -187,7 +195,9 @@ export class MembershipComponent implements OnInit {
         },
         error => {
           console.error('Error creating membership:', error);
-          alert('Error creating membership: ' + (error.error?.detail || error.message));
+          // Usar sintaxis compatible en lugar de encadenamiento opcional
+          const errorMessage = error.error && error.error.detail ? error.error.detail : error.message;
+          alert('Error creating membership: ' + errorMessage);
         }
       );
     }
@@ -202,7 +212,9 @@ export class MembershipComponent implements OnInit {
         },
         error => {
           console.error('Error deleting membership:', error);
-          alert('Error eliminando membresía: ' + (error.error?.detail || error.message));
+          // Usar sintaxis compatible en lugar de encadenamiento opcional
+          const errorMessage = error.error && error.error.detail ? error.error.detail : error.message;
+          alert('Error eliminando membresía: ' + errorMessage);
         }
       );
     }
@@ -212,7 +224,14 @@ export class MembershipComponent implements OnInit {
     if (this.membershipForm.start_date) {
       let duration = 30;
       if (this.membershipForm.membership_type_id) {
-        const selectedType = this.membershipTypes.find(mt => mt.id == this.membershipForm.membership_type_id);
+        // Usar bucle for en lugar de find para mayor compatibilidad
+        let selectedType = null;
+        for (let i = 0; i < this.membershipTypes.length; i++) {
+          if (this.membershipTypes[i].id == this.membershipForm.membership_type_id) {
+            selectedType = this.membershipTypes[i];
+            break;
+          }
+        }
         if (selectedType && selectedType.duration_days) {
           duration = selectedType.duration_days;
         }
@@ -223,12 +242,19 @@ export class MembershipComponent implements OnInit {
 
   onMembershipTypeChange(): void {
     if (this.membershipForm.membership_type_id) {
-      const selectedType = this.membershipTypes.find(mt => mt.id == this.membershipForm.membership_type_id);
+      // Usar bucle for en lugar de find para mayor compatibilidad
+      let selectedType = null;
+      for (let i = 0; i < this.membershipTypes.length; i++) {
+        if (this.membershipTypes[i].id == this.membershipForm.membership_type_id) {
+          selectedType = this.membershipTypes[i];
+          break;
+        }
+      }
       if (selectedType) {
         // Set price based on membership type
         this.membershipForm.price = selectedType.price;
         this.membershipForm.price_paid = selectedType.price;
-        
+
         // Calculate end date based on duration
         const duration = selectedType.duration_days || 30;
         this.membershipForm.end_date = this.calculateEndDate(this.membershipForm.start_date, duration);
@@ -240,17 +266,28 @@ export class MembershipComponent implements OnInit {
     const startDate = new Date(startDateStr);
     // Add days (manually to avoid timezone shifts)
     const endDate = new Date(startDate.getTime() + (durationDays * 24 * 60 * 60 * 1000));
-    return endDate.toISOString().split('T')[0];
+
+    // Usar método más compatible para formatear la fecha
+    const year = endDate.getFullYear();
+    const month = ('0' + (endDate.getMonth() + 1)).slice(-2);
+    const day = ('0' + endDate.getDate()).slice(-2);
+    return year + '-' + month + '-' + day;
   }
 
   resetForm(): void {
-    const today = new Date().toISOString().split('T')[0];
+    // Usar método más compatible para obtener la fecha actual
+    const today = new Date();
+    const year = today.getFullYear();
+    const month = ('0' + (today.getMonth() + 1)).slice(-2);
+    const day = ('0' + today.getDate()).slice(-2);
+    const todayStr = year + '-' + month + '-' + day;
+
     this.membershipForm = {
       client_id: 0,
       membership_type_id: undefined,
       type: 'basic',
-      start_date: today,
-      end_date: this.calculateEndDate(today),
+      start_date: todayStr,
+      end_date: this.calculateEndDate(todayStr),
       price: 0,
       price_paid: 0,
       status: 'active',
@@ -278,14 +315,24 @@ export class MembershipComponent implements OnInit {
   }
 
   getClientName(clientId: number): string {
-    const client = this.clients.find(c => c.id === clientId);
-    return client ? client.name : 'Cliente Desconocido';
+    // Usar bucle for en lugar de find para mayor compatibilidad
+    for (let i = 0; i < this.clients.length; i++) {
+      if (this.clients[i].id === clientId) {
+        return this.clients[i].name;
+      }
+    }
+    return 'Cliente Desconocido';
   }
 
   getMembershipTypeName(membershipTypeId: number | undefined): string {
     if (!membershipTypeId) return 'Tipo no definido';
-    const membershipType = this.membershipTypes.find(mt => mt.id === membershipTypeId);
-    return membershipType ? membershipType.name : 'Tipo desconocido';
+    // Usar bucle for en lugar de find para mayor compatibilidad
+    for (let i = 0; i < this.membershipTypes.length; i++) {
+      if (this.membershipTypes[i].id === membershipTypeId) {
+        return this.membershipTypes[i].name;
+      }
+    }
+    return 'Tipo desconocido';
   }
 
   viewClientHistory(clientId: number): void {

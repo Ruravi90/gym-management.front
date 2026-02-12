@@ -54,8 +54,13 @@ export class UsersAdminComponent implements OnInit {
   ];
 
   getRoleLabel(value: string): string {
-    const found = this.roles.find(r => r.value === value);
-    return found ? found.label : (value || '').toUpperCase();
+    // Usar bucle for en lugar de find para mayor compatibilidad
+    for (let i = 0; i < this.roles.length; i++) {
+      if (this.roles[i].value === value) {
+        return this.roles[i].label;
+      }
+    }
+    return (value || '').toUpperCase();
   }
 
   constructor(private userService: UserService) { }
@@ -74,7 +79,8 @@ export class UsersAdminComponent implements OnInit {
   }
 
   openEditModal(user: User) {
-    this.editingUser = { ...user };
+    // Usar Object.assign en lugar de spread para mayor compatibilidad
+    this.editingUser = Object.assign({}, user);
     this.userForm = {
       name: user.name,
       email: user.email,
@@ -113,7 +119,9 @@ export class UsersAdminComponent implements OnInit {
       },
       error: (err) => {
         console.error(err);
-        alert('Error al registrar usuario: ' + (err.error?.detail || err.message));
+        // Usar sintaxis compatible en lugar de encadenamiento opcional
+        const errorMessage = err.error && err.error.detail ? err.error.detail : err.message;
+        alert('Error al registrar usuario: ' + errorMessage);
       }
     });
   }
@@ -142,7 +150,9 @@ export class UsersAdminComponent implements OnInit {
       },
       error: (err) => {
         console.error(err);
-        alert('Error actualizando usuario: ' + (err.error?.detail || err.message));
+        // Usar sintaxis compatible en lugar de encadenamiento opcional
+        const errorMessage = err.error && err.error.detail ? err.error.detail : err.message;
+        alert('Error actualizando usuario: ' + errorMessage);
       }
     });
   }
@@ -179,7 +189,9 @@ export class UsersAdminComponent implements OnInit {
       },
       error: (err) => {
         console.error(err);
-        alert('Error eliminando usuario: ' + (err.error?.detail || err.message));
+        // Usar sintaxis compatible en lugar de encadenamiento opcional
+        const errorMessage = err.error && err.error.detail ? err.error.detail : err.message;
+        alert('Error eliminando usuario: ' + errorMessage);
       }
     });
   }
@@ -220,15 +232,25 @@ export class UsersAdminComponent implements OnInit {
 
   // Update onSearch to recalculate pagination
   onSearch(event: any): void {
-    const q = (event?.target?.value || '').toLowerCase();
+    // Usar sintaxis compatible en lugar de encadenamiento opcional
+    const target = event && event.target ? event.target : null;
+    const value = target && target.value ? target.value : '';
+    const q = value.toLowerCase();
+
     if (!q) {
-      this.filteredUsers = [...this.users];
+      // Usar slice en lugar de spread para mayor compatibilidad
+      this.filteredUsers = this.users.slice();
     } else {
-      this.filteredUsers = this.users.filter(u => {
+      // Usar bucle for en lugar de filter para mayor compatibilidad
+      this.filteredUsers = [];
+      for (let i = 0; i < this.users.length; i++) {
+        const u = this.users[i];
         const name = (u.name || '').toLowerCase();
         const email = (u.email || '').toLowerCase();
-        return name.includes(q) || email.includes(q);
-      });
+        if (name.indexOf(q) !== -1 || email.indexOf(q) !== -1) {
+          this.filteredUsers.push(u);
+        }
+      }
     }
 
     // Reset to first page when filtering
@@ -246,7 +268,8 @@ export class UsersAdminComponent implements OnInit {
         this.loading = false;
       },
       error: (err) => {
-        this.error = err?.message || 'Error fetching users';
+        // Usar sintaxis compatible en lugar de encadenamiento opcional
+        this.error = (err && err.message) ? err.message : 'Error fetching users';
         this.loading = false;
       }
     });

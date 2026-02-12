@@ -104,12 +104,18 @@ export class ClientsComponent implements OnInit, OnDestroy {
 
   applyFilter() {
     if (!this.searchTerm) {
-      this.filteredClients = [...this.clients];
+      // Usar slice en lugar de spread para mayor compatibilidad
+      this.filteredClients = this.clients.slice();
     } else {
-      this.filteredClients = this.clients.filter(client =>
-        client.name.toLowerCase().includes(this.searchTerm) ||
-        client.email.toLowerCase().includes(this.searchTerm)
-      );
+      // Usar bucle for en lugar de filter para mayor compatibilidad
+      this.filteredClients = [];
+      for (let i = 0; i < this.clients.length; i++) {
+        const client = this.clients[i];
+        if (client.name.toLowerCase().indexOf(this.searchTerm) !== -1 ||
+            client.email.toLowerCase().indexOf(this.searchTerm) !== -1) {
+          this.filteredClients.push(client);
+        }
+      }
     }
 
     // Reset to first page when filtering
@@ -129,7 +135,8 @@ export class ClientsComponent implements OnInit, OnDestroy {
   }
 
   openEditModal(client: Client) {
-    this.editingClient = { ...client };
+    // Usar Object.assign en lugar de spread para mayor compatibilidad
+    this.editingClient = Object.assign({}, client);
     this.clientForm = {
       name: client.name,
       email: client.email,
@@ -168,7 +175,9 @@ export class ClientsComponent implements OnInit, OnDestroy {
       },
       error: (err) => {
         console.error(err);
-        alert('Error al registrar cliente: ' + (err.error?.detail || err.message));
+        // Usar sintaxis compatible en lugar de encadenamiento opcional
+        const errorMessage = err.error && err.error.detail ? err.error.detail : err.message;
+        alert('Error al registrar cliente: ' + errorMessage);
       }
     });
   }
@@ -184,7 +193,9 @@ export class ClientsComponent implements OnInit, OnDestroy {
       },
       error: (err) => {
         console.error(err);
-        alert('Error actualizando cliente: ' + (err.error?.detail || err.message));
+        // Usar sintaxis compatible en lugar de encadenamiento opcional
+        const errorMessage = err.error && err.error.detail ? err.error.detail : err.message;
+        alert('Error actualizando cliente: ' + errorMessage);
       }
     });
   }
@@ -280,11 +291,13 @@ export class ClientsComponent implements OnInit, OnDestroy {
     canvas.height = 480;
     const context = canvas.getContext('2d');
     
-    context?.drawImage(
-      video, 
-      sourceX, sourceY, sourceWidth, sourceHeight, 
-      0, 0, canvas.width, canvas.height
-    );
+    if (context) {
+      context.drawImage(
+        video,
+        sourceX, sourceY, sourceWidth, sourceHeight,
+        0, 0, canvas.width, canvas.height
+      );
+    }
 
     canvas.toBlob((blob: Blob | null) => {
       if (!blob) {
@@ -315,7 +328,9 @@ export class ClientsComponent implements OnInit, OnDestroy {
           this.isRegistering = false;
           this.registrationSuccess = false; // Ensure success state is false for errors
           // Capture the specific error from backend (low confidence, etc)
-          this.registrationMessage = (err.error?.detail || err.message || 'Error desconocido');
+          // Usar sintaxis compatible en lugar de encadenamiento opcional
+          const errorMessage = err.error && err.error.detail ? err.error.detail : err.message;
+          this.registrationMessage = errorMessage || 'Error desconocido';
           
           // Trigger change detection to update the UI
           this.cdr.detectChanges();
@@ -346,7 +361,9 @@ export class ClientsComponent implements OnInit, OnDestroy {
       },
       error: (err) => {
         console.error(err);
-        alert('Error eliminando cliente: ' + (err.error?.detail || err.message));
+        // Usar sintaxis compatible en lugar de encadenamiento opcional
+        const errorMessage = err.error && err.error.detail ? err.error.detail : err.message;
+        alert('Error eliminando cliente: ' + errorMessage);
       }
     });
   }

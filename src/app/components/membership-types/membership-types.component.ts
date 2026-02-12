@@ -58,7 +58,8 @@ export class MembershipTypesComponent implements OnInit {
   }
 
   openEditModal(type: MembershipType): void {
-    this.editingType = { ...type };
+    // Usar Object.assign en lugar de spread para mayor compatibilidad
+    this.editingType = Object.assign({}, type);
     this.typeForm = {
       name: type.name,
       duration_days: type.duration_days || null,
@@ -95,7 +96,9 @@ export class MembershipTypesComponent implements OnInit {
         },
         error => {
           console.error('Error updating membership type:', error);
-          alert('Error updating membership type: ' + (error.error?.detail || error.message));
+          // Usar sintaxis compatible en lugar de encadenamiento opcional
+          const errorMessage = error.error && error.error.detail ? error.error.detail : error.message;
+          alert('Error updating membership type: ' + errorMessage);
         }
       );
     } else {
@@ -108,7 +111,9 @@ export class MembershipTypesComponent implements OnInit {
         },
         error => {
           console.error('Error creating membership type:', error);
-          alert('Error creating membership type: ' + (error.error?.detail || error.message));
+          // Usar sintaxis compatible en lugar de encadenamiento opcional
+          const errorMessage = error.error && error.error.detail ? error.error.detail : error.message;
+          alert('Error creating membership type: ' + errorMessage);
         }
       );
     }
@@ -123,7 +128,9 @@ export class MembershipTypesComponent implements OnInit {
         },
         error => {
           console.error('Error deactivating membership type:', error);
-          alert('Error desactivating membership type: ' + (error.error?.detail || error.message));
+          // Usar sintaxis compatible en lugar de encadenamiento opcional
+          const errorMessage = error.error && error.error.detail ? error.error.detail : error.message;
+          alert('Error desactivating membership type: ' + errorMessage);
         }
       );
     }
