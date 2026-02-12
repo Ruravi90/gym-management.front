@@ -101,7 +101,7 @@
                     </div>
 
                     <div class="info-footer" *ngIf="lastVisit">
-                        <span>Último acceso: {{ lastVisit.check_in | date:'dd/MM HH:mm' }}</span>
+                        <span>Último acceso: {{ lastVisit.check_in_time | date:'dd/MM HH:mm' }}</span>
                     </div>
                 </div>
 
@@ -129,10 +129,13 @@
                 
                 <div class="form-group" style="margin-top: 1rem;">
                     <label>Seleccionar Guerrero</label>
-                    <select [(ngModel)]="manualClientId" class="app-input">
+                    <select [(ngModel)]="manualClientId" class="app-input" [disabled]="clients.length === 0">
                         <option [ngValue]="null">-- Seleccione un socio --</option>
                         <option *ngFor="let client of clients" [ngValue]="client.id">{{ client.name }}</option>
                     </select>
+                    <div class="no-results-message" *ngIf="searchTerm && clients.length === 0">
+                        No se encontraron socios para "{{ searchTerm }}"
+                    </div>
                 </div>
 
                 <div class="modal-actions-manual">

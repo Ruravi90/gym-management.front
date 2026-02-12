@@ -216,7 +216,7 @@ export class FacialCheckinComponent implements OnInit, OnDestroy {
               
               if (data.history && data.history.length > 0) {
                 this.lastVisit = [...data.history].sort((a: any, b: any) => 
-                  new Date(b.check_in).getTime() - new Date(a.check_in).getTime()
+                  new Date(b.check_in_time).getTime() - new Date(a.check_in_time).getTime()
                 )[0];
               }
 
@@ -335,12 +335,34 @@ export class FacialCheckinComponent implements OnInit, OnDestroy {
   }
 
   loadClients() {
-    this.clientService.getClients().subscribe(data => this.clients = data);
+    this.clientService.getClients().subscribe({
+      next: (data) => {
+        this.clients = data;
+        console.log('Loaded clients:', data); // Debug log
+        this.cdr.detectChanges(); // Force change detection to update UI
+      },
+      error: (error) => {
+        console.error('Error loading clients:', error);
+        this.clients = [];
+        this.cdr.detectChanges(); // Force change detection to update UI
+      }
+    });
   }
 
   searchClients() {
     if (this.searchTerm.trim()) {
-      this.clientService.searchClients(this.searchTerm).subscribe(data => this.clients = data);
+      this.clientService.searchClients(this.searchTerm).subscribe({
+        next: (data) => {
+          this.clients = data;
+          console.log('Search results:', data); // Debug log
+          this.cdr.detectChanges(); // Force change detection to update UI
+        },
+        error: (error) => {
+          console.error('Error searching clients:', error);
+          this.clients = [];
+          this.cdr.detectChanges(); // Force change detection to update UI
+        }
+      });
     } else {
       this.loadClients();
     }
@@ -350,6 +372,14 @@ export class FacialCheckinComponent implements OnInit, OnDestroy {
     console.log('Manual check-in initiated, client ID:', this.manualClientId); // Debug log
     if (!this.manualClientId) {
       console.log('No client selected'); // Debug log
+      this.message = 'Por favor seleccione un socio.';
+      this.state = 'denied';
+      this.cdr.detectChanges();
+      setTimeout(() => {
+        this.state = 'idle';
+        this.message = '';
+        this.cdr.detectChanges();
+      }, 3000);
       return;
     }
 
@@ -375,7 +405,7 @@ export class FacialCheckinComponent implements OnInit, OnDestroy {
 
             if (data.history && data.history.length > 0) {
               this.lastVisit = [...data.history].sort((a: any, b: any) =>
-                new Date(b.check_in).getTime() - new Date(a.check_in).getTime()
+                new Date(b.check_in_time).getTime() - new Date(a.check_in_time).getTime()
               )[0];
             }
 
@@ -393,7 +423,7 @@ export class FacialCheckinComponent implements OnInit, OnDestroy {
           error: (err) => {
             console.error('Error fetching member details:', err);
             this.state = 'denied';
-            this.message = 'Error al recuperar información.';
+            this.message = 'Error al recuperar información del socio.';
             this.manualMode = false;
             this.cdr.detectChanges();
             this.displayTimer = setTimeout(() => this.resetToIdle(), 5000);
@@ -404,7 +434,7 @@ export class FacialCheckinComponent implements OnInit, OnDestroy {
         console.error('Manual check-in error:', err);
         console.error('Error details:', err.message, err.status); // Additional debug
         this.state = 'denied';
-        this.message = 'Error al registrar ingreso manual.';
+        this.message = 'Error al registrar ingreso manual. Intente nuevamente.';
         this.manualMode = false;
         this.cdr.detectChanges();
         this.displayTimer = setTimeout(() => this.resetToIdle(), 5000);

@@ -159,9 +159,9 @@
 }
 
 .app-btn-kiosk {
-    height: 80px;
+    height: 160px;
     border-radius: 12px;
-    font-size: 1.25rem;
+    font-size: 1.5rem;
     font-weight: 800;
     text-transform: uppercase;
     letter-spacing: 1px;
@@ -175,8 +175,8 @@
 
 @media (min-width: 1024px) {
     .app-btn-kiosk {
-        height: 90px;
-        font-size: 1.35rem;
+        height: 180px;
+        font-size: 1.7rem;
     }
 }
 
@@ -478,6 +478,17 @@
     grid-template-columns: 1fr 1fr;
     gap: 12px;
     margin-top: 1.5rem;
+}
+
+.no-results-message {
+    margin-top: 8px;
+    padding: 10px;
+    background-color: #fef2f2;
+    border: 1px solid #fecaca;
+    border-radius: 6px;
+    color: #dc2626;
+    font-size: 0.9rem;
+    text-align: center;
 }
 
 .hidden { display: none; }
