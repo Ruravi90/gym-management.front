@@ -2,8 +2,9 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
 import { BehaviorSubject, Observable, of } from 'rxjs';
-import { map, switchMap } from 'rxjs/operators';
+import { map, switchMap, tap } from 'rxjs/operators';
 import { environment } from '../../environments/environment';
+import { StorageService } from './storage.service';
 
 export interface User {
   id: number;
@@ -40,12 +41,18 @@ export class AuthService {
 
   constructor(
     private http: HttpClient,
-    private router: Router
+    private router: Router,
+    private storage: StorageService
   ) {
-    // Check if user is already logged in from localStorage
-    const savedUser = localStorage.getItem('currentUser');
+    // Check if user is already logged in from storage
+    const savedUser = this.storage.getItem('currentUser');
     if (savedUser) {
-      this.currentUserSubject.next(JSON.parse(savedUser));
+      try {
+        this.currentUserSubject.next(JSON.parse(savedUser));
+      } catch (e) {
+        console.error('Error parsing stored user', e);
+        this.storage.removeItem('currentUser');
+      }
     }
   }
 
@@ -59,10 +66,10 @@ export class AuthService {
         'Content-Type': 'application/x-www-form-urlencoded'
       }
     }).pipe(
-      map(response => {
-        // Store token in local storage
-        localStorage.setItem('accessToken', response.access_token);
-        return response;
+      tap(response => {
+        console.log('Login response received, storing token...');
+        // Store token in storage
+        this.storage.setItem('accessToken', response.access_token);
       })
     );
   }
@@ -72,14 +79,16 @@ export class AuthService {
   }
 
   logout(): void {
-    localStorage.removeItem('accessToken');
-    localStorage.removeItem('currentUser');
+    console.log('Executing logout - clearing storage');
+    this.storage.removeItem('accessToken');
+    this.storage.removeItem('currentUser');
     this.currentUserSubject.next(null);
     this.router.navigate(['/login']);
   }
 
   isLoggedIn(): boolean {
-    return !!localStorage.getItem('accessToken');
+    const token = this.storage.getItem('accessToken');
+    return !!token;
   }
 
   getCurrentUser(): User | null {
@@ -87,34 +96,44 @@ export class AuthService {
   }
 
   setCurrentUser(user: User): void {
+    console.log('Setting current user', user);
     this.currentUserSubject.next(user);
-    localStorage.setItem('currentUser', JSON.stringify(user));
+    this.storage.setItem('currentUser', JSON.stringify(user));
   }
 
   getAccessToken(): string | null {
-    return localStorage.getItem('accessToken');
+    return this.storage.getItem('accessToken');
   }
 
   // Method to get user info after login
   fetchCurrentUser(): Observable<User> {
     const token = this.getAccessToken();
     if (!token) {
+      console.warn('FetchCurrentUser called without token');
       return of(null as any);
     }
 
     // If we already have a stored user, return it
-    const storedUser = localStorage.getItem('currentUser');
+    const storedUser = this.storage.getItem('currentUser');
     if (storedUser) {
-      this.currentUserSubject.next(JSON.parse(storedUser));
-      return of(JSON.parse(storedUser));
+      try {
+        const user = JSON.parse(storedUser);
+        this.currentUserSubject.next(user);
+        return of(user);
+      } catch (e) {
+        console.error('Error parsing stored user in fetchCurrentUser', e);
+      }
     }
 
     // Otherwise fetch from API (/users/me)
+    console.log('Fetching user info from API...');
     return this.http.get<User>(`${environment.apiUrl}/users/me`, {
       headers: { 'Authorization': `Bearer ${token}` }
     }).pipe(
       map(user => {
-        if (user) this.setCurrentUser(user);
+        if (user) {
+          this.setCurrentUser(user);
+        }
         return user;
       })
     );
@@ -127,11 +146,13 @@ export class AuthService {
       return of(null as any);
     }
 
-    // This would require a new endpoint in the backend like /users/me
-    // For now, return the stored user
-    const storedUser = localStorage.getItem('currentUser');
+    const storedUser = this.storage.getItem('currentUser');
     if (storedUser) {
-      return of(JSON.parse(storedUser));
+      try {
+        return of(JSON.parse(storedUser));
+      } catch (e) {
+        console.error('Error parsing stored user in fetchUserInfo', e);
+      }
     }
 
     return of(null as any);

@@ -32,8 +32,11 @@ export class AuthInterceptor implements HttpInterceptor {
       catchError((error: HttpErrorResponse) => {
         if (error.status === 401) {
           // Token expired or invalid
-          console.log('Unauthorized request - logging out');
+          console.error('Unauthorized request (401) detected at AuthInterceptor. Token might be invalid or expired.');
+          console.log('Logging out user due to 401 error...');
           authService.logout();
+        } else {
+          console.error(`Request failed with status ${error.status}:`, error.message);
         }
         return throwError(() => error);
       })

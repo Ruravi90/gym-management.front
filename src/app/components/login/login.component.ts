@@ -41,18 +41,32 @@ export class LoginComponent implements OnInit {
 
     this.authService.login(this.email, this.password).subscribe({
       next: (response) => {
-        console.log('Login successful', response);
+        console.log('Login successful, fetching user details...');
         // Fetch current user info after successful login
-        this.authService.fetchCurrentUser().subscribe(user => {
-          if (user) {
-            this.authService.setCurrentUser(user);
+        this.authService.fetchCurrentUser().subscribe({
+          next: (user) => {
+            if (user) {
+              console.log('User details fetched successfully', user);
+              this.authService.setCurrentUser(user);
+              
+              // Small timeout to ensure storage is settled before guard checks it on navigation
+              setTimeout(() => {
+                console.log('Navigating to:', this.returnUrl);
+                this.router.navigateByUrl(this.returnUrl);
+              }, 100);
+            } else {
+              console.warn('Login succeeded but fetchCurrentUser returned null/empty');
+              this.router.navigateByUrl(this.returnUrl);
+            }
+          },
+          error: (err) => {
+            console.error('Failed to fetch user after login', err);
+            this.router.navigateByUrl(this.returnUrl);
           }
-          // Navigate to return URL or default to dashboard
-          this.router.navigate([this.returnUrl]);
         });
       },
       error: (error) => {
-        console.error('Login failed', error);
+        console.error('Login failed at component level', error);
         this.error = error.error?.detail || error.message || 'Error de autenticación';
         this.loading = false;
       }
