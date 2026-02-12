@@ -30,7 +30,8 @@
     <button (click)="loadUsers()" class="retry-btn">Reintentar</button>
 </div>
 
-<div class="table-responsive-wrapper">
+<!-- Table View for Desktop -->
+<div class="table-responsive-wrapper desktop-view">
     <table class="app-table">
         <thead>
             <tr>
@@ -69,6 +70,77 @@
             </tr>
         </tbody>
     </table>
+</div>
+
+<!-- Card View for Mobile -->
+<div class="cards-container mobile-view" *ngIf="paginatedUsers.length > 0">
+    <div class="user-card" *ngFor="let user of paginatedUsers">
+        <div class="card-header">
+            <div class="header-top">
+                <div class="user-id">#{{user.id}}</div>
+                <div class="user-name">{{user.name}}</div>
+            </div>
+            <div class="header-tags">
+                <span class="role-badge" [attr.data-type]="user.role">
+                    {{getRoleLabel(user.role) | uppercase}}
+                </span>
+                <div class="status-badge" [class.active]="user.status">
+                    {{user.status ? 'ACTIVO' : 'INACTIVO'}}
+                </div>
+            </div>
+        </div>
+
+        <div class="card-body">
+            <div class="user-details">
+                <div class="detail-item">
+                    <span class="detail-label">Email:</span>
+                    <span class="detail-value">{{user.email}}</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="card-actions">
+            <button class="app-btn app-btn-secondary btn-sm" (click)="openEditModal(user)">Editar</button>
+            <button class="app-btn app-btn-danger btn-sm" (click)="confirmDelete(user)">Eliminar</button>
+        </div>
+    </div>
+</div>
+
+<!-- Empty state for mobile -->
+<div class="empty-state mobile-view" *ngIf="paginatedUsers.length === 0 && filteredUsers.length > 0">
+    <p>No se encontraron usuarios en esta página</p>
+</div>
+
+<div class="empty-state mobile-view" *ngIf="filteredUsers.length === 0">
+    <p>No se encontraron usuarios</p>
+</div>
+
+<!-- Pagination Controls for Mobile -->
+<div class="pagination-controls mobile-view" *ngIf="totalPages > 1">
+    <div class="pagination-info">
+        Página {{currentPage}} de {{totalPages}}
+    </div>
+    <div class="pagination-buttons">
+        <button class="app-btn app-btn-secondary btn-sm"
+                [disabled]="currentPage === 1"
+                (click)="prevPage()">
+            Anterior
+        </button>
+        <span class="page-numbers">
+            <button *ngFor="let page of getPageNumbers()"
+                    class="app-btn btn-sm"
+                    [class.app-btn-primary]="page === currentPage"
+                    [class.app-btn-secondary]="page !== currentPage"
+                    (click)="goToPage(page)">
+                {{page}}
+            </button>
+        </span>
+        <button class="app-btn app-btn-secondary btn-sm"
+                [disabled]="currentPage === totalPages"
+                (click)="nextPage()">
+            Siguiente
+        </button>
+    </div>
 </div>
 
 <!-- Unified Modal: Registro / Edición -->

@@ -17,6 +17,12 @@ export class MembershipTypesComponent implements OnInit {
   membershipTypes: MembershipType[] = [];
   loading = true;
 
+  // Pagination properties
+  currentPage: number = 1;
+  itemsPerPage: number = 5; // Show 5 items per page on mobile
+  totalPages: number = 0;
+  paginatedMembershipTypes: MembershipType[] = [];
+
   // Form state
   showTypeModal = false;
   editingType: MembershipType | null = null;
@@ -44,21 +50,6 @@ export class MembershipTypesComponent implements OnInit {
     this.loadData();
   }
 
-  loadData(): void {
-    this.loading = true;
-
-    const activeOnly = this.filters.isActive === 'true';
-    this.membershipService.getMembershipTypes(0, 100, activeOnly).subscribe({
-      next: (data) => {
-        this.membershipTypes = data;
-        this.loading = false;
-      },
-      error: (error) => {
-        console.error('Error loading membership types:', error);
-        this.loading = false;
-      }
-    });
-  }
 
   openNewTypeModal(): void {
     this.editingType = null;
@@ -162,5 +153,77 @@ export class MembershipTypesComponent implements OnInit {
 
   logout() {
     this.authService.logout();
+  }
+
+  // Pagination methods
+  calculatePagination() {
+    // Calculate total pages
+    this.totalPages = Math.ceil(this.membershipTypes.length / this.itemsPerPage);
+
+    // Calculate start and end index for current page
+    const startIndex = (this.currentPage - 1) * this.itemsPerPage;
+    const endIndex = startIndex + this.itemsPerPage;
+
+    // Slice the membership types for current page
+    this.paginatedMembershipTypes = this.membershipTypes.slice(startIndex, endIndex);
+  }
+
+  goToPage(page: number) {
+    if (page >= 1 && page <= this.totalPages) {
+      this.currentPage = page;
+      this.calculatePagination();
+    }
+  }
+
+  nextPage() {
+    if (this.currentPage < this.totalPages) {
+      this.currentPage++;
+      this.calculatePagination();
+    }
+  }
+
+  prevPage() {
+    if (this.currentPage > 1) {
+      this.currentPage--;
+      this.calculatePagination();
+    }
+  }
+
+  // Update loadData to include pagination
+  loadData(): void {
+    this.loading = true;
+
+    const activeOnly = this.filters.isActive === 'true';
+    this.membershipService.getMembershipTypes(0, 100, activeOnly).subscribe({
+      next: (data) => {
+        this.membershipTypes = data;
+        this.calculatePagination(); // Calculate pagination after loading data
+        this.loading = false;
+      },
+      error: (error) => {
+        console.error('Error loading membership types:', error);
+        this.loading = false;
+      }
+    });
+  }
+
+  // Helper method to generate page numbers for pagination UI
+  getPageNumbers(): number[] {
+    const pages = [];
+    const maxVisiblePages = 5; // Maximum number of page buttons to show
+
+    let startPage = Math.max(1, this.currentPage - Math.floor(maxVisiblePages / 2));
+    let endPage = Math.min(this.totalPages, startPage + maxVisiblePages - 1);
+
+    // Adjust start page if we're near the end
+    if (endPage - startPage + 1 < maxVisiblePages) {
+      startPage = Math.max(1, endPage - maxVisiblePages + 1);
+    }
+
+    for (let i = startPage; i <= endPage; i++) {
+      pages.push(i);
+    }
+
+    return pages;
   }
 }

@@ -24,6 +24,12 @@ export class MembershipComponent implements OnInit {
   statistics: MembershipStatistics | null = null;
   loading = true;
 
+  // Pagination properties
+  currentPage: number = 1;
+  itemsPerPage: number = 5; // Show 5 items per page on mobile
+  totalPages: number = 0;
+  paginatedMemberships: ServiceMembershipWithClient[] = [];
+
   // Form state
   showMembershipModal = false;
   editingMembership: ServiceMembershipWithClient | null = null;
@@ -49,6 +55,9 @@ export class MembershipComponent implements OnInit {
     membershipTypeId: ''
   };
 
+  // Filter visibility
+  showFilters = true;
+
   constructor(
     private membershipService: MembershipService,
     private clientService: ClientService,
@@ -60,39 +69,7 @@ export class MembershipComponent implements OnInit {
     this.loadData();
   }
 
-  loadData(): void {
-    this.loading = true;
 
-    // Load memberships, clients, membership types, and statistics in parallel
-    Promise.all([
-      this.loadMemberships(),
-      this.loadClients(),
-      this.loadMembershipTypes(),
-      this.loadStatistics()
-    ]).then(() => {
-      this.loading = false;
-    }).catch(error => {
-      console.error('Error loading data:', error);
-      this.loading = false;
-    });
-  }
-
-  loadMemberships(): Promise<void> {
-    return new Promise((resolve, reject) => {
-      this.membershipService.getMemberships().subscribe({
-        next: (data) => {
-          this.memberships = data;
-          // Fetch client details for each membership
-          this.loadClientDetailsForMemberships();
-          resolve();
-        },
-        error: (error) => {
-          console.error('Error loading memberships:', error);
-          reject(error);
-        }
-      });
-    });
-  }
 
   loadClients(): Promise<void> {
     return new Promise((resolve, reject) => {
@@ -367,5 +344,102 @@ export class MembershipComponent implements OnInit {
 
   logout() {
     this.authService.logout();
+  }
+
+  // Pagination methods
+  calculatePagination() {
+    // Calculate total pages
+    this.totalPages = Math.ceil(this.memberships.length / this.itemsPerPage);
+
+    // Calculate start and end index for current page
+    const startIndex = (this.currentPage - 1) * this.itemsPerPage;
+    const endIndex = startIndex + this.itemsPerPage;
+
+    // Slice the memberships for current page
+    this.paginatedMemberships = this.memberships.slice(startIndex, endIndex);
+  }
+
+  goToPage(page: number) {
+    if (page >= 1 && page <= this.totalPages) {
+      this.currentPage = page;
+      this.calculatePagination();
+    }
+  }
+
+  nextPage() {
+    if (this.currentPage < this.totalPages) {
+      this.currentPage++;
+      this.calculatePagination();
+    }
+  }
+
+  prevPage() {
+    if (this.currentPage > 1) {
+      this.currentPage--;
+      this.calculatePagination();
+    }
+  }
+
+  // Update loadData to include pagination
+  loadData(): void {
+    this.loading = true;
+
+    // Load memberships, clients, membership types, and statistics in parallel
+    Promise.all([
+      this.loadMemberships(),
+      this.loadClients(),
+      this.loadMembershipTypes(),
+      this.loadStatistics()
+    ]).then(() => {
+      this.calculatePagination(); // Calculate pagination after loading data
+      this.loading = false;
+    }).catch(error => {
+      console.error('Error loading data:', error);
+      this.loading = false;
+    });
+  }
+
+  // Update loadMemberships to recalculate pagination
+  loadMemberships(): Promise<void> {
+    return new Promise((resolve, reject) => {
+      this.membershipService.getMemberships().subscribe({
+        next: (data) => {
+          this.memberships = data;
+          // Fetch client details for each membership
+          this.loadClientDetailsForMemberships();
+          this.calculatePagination(); // Recalculate pagination after loading new data
+          resolve();
+        },
+        error: (error) => {
+          console.error('Error loading memberships:', error);
+          reject(error);
+        }
+      });
+    });
+  }
+
+  // Helper method to generate page numbers for pagination UI
+  getPageNumbers(): number[] {
+    const pages = [];
+    const maxVisiblePages = 5; // Maximum number of page buttons to show
+
+    let startPage = Math.max(1, this.currentPage - Math.floor(maxVisiblePages / 2));
+    let endPage = Math.min(this.totalPages, startPage + maxVisiblePages - 1);
+
+    // Adjust start page if we're near the end
+    if (endPage - startPage + 1 < maxVisiblePages) {
+      startPage = Math.max(1, endPage - maxVisiblePages + 1);
+    }
+
+    for (let i = startPage; i <= endPage; i++) {
+      pages.push(i);
+    }
+
+    return pages;
+  }
+
+  // Toggle filter visibility
+  toggleFilters(): void {
+    this.showFilters = !this.showFilters;
   }
 }

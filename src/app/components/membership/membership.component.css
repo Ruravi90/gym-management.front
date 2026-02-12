@@ -63,6 +63,45 @@
 /* --- Filters --- */
 .filters-container {
   margin-bottom: 2rem;
+  overflow: hidden;
+}
+
+.filters-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem 1.5rem;
+  background: #f8fafc;
+  border-bottom: 1px solid var(--app-border);
+  cursor: pointer;
+  user-select: none;
+}
+
+.filters-header h3 {
+  margin: 0;
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--text-main);
+}
+
+.filter-toggle {
+  font-size: 1.2rem;
+  transition: transform 0.3s ease;
+}
+
+.filters-header:hover {
+  background: #f1f5f9;
+}
+
+.filters-content {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.3s ease;
+}
+
+.filters-content.expanded {
+  max-height: 1000px; /* Large enough to accommodate all content */
+  transition: max-height 0.3s ease;
 }
 
 .filters-grid {
@@ -70,6 +109,7 @@
   grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
   gap: 1.5rem;
   align-items: flex-end;
+  padding: 1.5rem;
 }
 
 .filter-actions {
@@ -154,6 +194,226 @@
 
 /* --- Responsive Adjustments --- */
 @media (max-width: 900px) { .form-grid { grid-template-columns: 1fr; } }
+
+/* --- Mobile Card Layout --- */
+.desktop-view {
+    display: table;
+}
+
+.mobile-view {
+    display: none;
+}
+
+/* Mobile view overrides */
+@media (max-width: 768px) {
+    .desktop-view {
+        display: none;
+    }
+
+    .mobile-view {
+        display: block;
+    }
+
+    /* Card Container */
+    .cards-container {
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+        width: 100%;
+    }
+
+    /* Individual Membership Card */
+    .membership-card {
+        background: white;
+        border: 1px solid var(--app-border);
+        border-radius: var(--radius-lg);
+        box-shadow: var(--shadow-md);
+        padding: 1.5rem;
+        transition: transform 0.2s, box-shadow 0.2s;
+    }
+
+    .membership-card:hover {
+        transform: translateY(-2px);
+        box-shadow: var(--shadow-lg);
+    }
+
+    /* Card Header */
+    .card-header {
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+        margin-bottom: 1rem;
+        padding-bottom: 0.75rem;
+        border-bottom: 1px solid var(--app-border);
+    }
+
+    .header-top {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .membership-id {
+        font-family: 'JetBrains Mono', monospace;
+        color: var(--text-muted);
+        font-size: 0.85rem;
+        background: #f8fafc;
+        padding: 0.25rem 0.75rem;
+        border-radius: 20px;
+    }
+
+    .client-name {
+        font-weight: 700;
+        color: var(--text-main);
+        font-size: 1.1rem;
+        flex: 1;
+        margin-left: 1rem;
+    }
+
+    .header-tags {
+        display: flex;
+        gap: 0.5rem;
+        flex-wrap: wrap;
+    }
+
+    /* Card Body */
+    .card-body {
+        margin-bottom: 1.5rem;
+    }
+
+    .membership-details-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 0.75rem;
+    }
+
+    .detail-item {
+        display: flex;
+        flex-direction: column;
+        gap: 0.25rem;
+        min-width: 0; /* Allow flex items to shrink below content size */
+    }
+
+    .detail-label {
+        font-size: 0.75rem;
+        font-weight: 700;
+        color: var(--text-muted);
+        text-transform: uppercase;
+    }
+
+    .detail-value {
+        font-size: 0.95rem;
+        color: var(--text-main);
+        word-break: break-word;
+    }
+
+    /* On very small screens, switch to single column */
+    @media (max-width: 480px) {
+        .membership-details-grid {
+            grid-template-columns: 1fr;
+        }
+    }
+
+    /* Card Actions */
+    .card-actions {
+        display: flex;
+        gap: 0.75rem;
+        flex-wrap: wrap;
+    }
+
+    .card-actions .app-btn {
+        flex: 1;
+        min-width: 100px;
+        padding: 0.5rem 1rem;
+        font-size: 0.85rem;
+    }
+
+    /* Adjust table header for mobile */
+    .main-header {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 1rem;
+    }
+
+    .header-actions {
+        align-self: stretch;
+    }
+
+    .header-actions .app-btn {
+        width: 100%;
+    }
+
+    /* Filters container for mobile */
+    .filters-container {
+        margin-bottom: 1.5rem;
+    }
+
+    .filters-header {
+        padding: 0.75rem 1rem;
+    }
+
+    .filters-grid {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+        padding: 1rem;
+    }
+
+    .filter-actions {
+        justify-content: center;
+    }
+
+    /* Stats row for mobile */
+    .stats-row {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+    }
+
+    /* Empty state for mobile */
+    .empty-state {
+        text-align: center;
+        padding: 2rem;
+        color: var(--text-muted);
+    }
+
+    /* Pagination Controls for Mobile */
+    .pagination-controls {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 1rem;
+        margin-top: 1.5rem;
+        padding: 1rem;
+    }
+
+    .pagination-info {
+        font-size: 0.9rem;
+        color: var(--text-main);
+        font-weight: 500;
+    }
+
+    .pagination-buttons {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        flex-wrap: wrap;
+        justify-content: center;
+    }
+
+    .pagination-buttons .app-btn {
+        min-width: 40px;
+        padding: 0.5rem 0.75rem;
+        font-size: 0.85rem;
+    }
+
+    .page-numbers {
+        display: flex;
+        gap: 0.25rem;
+    }
+
+    .page-numbers .app-btn {
+        min-width: 36px;
+    }
+}
 
 /* Apply standardized table style */
 .app-table {

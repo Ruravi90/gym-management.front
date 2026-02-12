@@ -17,7 +17,8 @@
     </div>
 </div>
 
-<div class="table-responsive-wrapper">
+<!-- Table View for Desktop -->
+<div class="table-responsive-wrapper desktop-view">
     <table class="app-table">
         <thead>
             <tr>
@@ -59,6 +60,82 @@
             </tr>
         </tbody>
     </table>
+</div>
+
+<!-- Card View for Mobile -->
+<div class="cards-container mobile-view" *ngIf="paginatedClients.length > 0">
+    <div class="client-card" *ngFor="let client of paginatedClients">
+        <div class="card-header">
+            <div class="header-top">
+                <div class="client-id">#{{client.id}}</div>
+                <div class="client-name">{{client.name}}</div>
+            </div>
+            <div class="header-tags">
+                <span class="membership-badge" [attr.data-type]="getClientMembershipType(client)">
+                    {{getClientMembershipType(client) | uppercase}}
+                </span>
+                <div class="status-badge" [class.active]="client.status">
+                    {{client.status ? 'ACTIVO' : 'INACTIVO'}}
+                </div>
+            </div>
+        </div>
+
+        <div class="card-body">
+            <div class="client-details">
+                <div class="detail-item">
+                    <span class="detail-label">Email:</span>
+                    <span class="detail-value">{{client.email}}</span>
+                </div>
+                <div class="detail-item">
+                    <span class="detail-label">Teléfono:</span>
+                    <span class="detail-value">{{client.phone || 'N/A'}}</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="card-actions">
+            <button class="app-btn app-btn-secondary btn-sm" (click)="openEditModal(client)">Editar</button>
+            <button class="app-btn app-btn-danger btn-sm" (click)="confirmDelete(client)">Eliminar</button>
+            <button class="app-btn app-btn-primary btn-sm" (click)="openFaceScanModal(client)">📷 Rostro</button>
+        </div>
+    </div>
+</div>
+
+<!-- Empty state for mobile -->
+<div class="empty-state mobile-view" *ngIf="paginatedClients.length === 0 && filteredClients.length > 0">
+    <p>No se encontraron clientes en esta página</p>
+</div>
+
+<div class="empty-state mobile-view" *ngIf="filteredClients.length === 0">
+    <p>No se encontraron clientes</p>
+</div>
+
+<!-- Pagination Controls for Mobile -->
+<div class="pagination-controls mobile-view" *ngIf="totalPages > 1">
+    <div class="pagination-info">
+        Página {{currentPage}} de {{totalPages}}
+    </div>
+    <div class="pagination-buttons">
+        <button class="app-btn app-btn-secondary btn-sm"
+                [disabled]="currentPage === 1"
+                (click)="prevPage()">
+            Anterior
+        </button>
+        <span class="page-numbers">
+            <button *ngFor="let page of getPageNumbers()"
+                    class="app-btn btn-sm"
+                    [class.app-btn-primary]="page === currentPage"
+                    [class.app-btn-secondary]="page !== currentPage"
+                    (click)="goToPage(page)">
+                {{page}}
+            </button>
+        </span>
+        <button class="app-btn app-btn-secondary btn-sm"
+                [disabled]="currentPage === totalPages"
+                (click)="nextPage()">
+            Siguiente
+        </button>
+    </div>
 </div>
 
 <!-- Unified Modal: Registro / Edición -->
@@ -113,17 +190,24 @@
         <div class="modal-body centered">
             <div class="viewfinder-wrapper">
                 <video #video class="video-preview" autoplay playsinline [class.hidden]="!streaming"></video>
-                
+
                 <!-- Visual Guidance Overlay -->
                 <div class="face-guide-overlay">
                     <div class="face-guide-oval"></div>
                     <div class="face-guide-label">Centra el rostro aquí</div>
                 </div>
-                
+
                 <div class="scan-bar"></div>
+
+                <!-- Camera toggle button -->
+                <div class="camera-toggle-button" *ngIf="streaming">
+                    <button (click)="toggleCamera()" class="app-btn app-btn-tertiary" title="Cambiar cámara">
+                        🔄 CÁMARA
+                    </button>
+                </div>
             </div>
             <p class="hint" *ngIf="!registrationMessage">Asegúrate de que el rostro encaje en la guía y esté bien iluminado.</p>
-            
+
             <!-- Dynamic Status Message -->
             <div class="registration-status" *ngIf="registrationMessage" [class.success]="registrationSuccess" [class.error]="!registrationSuccess && !isRegistering">
                 <span class="status-icon">{{ registrationSuccess ? '✅' : isRegistering ? '⌛' : '⚠️' }}</span>

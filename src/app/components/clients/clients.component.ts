@@ -13,6 +13,12 @@ export class ClientsComponent implements OnInit, OnDestroy {
   filteredClients: Client[] = [];
   searchTerm: string = '';
 
+  // Pagination properties
+  currentPage: number = 1;
+  itemsPerPage: number = 5; // Show 5 items per page on mobile
+  totalPages: number = 0;
+  paginatedClients: Client[] = [];
+
   // Unified Modal State: Registro / Edición
   showClientModal = false;
   editingClient: Client | null = null;
@@ -39,24 +45,55 @@ export class ClientsComponent implements OnInit, OnDestroy {
   registrationMessage = '';
   registrationSuccess = false;
 
+  // Camera Selection
+  cameraOptions: MediaDeviceInfo[] = [];
+  selectedCameraId: string | null = null;
+  currentFacingMode: 'user' | 'environment' = 'environment'; // Default to rear camera
+
   constructor(
     private clientService: ClientService,
     private authService: AuthService,
     private cdr: ChangeDetectorRef
   ) { }
 
-  ngOnInit(): void {
+  async ngOnInit(): Promise<void> {
     this.loadClients();
+    await this.loadCameraDevices();
   }
 
   ngOnDestroy(): void {
     this.stopCamera();
   }
 
+  // Load available camera devices
+  async loadCameraDevices(): Promise<void> {
+    try {
+      const devices = await navigator.mediaDevices.enumerateDevices();
+      this.cameraOptions = devices.filter(device => device.kind === 'videoinput');
+      console.log('Available cameras:', this.cameraOptions);
+    } catch (error) {
+      console.error('Error enumerating camera devices:', error);
+    }
+  }
+
+  // Toggle between front and rear cameras
+  async toggleCamera(): Promise<void> {
+    this.currentFacingMode = this.currentFacingMode === 'user' ? 'environment' : 'user';
+    if (this.streaming) {
+      await this.restartCamera();
+    }
+  }
+
+  // Restart camera with new facing mode
+  private async restartCamera(): Promise<void> {
+    this.stopCamera();
+    await this.startCamera();
+  }
+
   loadClients() {
     this.clientService.getClients().subscribe(data => {
       this.clients = data;
-      this.applyFilter();
+      this.applyFilter(); // This will also call calculatePagination()
     });
   }
 
@@ -69,11 +106,15 @@ export class ClientsComponent implements OnInit, OnDestroy {
     if (!this.searchTerm) {
       this.filteredClients = [...this.clients];
     } else {
-      this.filteredClients = this.clients.filter(client => 
-        client.name.toLowerCase().includes(this.searchTerm) || 
+      this.filteredClients = this.clients.filter(client =>
+        client.name.toLowerCase().includes(this.searchTerm) ||
         client.email.toLowerCase().includes(this.searchTerm)
       );
     }
+
+    // Reset to first page when filtering
+    this.currentPage = 1;
+    this.calculatePagination();
   }
 
   getClientMembershipType(client: Client): string {
@@ -183,7 +224,8 @@ export class ClientsComponent implements OnInit, OnDestroy {
     try {
       const constraints = {
         video: {
-          aspectRatio: { ideal: 1.333333 } // 4:3
+          aspectRatio: { ideal: 1.333333 }, // 4:3
+          facingMode: this.currentFacingMode
         }
       };
       this.stream = await navigator.mediaDevices.getUserMedia(constraints);
@@ -307,5 +349,60 @@ export class ClientsComponent implements OnInit, OnDestroy {
         alert('Error eliminando cliente: ' + (err.error?.detail || err.message));
       }
     });
+  }
+
+  // Pagination methods
+  calculatePagination() {
+    // Calculate total pages
+    this.totalPages = Math.ceil(this.filteredClients.length / this.itemsPerPage);
+
+    // Calculate start and end index for current page
+    const startIndex = (this.currentPage - 1) * this.itemsPerPage;
+    const endIndex = startIndex + this.itemsPerPage;
+
+    // Slice the filtered clients for current page
+    this.paginatedClients = this.filteredClients.slice(startIndex, endIndex);
+  }
+
+  goToPage(page: number) {
+    if (page >= 1 && page <= this.totalPages) {
+      this.currentPage = page;
+      this.calculatePagination();
+    }
+  }
+
+  nextPage() {
+    if (this.currentPage < this.totalPages) {
+      this.currentPage++;
+      this.calculatePagination();
+    }
+  }
+
+  prevPage() {
+    if (this.currentPage > 1) {
+      this.currentPage--;
+      this.calculatePagination();
+    }
+  }
+
+
+  // Helper method to generate page numbers for pagination UI
+  getPageNumbers(): number[] {
+    const pages = [];
+    const maxVisiblePages = 5; // Maximum number of page buttons to show
+
+    let startPage = Math.max(1, this.currentPage - Math.floor(maxVisiblePages / 2));
+    let endPage = Math.min(this.totalPages, startPage + maxVisiblePages - 1);
+
+    // Adjust start page if we're near the end
+    if (endPage - startPage + 1 < maxVisiblePages) {
+      startPage = Math.max(1, endPage - maxVisiblePages + 1);
+    }
+
+    for (let i = startPage; i <= endPage; i++) {
+      pages.push(i);
+    }
+
+    return pages;
   }
 }

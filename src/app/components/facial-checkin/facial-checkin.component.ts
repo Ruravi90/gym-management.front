@@ -40,6 +40,11 @@ export class FacialCheckinComponent implements OnInit, OnDestroy {
   private scanInterval: any = null;
   private displayTimer: any = null;
 
+  // Camera Selection
+  cameraOptions: MediaDeviceInfo[] = [];
+  selectedCameraId: string | null = null;
+  currentFacingMode: 'user' | 'environment' = 'environment'; // Default to rear camera
+
   // Manual Mode
   manualMode = false;
   searchTerm = '';
@@ -54,33 +59,61 @@ export class FacialCheckinComponent implements OnInit, OnDestroy {
     private cdr: ChangeDetectorRef
   ) {}
 
-  ngOnInit(): void {}
+  async ngOnInit(): Promise<void> {
+    await this.loadCameraDevices();
+  }
 
   ngOnDestroy(): void {
     this.resetToIdle();
   }
 
+  // Load available camera devices
+  async loadCameraDevices(): Promise<void> {
+    try {
+      const devices = await navigator.mediaDevices.enumerateDevices();
+      this.cameraOptions = devices.filter(device => device.kind === 'videoinput');
+      console.log('Available cameras:', this.cameraOptions);
+    } catch (error) {
+      console.error('Error enumerating camera devices:', error);
+    }
+  }
+
+  // Toggle between front and rear cameras
+  async toggleCamera(): Promise<void> {
+    this.currentFacingMode = this.currentFacingMode === 'user' ? 'environment' : 'user';
+    if (this.streaming) {
+      await this.restartCamera();
+    }
+  }
+
+  // Restart camera with new facing mode
+  private async restartCamera(): Promise<void> {
+    this.stopCameraTracks();
+    await this.startCamera();
+  }
+
   // --- STEP 1: Activar Cámara ---
   async startCamera() {
     if (this.streaming) return;
-    
+
     console.log('Starting camera...');
     try {
-      // Solicitar 4:3 aspect ratio
+      // Solicitar 4:3 aspect ratio y especificar cámara frontal o trasera
       const constraints = {
         video: {
-          aspectRatio: { ideal: 1.333333 } // 4:3
+          aspectRatio: { ideal: 1.333333 }, // 4:3
+          facingMode: this.currentFacingMode
         }
       };
-      
+
       this.stream = await navigator.mediaDevices.getUserMedia(constraints);
-      
+
       // Update state FIRST so *ngIf renders the video element in the DOM
       this.streaming = true;
       this.state = 'scanning';
       this.message = 'Centra tu rostro en la guía';
-      this.cdr.detectChanges(); 
-      
+      this.cdr.detectChanges();
+
       // Now nativeElement is guaranteed to be defined
       this.videoElement.nativeElement.srcObject = this.stream;
       this.startScanning();

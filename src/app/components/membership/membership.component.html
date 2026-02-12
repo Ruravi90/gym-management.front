@@ -4,122 +4,89 @@
     <p class="page-subtitle">Control total sobre los planes de tus guerreros</p>
   </div>
   <div class="header-actions">
-    <button
-      class="app-btn app-btn-secondary btn-sm"
-      (click)="loadStatistics()"
-      title="Actualizar estadísticas"
-    >
-      🔄
-    </button>
     <button class="app-btn app-btn-primary" (click)="openNewMembershipModal()">
       <span>+</span> Nueva Membresía
     </button>
   </div>
 </header>
 
-<!-- Statistics Overview -->
-<div *ngIf="statistics" class="stats-row">
-  <div class="app-card stat-card total">
-    <div class="stat-icon-wrapper">📊</div>
-    <div class="stat-details">
-      <span class="label">Total Planes</span>
-      <span class="value">{{ statistics.total_memberships }}</span>
-    </div>
-  </div>
-  <div class="app-card stat-card success">
-    <div class="stat-icon-wrapper">✅</div>
-    <div class="stat-details">
-      <span class="label">Activas</span>
-      <span class="value">{{ statistics.active_memberships }}</span>
-    </div>
-  </div>
-  <div class="app-card stat-card danger">
-    <div class="stat-icon-wrapper">⌛</div>
-    <div class="stat-details">
-      <span class="label">Expiradas</span>
-      <span class="value">{{ statistics.expired_memberships }}</span>
-    </div>
-  </div>
-  <div class="app-card stat-card warning">
-    <div class="stat-icon-wrapper">⚠️</div>
-    <div class="stat-details">
-      <span class="label">Expiran pronto</span>
-      <span class="value">{{ statistics.upcoming_expirations }}</span>
-    </div>
-  </div>
-</div>
-
-<!-- Advanced Filters Area -->
+<!-- Collapsible Filters Area -->
 <div class="app-card filters-container">
-  <div class="filters-grid">
-    <div class="form-group">
-      <label>Estado del Plan</label>
-      <select
-        class="app-input"
-        [(ngModel)]="filters.status"
-        (change)="applyFilters()"
-      >
-        <option value="">Cualquier estado</option>
-        <option value="available">Disponible</option>
-        <option value="active">Activa</option>
-        <option value="expired">Expirada</option>
-        <option value="suspended">Suspendida</option>
-        <option value="cancelled">Cancelada</option>
-      </select>
-    </div>
+  <div class="filters-header" (click)="toggleFilters()">
+    <h3>Filtros Avanzados</h3>
+    <span class="filter-toggle">{{ showFilters ? '▲' : '▼' }}</span>
+  </div>
+  <div class="filters-content" [class.expanded]="showFilters">
+    <div class="filters-grid">
+      <div class="form-group">
+        <label>Estado del Plan</label>
+        <select
+          class="app-input"
+          [(ngModel)]="filters.status"
+          (change)="applyFilters()"
+        >
+          <option value="">Cualquier estado</option>
+          <option value="available">Disponible</option>
+          <option value="active">Activa</option>
+          <option value="expired">Expirada</option>
+          <option value="suspended">Suspendida</option>
+          <option value="cancelled">Cancelada</option>
+        </select>
+      </div>
 
-    <div class="form-group">
-      <label>Estado de Pago</label>
-      <select
-        class="app-input"
-        [(ngModel)]="filters.paymentStatus"
-        (change)="applyFilters()"
-      >
-        <option value="">Cualquier pago</option>
-        <option value="paid">Pagado</option>
-        <option value="pending">Pendiente</option>
-        <option value="overdue">Atrasado</option>
-      </select>
-    </div>
+      <div class="form-group">
+        <label>Estado de Pago</label>
+        <select
+          class="app-input"
+          [(ngModel)]="filters.paymentStatus"
+          (change)="applyFilters()"
+        >
+          <option value="">Cualquier pago</option>
+          <option value="paid">Pagado</option>
+          <option value="pending">Pendiente</option>
+          <option value="overdue">Atrasado</option>
+        </select>
+      </div>
 
-    <div class="form-group search-group">
-      <label>Socio</label>
-      <select
-        class="app-input"
-        [(ngModel)]="filters.clientId"
-        (change)="applyFilters()"
-      >
-        <option value="">Todos los clientes</option>
-        <option *ngFor="let client of clients" [value]="client.id">
-          {{ client.name }}
-        </option>
-      </select>
-    </div>
+      <div class="form-group search-group">
+        <label>Socio</label>
+        <select
+          class="app-input"
+          [(ngModel)]="filters.clientId"
+          (change)="applyFilters()"
+        >
+          <option value="">Todos los clientes</option>
+          <option *ngFor="let client of clients" [value]="client.id">
+            {{ client.name }}
+          </option>
+        </select>
+      </div>
 
-    <div class="form-group">
-      <label>Tipo de Membresía</label>
-      <select
-        class="app-input"
-        [(ngModel)]="filters.membershipTypeId"
-        (change)="applyFilters()"
-      >
-        <option value="">Todos los tipos</option>
-        <option *ngFor="let type of membershipTypes" [value]="type.id">
-          {{ type.name }}
-        </option>
-      </select>
-    </div>
+      <div class="form-group">
+        <label>Tipo de Membresía</label>
+        <select
+          class="app-input"
+          [(ngModel)]="filters.membershipTypeId"
+          (change)="applyFilters()"
+        >
+          <option value="">Todos los tipos</option>
+          <option *ngFor="let type of membershipTypes" [value]="type.id">
+            {{ type.name }}
+          </option>
+        </select>
+      </div>
 
-    <div class="filter-actions">
-      <button class="app-btn app-btn-secondary" (click)="clearFilters()">
-        Limpiar Filtros
-      </button>
+      <div class="filter-actions">
+        <button class="app-btn app-btn-secondary" (click)="clearFilters()">
+          Limpiar Filtros
+        </button>
+      </div>
     </div>
   </div>
 </div>
 
-<!-- Data Table Section -->
-<div class="table-responsive-wrapper">
+<!-- Table View for Desktop -->
+<div class="table-responsive-wrapper desktop-view">
   <table class="app-table">
     <thead>
       <tr>
@@ -221,6 +188,115 @@
       </tr>
     </tbody>
   </table>
+</div>
+
+<!-- Card View for Mobile -->
+<div class="cards-container mobile-view" *ngIf="paginatedMemberships.length > 0">
+  <div class="membership-card" *ngFor="let membership of paginatedMemberships">
+    <div class="card-header">
+      <div class="header-top">
+        <div class="membership-id">#{{ membership.id }}</div>
+        <div class="client-name">{{ getClientName(membership.client_id) }}</div>
+      </div>
+      <div class="header-tags">
+        <span
+          class="membership-badge"
+          [attr.data-type]="getMembershipTypeName(membership.membership_type_id)"
+        >
+          {{ getMembershipTypeName(membership.membership_type_id) }}
+        </span>
+        <span
+          class="status-badge"
+          [style.color]="getStatusColor(membership.status)"
+          [style.background]="getStatusColor(membership.status) + '15'"
+        >
+          {{ membership.status | titlecase }}
+        </span>
+      </div>
+    </div>
+
+    <div class="card-body">
+      <div class="membership-details-grid">
+        <div class="detail-item">
+          <span class="detail-label">Precio:</span>
+          <span class="detail-value">${{ membership.price_paid || membership.price }}</span>
+        </div>
+        <div class="detail-item" *ngIf="membership.accesses_used !== undefined">
+          <span class="detail-label">Accesos:</span>
+          <span class="detail-value">{{ getAccessesRemaining(membership) }}</span>
+        </div>
+        <div class="detail-item">
+          <span class="detail-label">Inicio:</span>
+          <span class="detail-value">{{ formatDate(membership.start_date) }}</span>
+        </div>
+        <div class="detail-item">
+          <span class="detail-label">Fin:</span>
+          <span class="detail-value">{{ formatDate(membership.end_date) }}</span>
+        </div>
+        <div class="detail-item" *ngIf="!isMembershipExpired(membership)">
+          <span class="detail-label">Restante:</span>
+          <div class="time-left">
+            <span class="days-count">{{ daysUntilExpiration(membership) }}</span>
+            días
+          </div>
+        </div>
+        <div class="detail-item" *ngIf="isMembershipExpired(membership)">
+          <span class="detail-label">Expiró:</span>
+          <div class="time-left expired">
+            Hace {{ -daysUntilExpiration(membership) }} días
+          </div>
+        </div>
+        <div class="detail-item">
+          <span class="detail-label">Pago:</span>
+          <span class="payment-badge" [class]="membership.payment_status">
+            {{ membership.payment_status | titlecase }}
+          </span>
+        </div>
+      </div>
+    </div>
+
+    <div class="card-actions">
+      <button class="app-btn app-btn-secondary btn-sm" (click)="openEditModal(membership)">Editar</button>
+      <button class="app-btn app-btn-danger btn-sm" (click)="deleteMembership(membership.id)">Eliminar</button>
+    </div>
+  </div>
+</div>
+
+<!-- Empty state for mobile -->
+<div class="empty-state mobile-view" *ngIf="paginatedMemberships.length === 0 && memberships.length > 0">
+  <p>No se encontraron membresías en esta página</p>
+</div>
+
+<div class="empty-state mobile-view" *ngIf="memberships.length === 0">
+  <p>No se encontraron membresías</p>
+</div>
+
+<!-- Pagination Controls for Mobile -->
+<div class="pagination-controls mobile-view" *ngIf="totalPages > 1">
+  <div class="pagination-info">
+    Página {{currentPage}} de {{totalPages}}
+  </div>
+  <div class="pagination-buttons">
+    <button class="app-btn app-btn-secondary btn-sm"
+            [disabled]="currentPage === 1"
+            (click)="prevPage()">
+      Anterior
+    </button>
+    <span class="page-numbers">
+      <button *ngFor="let page of getPageNumbers()"
+              class="app-btn btn-sm"
+              [class.app-btn-primary]="page === currentPage"
+              [class.app-btn-secondary]="page !== currentPage"
+              (click)="goToPage(page)">
+        {{page}}
+      </button>
+    </span>
+    <button class="app-btn app-btn-secondary btn-sm"
+            [disabled]="currentPage === totalPages"
+            (click)="nextPage()">
+      Siguiente
+    </button>
+  </div>
 </div>
 
 <!-- Unified Premium Modal -->

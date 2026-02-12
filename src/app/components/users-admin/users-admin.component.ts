@@ -24,6 +24,12 @@ export class UsersAdminComponent implements OnInit {
   loading = false;
   error: string | null = null;
 
+  // Pagination properties
+  currentPage: number = 1;
+  itemsPerPage: number = 5; // Show 5 items per page on mobile
+  totalPages: number = 0;
+  paginatedUsers: User[] = [];
+
   // Unified Modal State: Registro / Edición
   showUserModal = false;
   editingUser: User | null = null;
@@ -58,33 +64,7 @@ export class UsersAdminComponent implements OnInit {
     this.loadUsers();
   }
 
-  loadUsers(): void {
-    this.loading = true;
-    this.userService.getUsers().subscribe({
-      next: (res) => { 
-        this.users = res; 
-        this.filteredUsers = [...res]; 
-        this.loading = false; 
-      },
-      error: (err) => { 
-        this.error = err?.message || 'Error fetching users'; 
-        this.loading = false; 
-      }
-    });
-  }
 
-  onSearch(event: any): void {
-    const q = (event?.target?.value || '').toLowerCase();
-    if (!q) { 
-      this.filteredUsers = [...this.users]; 
-      return; 
-    }
-    this.filteredUsers = this.users.filter(u => {
-      const name = (u.name || '').toLowerCase();
-      const email = (u.email || '').toLowerCase();
-      return name.includes(q) || email.includes(q);
-    });
-  }
 
   // --- User Modal Controls ---
   openRegisterModal() {
@@ -202,6 +182,94 @@ export class UsersAdminComponent implements OnInit {
         alert('Error eliminando usuario: ' + (err.error?.detail || err.message));
       }
     });
+  }
+
+  // Pagination methods
+  calculatePagination() {
+    // Calculate total pages
+    this.totalPages = Math.ceil(this.filteredUsers.length / this.itemsPerPage);
+
+    // Calculate start and end index for current page
+    const startIndex = (this.currentPage - 1) * this.itemsPerPage;
+    const endIndex = startIndex + this.itemsPerPage;
+
+    // Slice the filtered users for current page
+    this.paginatedUsers = this.filteredUsers.slice(startIndex, endIndex);
+  }
+
+  goToPage(page: number) {
+    if (page >= 1 && page <= this.totalPages) {
+      this.currentPage = page;
+      this.calculatePagination();
+    }
+  }
+
+  nextPage() {
+    if (this.currentPage < this.totalPages) {
+      this.currentPage++;
+      this.calculatePagination();
+    }
+  }
+
+  prevPage() {
+    if (this.currentPage > 1) {
+      this.currentPage--;
+      this.calculatePagination();
+    }
+  }
+
+  // Update onSearch to recalculate pagination
+  onSearch(event: any): void {
+    const q = (event?.target?.value || '').toLowerCase();
+    if (!q) {
+      this.filteredUsers = [...this.users];
+    } else {
+      this.filteredUsers = this.users.filter(u => {
+        const name = (u.name || '').toLowerCase();
+        const email = (u.email || '').toLowerCase();
+        return name.includes(q) || email.includes(q);
+      });
+    }
+
+    // Reset to first page when filtering
+    this.currentPage = 1;
+    this.calculatePagination();
+  }
+
+  // Update loadUsers to include pagination
+  loadUsers(): void {
+    this.loading = true;
+    this.userService.getUsers().subscribe({
+      next: (res) => {
+        this.users = res;
+        this.onSearch({ target: { value: '' } }); // This will also call calculatePagination()
+        this.loading = false;
+      },
+      error: (err) => {
+        this.error = err?.message || 'Error fetching users';
+        this.loading = false;
+      }
+    });
+  }
+
+  // Helper method to generate page numbers for pagination UI
+  getPageNumbers(): number[] {
+    const pages = [];
+    const maxVisiblePages = 5; // Maximum number of page buttons to show
+
+    let startPage = Math.max(1, this.currentPage - Math.floor(maxVisiblePages / 2));
+    let endPage = Math.min(this.totalPages, startPage + maxVisiblePages - 1);
+
+    // Adjust start page if we're near the end
+    if (endPage - startPage + 1 < maxVisiblePages) {
+      startPage = Math.max(1, endPage - maxVisiblePages + 1);
+    }
+
+    for (let i = startPage; i <= endPage; i++) {
+      pages.push(i);
+    }
+
+    return pages;
   }
 }
 

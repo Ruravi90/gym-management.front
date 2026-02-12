@@ -213,6 +213,8 @@
 
 .checkin-actions-compact {
     margin-top: auto;
+    display: flex;
+    gap: 10px;
 }
 
 .section-badge {

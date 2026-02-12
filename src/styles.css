@@ -155,6 +155,17 @@ body {
   border-color: var(--text-muted);
 }
 
+.app-btn-tertiary {
+  background: #f1f5f9;
+  border-color: #cbd5e1;
+  color: #475569;
+}
+
+.app-btn-tertiary:hover {
+  background: #e2e8f0;
+  border-color: #94a3b8;
+}
+
 /* --- Standard Modals --- */
 
 .modal-backdrop {

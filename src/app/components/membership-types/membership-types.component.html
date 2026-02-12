@@ -28,8 +28,8 @@
   </div>
 </div>
 
-<!-- Data Table Section -->
-<div class="table-responsive-wrapper">
+<!-- Table View for Desktop -->
+<div class="table-responsive-wrapper desktop-view">
   <table class="app-table">
     <thead>
       <tr>
@@ -78,6 +78,89 @@
       </tr>
     </tbody>
   </table>
+</div>
+
+<!-- Card View for Mobile -->
+<div class="cards-container mobile-view" *ngIf="paginatedMembershipTypes.length > 0">
+  <div class="membership-type-card" *ngFor="let type of paginatedMembershipTypes">
+    <div class="card-header">
+      <div class="header-top">
+        <div class="type-id">#{{ type.id }}</div>
+        <div class="type-name">{{ type.name }}</div>
+      </div>
+      <div class="header-tags">
+        <span class="status-badge" [class.active]="type.is_active" [class.inactive]="!type.is_active">
+          {{ type.is_active ? 'Activo' : 'Inactivo' }}
+        </span>
+      </div>
+    </div>
+
+    <div class="card-body">
+      <div class="type-details-grid">
+        <div class="detail-item">
+          <span class="detail-label">Descripción:</span>
+          <div class="detail-value" *ngIf="type.description">{{ type.description }}</div>
+          <div class="detail-value empty" *ngIf="!type.description">Sin descripción</div>
+        </div>
+        <div class="detail-item">
+          <span class="detail-label">Duración:</span>
+          <div class="detail-value" *ngIf="type.duration_days">{{ type.duration_days }} días</div>
+          <div class="detail-value empty" *ngIf="!type.duration_days">Ilimitado</div>
+        </div>
+        <div class="detail-item">
+          <span class="detail-label">Accesos:</span>
+          <div class="detail-value" *ngIf="type.accesses_allowed !== null">{{ type.accesses_allowed }} accesos</div>
+          <div class="detail-value empty" *ngIf="type.accesses_allowed === null">Ilimitados</div>
+        </div>
+        <div class="detail-item">
+          <span class="detail-label">Precio:</span>
+          <span class="detail-value price-info">${{ type.price }}</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="card-actions">
+      <button class="app-btn app-btn-secondary btn-sm" (click)="openEditModal(type)">Editar</button>
+      <button class="app-btn app-btn-danger btn-sm" (click)="deleteType(type.id)">Eliminar</button>
+    </div>
+  </div>
+</div>
+
+<!-- Empty state for mobile -->
+<div class="empty-state mobile-view" *ngIf="paginatedMembershipTypes.length === 0 && membershipTypes.length > 0">
+  <p>No se encontraron tipos de membresía en esta página</p>
+</div>
+
+<div class="empty-state mobile-view" *ngIf="membershipTypes.length === 0">
+  <p>No se encontraron tipos de membresía</p>
+</div>
+
+<!-- Pagination Controls for Mobile -->
+<div class="pagination-controls mobile-view" *ngIf="totalPages > 1">
+  <div class="pagination-info">
+    Página {{currentPage}} de {{totalPages}}
+  </div>
+  <div class="pagination-buttons">
+    <button class="app-btn app-btn-secondary btn-sm"
+            [disabled]="currentPage === 1"
+            (click)="prevPage()">
+      Anterior
+    </button>
+    <span class="page-numbers">
+      <button *ngFor="let page of getPageNumbers()"
+              class="app-btn btn-sm"
+              [class.app-btn-primary]="page === currentPage"
+              [class.app-btn-secondary]="page !== currentPage"
+              (click)="goToPage(page)">
+        {{page}}
+      </button>
+    </span>
+    <button class="app-btn app-btn-secondary btn-sm"
+            [disabled]="currentPage === totalPages"
+            (click)="nextPage()">
+      Siguiente
+    </button>
+  </div>
 </div>
 
 <!-- Type Modal -->
