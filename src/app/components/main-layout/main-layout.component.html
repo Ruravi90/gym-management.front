@@ -60,20 +60,7 @@
     </div>
   </aside>
 
-  <main class="content-area" [class.full-width]="sidebarCollapsed"
-        (touchstart)="onTouchStart($event)"
-        (touchmove)="onTouchMove($event)"
-        (touchend)="onTouchEnd($event)"
-        [class.refreshing]="isRefreshing">
-    <div class="refresh-indicator" *ngIf="showRefreshIndicator">
-      <div class="refresh-spinner" [style.transform]="'rotate(' + refreshRotation + 'deg)'">
-        ↻
-      </div>
-    </div>
-    <div class="loading-overlay" *ngIf="isRefreshing">
-      <div class="loading-spinner"></div>
-      <p>Actualizando...</p>
-    </div>
+  <main class="content-area" [class.full-width]="sidebarCollapsed">
     <router-outlet></router-outlet>
   </main>
 </div>

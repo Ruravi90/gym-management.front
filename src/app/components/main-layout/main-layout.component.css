@@ -58,15 +58,15 @@
     display: flex; align-items: center; gap: 12px;
     padding: 12px 14px; /* More comfortable padding */
     color: var(--text-muted);
-    text-decoration: none; 
+    text-decoration: none;
     border-radius: 12px; /* More rounded */
     font-weight: 500; font-size: 0.9rem;
     transition: all 0.2s;
 }
 
-.nav-item:hover { 
+.nav-item:hover {
     background: #f1f5f9; /* Soft hover */
-    color: var(--text-main); 
+    color: var(--text-main);
 }
 
 .nav-item.active {
@@ -259,71 +259,4 @@ button, .nav-item, .btn-icon-modern {
   margin-left: auto;
   opacity: 0.8;
   font-family: 'JetBrains Mono', monospace;
-}
-
-/* Pull-to-refresh styles */
-.refresh-indicator {
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    height: 60px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    z-index: 1000;
-    pointer-events: none;
-}
-
-.refresh-spinner {
-    font-size: 24px;
-    transition: transform 0.2s ease;
-    color: var(--app-primary);
-}
-
-.content-area.refreshing {
-    overflow: hidden;
-}
-
-/* Animation for refresh spinner */
-@keyframes spin {
-    0% { transform: rotate(0deg); }
-    100% { transform: rotate(360deg); }
-}
-
-.refresh-spinner.refreshing {
-    animation: spin 1s linear infinite;
-}
-
-/* Loading overlay for refresh */
-.loading-overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(255, 255, 255, 0.9);
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    z-index: 9999;
-    backdrop-filter: blur(2px);
-}
-
-.loading-spinner {
-    width: 40px;
-    height: 40px;
-    border: 4px solid #f3f3f3;
-    border-top: 4px solid var(--app-primary);
-    border-radius: 50%;
-    animation: spin 1s linear infinite;
-    margin-bottom: 1rem;
-}
-
-.loading-overlay p {
-    margin: 0;
-    font-size: 1rem;
-    color: var(--text-main);
-    font-weight: 500;
 }

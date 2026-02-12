@@ -56,7 +56,7 @@ export class MembershipComponent implements OnInit {
   };
 
   // Filter visibility
-  showFilters = true;
+  showFilters = false;
 
   constructor(
     private membershipService: MembershipService,
