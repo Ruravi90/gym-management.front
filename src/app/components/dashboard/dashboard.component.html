@@ -22,37 +22,87 @@
             </div>
         </div>
 
-        <div class="app-card stat-card success" *ngIf="stats">
-            <div class="stat-icon-wrapper">💳</div>
+        <div class="app-card stat-card success" *ngIf="analytics">
+            <div class="stat-icon-wrapper">💰</div>
             <div class="stat-details">
-                <span class="label">Membresías Activas</span>
-                <span class="value">{{stats.active_memberships}}</span>
-                <p class="trend-text">Ingresos estables</p>
-            </div>
-        </div>
-
-        <div class="app-card stat-card warning" *ngIf="stats">
-            <div class="stat-icon-wrapper">⌛</div>
-            <div class="stat-details">
-                <span class="label">Vencimientos Próximos</span>
-                <span class="value">{{stats.upcoming_expirations}}</span>
-                <p class="trend-text warning">Atención necesaria</p>
+                <span class="label">Ingresos del Mes</span>
+                <span class="value">{{analytics.total_revenue_month | currency}}</span>
+                <p class="trend-text">{{analytics.check_ins_today}} ingresos hoy</p>
             </div>
         </div>
 
         <div class="app-card stat-card danger" *ngIf="stats">
-            <div class="stat-icon-wrapper">🚫</div>
+            <div class="stat-icon-wrapper">⌛</div>
             <div class="stat-details">
-                <span class="label">Planes Expirados</span>
-                <span class="value">{{stats.expired_memberships}}</span>
-                <p class="trend-text danger">Potencial de recuperación</p>
+                <span class="label">Acciones Urgentes</span>
+                <span class="value">{{stats.upcoming_expirations}}</span>
+                <p class="trend-text danger">Vencimientos próximos</p>
             </div>
         </div>
     </div>
 
-    <!-- Analytics Section -->
+    <!-- Charts Row 1: Attendance & Revenue -->
+    <div class="charts-row">
+        <div class="app-card chart-card">
+            <div class="chart-header">
+                <h3>Tendencia de Asistencia</h3>
+                <p>Últimos 30 días</p>
+            </div>
+            <div class="chart-container">
+                <ngx-charts-area-chart
+                    [scheme]="colorScheme"
+                    [results]="attendanceData"
+                    [gradient]="true"
+                    [xAxis]="true"
+                    [yAxis]="true"
+                    [legend]="false"
+                    [showXAxisLabel]="false"
+                    [showYAxisLabel]="false"
+                    [autoScale]="true"
+                    [curve]="curve">
+                </ngx-charts-area-chart>
+            </div>
+        </div>
+
+        <div class="app-card chart-card">
+            <div class="chart-header">
+                <h3>Flujo de Ingresos</h3>
+                <p>Nuevas membresías (30d)</p>
+            </div>
+            <div class="chart-container">
+                <ngx-charts-bar-vertical
+                    [scheme]="revenueColorScheme"
+                    [results]="revenueData[0]?.series"
+                    [gradient]="false"
+                    [xAxis]="true"
+                    [yAxis]="true"
+                    [legend]="false"
+                    [showXAxisLabel]="false"
+                    [showYAxisLabel]="false">
+                </ngx-charts-bar-vertical>
+            </div>
+        </div>
+    </div>
+
+    <!-- Charts Row 2 & Info -->
     <div class="analytics-content">
         <div class="charts-area">
+            <div class="app-card chart-card distribution">
+                <div class="chart-header">
+                    <h3>Distribución de Membresías</h3>
+                </div>
+                <div class="chart-container pie-container">
+                    <ngx-charts-pie-chart
+                        [scheme]="colorScheme"
+                        [results]="membershipTypeData"
+                        [gradient]="true"
+                        [legend]="true"
+                        [legendPosition]="legendPosition"
+                        [labels]="true"
+                        [doughnut]="true">
+                    </ngx-charts-pie-chart>
+                </div>
+            </div>
             <div class="app-card section-card">
                 <div class="section-header">
                     <h3>Próximas Expiraciones</h3>
