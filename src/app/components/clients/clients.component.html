@@ -32,23 +32,23 @@
         <tbody>
             <tr *ngFor="let client of filteredClients" class="client-row">
                 <td class="id-cell">#{{client.id}}</td>
-                <td>
+                <td class="client-info-cell">
                     <div class="client-info">
                         <span class="client-name">{{client.name}}</span>
                         <span class="client-email">{{client.email}}</span>
                     </div>
                 </td>
-                <td>
+                <td class="membership-cell">
                     <span class="membership-badge" [attr.data-type]="getClientMembershipType(client)">
                         {{getClientMembershipType(client) | uppercase}}
                     </span>
                 </td>
-                <td>
+                <td class="status-cell">
                     <div class="status-badge" [class.active]="client.status">
                         {{client.status ? 'ACTIVO' : 'INACTIVO'}}
                     </div>
                 </td>
-                <td class="text-right">
+                <td class="actions-cell text-right">
                     <div class="action-buttons">
                         <button class="btn-action-icon edit" (click)="openEditModal(client)" title="Editar">✏️</button>
                         <button class="btn-action-icon delete" (click)="confirmDelete(client)" title="Eliminar">🗑️</button>

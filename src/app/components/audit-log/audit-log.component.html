@@ -82,32 +82,6 @@
           <td>{{ log.entity_type }}</td>
           <td>{{ log.entity_id }}</td>
           <td>
-            <div *ngIf="log.action_type === 'UPDATE'" class="changes-list">
-              <div *ngFor="let change of getChangedFields(log); let i = index" [hidden]="i >= 3" class="change-item">
-                <strong>{{ change.key }}:</strong>
-                <span class="old-value">{{ getOldValueDisplay(change.key, change.oldValue) }}</span> →
-                <span class="new-value">{{ getNewValueDisplay(change.key, change.newValue) }}</span>
-              </div>
-              <div *ngIf="getChangedFields(log).length > 3">
-                <em>{{ getChangedFields(log).length - 3 }} más...</em>
-              </div>
-            </div>
-            <div *ngIf="log.action_type === 'CREATE'" class="creation-details">
-              <div *ngFor="let key of getObjectKeys(log.new_values); let i = index" [hidden]="i >= 3" class="creation-item">
-                <strong>{{ key }}:</strong> {{ getNewValueDisplay(key, log.new_values![key]) }}
-              </div>
-              <div *ngIf="getObjectKeys(log.new_values).length > 3">
-                <em>{{ getObjectKeys(log.new_values).length - 3 }} más...</em>
-              </div>
-            </div>
-            <div *ngIf="log.action_type === 'DELETE'" class="deletion-details">
-              <div *ngFor="let key of getObjectKeys(log.old_values); let i = index" [hidden]="i >= 3" class="deletion-item">
-                <strong>{{ key }}:</strong> {{ getOldValueDisplay(key, log.old_values![key]) }}
-              </div>
-              <div *ngIf="getObjectKeys(log.old_values).length > 3">
-                <em>{{ getObjectKeys(log.old_values).length - 3 }} más...</em>
-              </div>
-            </div>
             <button class="btn btn-info btn-sm" (click)="showDetail(log)" style="margin-top: 10px;">Detalles</button>
           </td>
         </tr>

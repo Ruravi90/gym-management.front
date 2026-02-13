@@ -46,30 +46,30 @@
     <tbody>
       <tr *ngFor="let type of membershipTypes">
         <td class="id-cell">#{{ type.id }}</td>
-        <td>
+        <td class="name-cell">
           <span class="type-name">{{ type.name }}</span>
         </td>
-        <td>
+        <td class="details-cell">
           <div class="type-description" *ngIf="type.description">{{ type.description }}</div>
           <div class="type-description empty" *ngIf="!type.description">Sin descripción</div>
         </td>
-        <td>
+        <td class="duration-cell">
           <span class="duration-info" *ngIf="type.duration_days">{{ type.duration_days }} días</span>
           <span class="duration-info empty" *ngIf="!type.duration_days">Ilimitado</span>
         </td>
-        <td>
+        <td class="accesses-cell">
           <span class="accesses-info" *ngIf="type.accesses_allowed !== null">{{ type.accesses_allowed }} accesos</span>
           <span class="accesses-info empty" *ngIf="type.accesses_allowed === null">Ilimitados</span>
         </td>
-        <td>
+        <td class="price-cell">
           <span class="price-info">${{ type.price }}</span>
         </td>
-        <td>
+        <td class="status-cell">
           <span class="status-badge" [class.active]="type.is_active" [class.inactive]="!type.is_active">
             {{ type.is_active ? 'Activo' : 'Inactivo' }}
           </span>
         </td>
-        <td class="text-right">
+        <td class="actions-cell text-right">
           <div class="action-buttons">
             <button class="btn-action-icon edit" (click)="openEditModal(type)">✏️</button>
             <button class="btn-action-icon delete" (click)="deleteType(type.id)">🗑️</button>

@@ -3,7 +3,7 @@
         <h1 class="page-title">Administración de Usuarios</h1>
         <p class="page-subtitle">Gestiona los usuarios del sistema</p>
     </div>
-    <div class="header-actions">
+    <div class="header-actions" *ngIf="canCreateUsers()">
         <button class="app-btn app-btn-primary" (click)="openRegisterModal()">
             <span>+</span> Nuevo Usuario
         </button>
@@ -45,24 +45,24 @@
         <tbody>
             <tr *ngFor="let user of filteredUsers" class="user-row">
                 <td class="id-cell">#{{user.id}}</td>
-                <td>
+                <td class="user-info-cell">
                     <div class="user-info">
                         <span class="user-name">{{user.name}}</span>
                         <span class="user-email">{{user.email}}</span>
                     </div>
                 </td>
-                <td>
+                <td class="role-cell">
                     <span class="role-badge" [attr.data-type]="user.role">
                         {{getRoleLabel(user.role) | uppercase}}
                     </span>
                 </td>
-                <td>
+                <td class="status-cell">
                     <div class="status-badge" [class.active]="user.status">
                         {{user.status ? 'ACTIVO' : 'INACTIVO'}}
                     </div>
                 </td>
-                <td class="text-right">
-                    <div class="action-buttons">
+                <td class="actions-cell text-right">
+                    <div class="action-buttons" *ngIf="canManageUser(user)">
                         <button class="btn-action-icon edit" (click)="openEditModal(user)" title="Editar">✏️</button>
                         <button class="btn-action-icon delete" (click)="confirmDelete(user)" title="Eliminar">🗑️</button>
                     </div>
@@ -99,7 +99,7 @@
             </div>
         </div>
 
-        <div class="card-actions">
+        <div class="card-actions" *ngIf="canManageUser(user)">
             <button class="app-btn app-btn-secondary btn-sm" (click)="openEditModal(user)">Editar</button>
             <button class="app-btn app-btn-danger btn-sm" (click)="confirmDelete(user)">Eliminar</button>
         </div>
@@ -170,7 +170,7 @@
                     <div class="form-group">
                         <label>Rol</label>
                         <select [(ngModel)]="userForm.role" name="role" class="app-input">
-                            <option *ngFor="let r of roles" [value]="r.value">{{ r.label }}</option>
+                            <option *ngFor="let r of getFilteredRoles()" [value]="r.value">{{ r.label }}</option>
                         </select>
                     </div>
                 </div>
@@ -178,7 +178,7 @@
                     <div class="form-group">
                         <label>Rol</label>
                         <select [(ngModel)]="userForm.role" name="role" class="app-input">
-                            <option *ngFor="let r of roles" [value]="r.value">{{ r.label }}</option>
+                            <option *ngFor="let r of getFilteredRoles()" [value]="r.value">{{ r.label }}</option>
                         </select>
                     </div>
                     <div class="form-group">

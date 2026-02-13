@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { UserService } from '../../services/user.service';
+import { AuthService } from '../../services/auth.service';
 
 interface RoleOption { value: string; label: string }
 
@@ -53,8 +54,9 @@ export class UsersAdminComponent implements OnInit {
     { value: 'member', label: 'Member' }
   ];
 
+  currentUser: any = null;
+
   getRoleLabel(value: string): string {
-    // Usar bucle for en lugar de find para mayor compatibilidad
     for (let i = 0; i < this.roles.length; i++) {
       if (this.roles[i].value === value) {
         return this.roles[i].label;
@@ -63,7 +65,46 @@ export class UsersAdminComponent implements OnInit {
     return (value || '').toUpperCase();
   }
 
-  constructor(private userService: UserService) { }
+  constructor(
+    private userService: UserService,
+    private authService: AuthService
+  ) { 
+    this.currentUser = this.authService.getCurrentUser();
+  }
+
+  getFilteredRoles(): RoleOption[] {
+    if (!this.currentUser) return [];
+    
+    if (this.currentUser.role === 'super_admin') {
+      return this.roles;
+    }
+    
+    if (this.currentUser.role === 'admin') {
+      // Admins cannot create or edit Super Admins
+      return this.roles.filter(r => r.value !== 'super_admin');
+    }
+    
+    return [];
+  }
+
+  canCreateUsers(): boolean {
+    if (!this.currentUser) return false;
+    return this.currentUser.role === 'super_admin' || this.currentUser.role === 'admin';
+  }
+
+  canManageUser(targetUser: User): boolean {
+    if (!this.currentUser) return false;
+    
+    // Super Admin can manage anyone
+    if (this.currentUser.role === 'super_admin') return true;
+    
+    // Admin can manage anyone except Super Admins
+    if (this.currentUser.role === 'admin') {
+      return targetUser.role !== 'super_admin';
+    }
+    
+    return false;
+  }
 
   ngOnInit(): void {
     this.loadUsers();
@@ -73,12 +114,21 @@ export class UsersAdminComponent implements OnInit {
 
   // --- User Modal Controls ---
   openRegisterModal() {
+    if (!this.canCreateUsers()) {
+      alert('No tienes permisos para crear usuarios.');
+      return;
+    }
     this.editingUser = null;
     this.resetForm();
+    this.userForm.role = 'receptionist'; // Default role
     this.showUserModal = true;
   }
 
   openEditModal(user: User) {
+    if (!this.canManageUser(user)) {
+      alert('No tienes permisos para editar este usuario.');
+      return;
+    }
     // Usar Object.assign en lugar de spread para mayor compatibilidad
     this.editingUser = Object.assign({}, user);
     this.userForm = {

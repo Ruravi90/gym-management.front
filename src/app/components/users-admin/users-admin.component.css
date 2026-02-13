@@ -114,11 +114,28 @@
     border-bottom: 2px solid #e2e8f0;
 }
 
-.app-table td {
-    padding: 1rem 1.25rem;
-    border-bottom: 1px solid #e2e8f0;
-    vertical-align: middle;
-    font-size: 0.95rem;
+.app-table th, .app-table td {
+    padding: 0.75rem 1rem;
+}
+
+.id-cell { 
+    width: 80px;
+}
+
+.user-info-cell {
+    min-width: 200px;
+}
+
+.role-cell {
+    width: 180px;
+}
+
+.status-cell {
+    width: 120px;
+}
+
+.actions-cell {
+    width: 150px;
 }
 
 .app-table tr:last-child td {
@@ -177,7 +194,7 @@
 
 /* --- Mobile Card Layout --- */
 .desktop-view {
-    display: table;
+    display: block;
 }
 
 .mobile-view {
