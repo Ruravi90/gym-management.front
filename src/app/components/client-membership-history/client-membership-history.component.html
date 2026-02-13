@@ -7,7 +7,6 @@
   <span class="error-icon">⚠️</span>
   <p>{{ error }}</p>
 </div>
-
 <div *ngIf="!loading && !error" class="history-content">
   <header class="main-header">
     <div class="header-info">
@@ -19,27 +18,35 @@
     </div>
   </header>
 
-  <!-- Button to open membership registration modal -->
-  <div class="section-header">
-    <h3 class="section-title">Agregar Membresía</h3>
-    <button class="app-btn app-btn-primary" (click)="openNewMembershipModal()">
-      <span>+</span> Nueva Membresía
+  <!-- Action Bar -->
+  <div class="action-bar-header">
+    <h3 class="section-title">Gestión de Membresías</h3>
+    <button class="app-btn app-btn-primary main-action-btn" (click)="openNewMembershipModal()">
+      <span class="btn-icon">+</span>
+      <span>Nueva Membresía</span>
     </button>
   </div>
 
   <!-- Memberships List -->
   <div class="history-section">
-    <div class="section-header">
-      <h3 class="section-title">Historial de Membresías</h3>
-      <span class="count-badge">{{ memberships.length }} entradas</span>
+    <div class="history-header">
+      <h3 class="section-title">Historial Completo</h3>
+      <div class="header-filters">
+        <span class="count-pill">{{ memberships.length }} registros</span>
+      </div>
     </div>
 
     <div *ngIf="memberships.length === 0" class="empty-state">
-      <p>Este cliente aún no tiene historial de membresías.</p>
+      <div class="empty-icon">📝</div>
+      <h3>Sin Historial</h3>
+      <p>Este cliente aún no tiene ninguna membresía registrada en el sistema.</p>
+      <button class="app-btn app-btn-primary btn-sm" (click)="openNewMembershipModal()">
+        Registrar Primera Membresía
+      </button>
     </div>
 
     <!-- Table View for Desktop -->
-    <div class="table-responsive-wrapper desktop-view">
+    <div *ngIf="memberships.length > 0" class="table-responsive-wrapper desktop-view">
       <table class="app-table">
         <thead>
           <tr>
@@ -86,10 +93,10 @@
             </td>
             <td class="text-right">
               <div class="action-buttons">
-                <button class="btn-action-icon edit" (click)="openEditModal(membership)" title="Editar">
+                <button class="btn-action-icon" (click)="openEditModal(membership)" title="Editar">
                   ✏️
                 </button>
-                <button class="btn-action-icon delete" (click)="deleteMembership(membership.id)" title="Eliminar">
+                <button class="btn-action-icon" (click)="deleteMembership(membership.id)" title="Eliminar">
                   🗑️
                 </button>
               </div>
@@ -165,7 +172,7 @@
                 class="app-input"
                 [(ngModel)]="newMembershipForm.membership_type_id"
                 name="membership_type_id"
-                (change)="onMembershipTypeChange()"
+                (ngModelChange)="onMembershipTypeChange()"
                 required
                 [disabled]="!!editingMembershipId"
               >

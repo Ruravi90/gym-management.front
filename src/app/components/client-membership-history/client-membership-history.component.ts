@@ -42,32 +42,43 @@ export class ClientMembershipHistoryComponent implements OnInit {
     private clientService: ClientService
   ) {}
 
-  ngOnInit(): void {
-    // Check if clientId was passed as input, otherwise get from route params
-    if (this.clientId) {
-      this.loadClientData(this.clientId);
-    } else {
-      const id = this.route.snapshot.paramMap.get('id');
-      if (id) {
-        this.loadClientData(+id);
-      } else {
-        this.loading = false;
-        this.error = 'Client ID is required';
-      }
-    }
+  async ngOnInit(): Promise<void> {
+    try {
+      // Load membership types first
+      await this.loadMembershipTypes();
 
-    // Load membership types
-    this.loadMembershipTypes();
+      // Then load client data
+      // Check if clientId was passed as input, otherwise get from route params
+      if (this.clientId) {
+        this.loadClientData(this.clientId);
+      } else {
+        const id = this.route.snapshot.paramMap.get('id');
+        if (id) {
+          this.loadClientData(+id);
+        } else {
+          this.loading = false;
+          this.error = 'Client ID is required';
+        }
+      }
+    } catch (error) {
+      console.error('Error initializing component:', error);
+      this.error = 'Error inicializando componente';
+      this.loading = false;
+    }
   }
 
-  loadMembershipTypes(): void {
-    this.membershipService.getMembershipTypes().subscribe({
-      next: (types) => {
-        this.membershipTypes = types;
-      },
-      error: (err) => {
-        console.error('Error loading membership types:', err);
-      }
+  loadMembershipTypes(): Promise<void> {
+    return new Promise((resolve, reject) => {
+      this.membershipService.getMembershipTypes().subscribe({
+        next: (types) => {
+          this.membershipTypes = types;
+          resolve();
+        },
+        error: (err) => {
+          console.error('Error loading membership types:', err);
+          reject(err);
+        }
+      });
     });
   }
 
@@ -117,18 +128,27 @@ export class ClientMembershipHistoryComponent implements OnInit {
 
   // Handle membership type change to update price and end date
   onMembershipTypeChange(): void {
+    console.log('Membership type changed to:', this.newMembershipForm.membership_type_id);
     if (this.newMembershipForm.membership_type_id) {
-      const selectedType = this.membershipTypes.find(type => type.id === this.newMembershipForm.membership_type_id);
+      // Use == to handle potential string/number comparison
+      const selectedType = this.membershipTypes.find(type => type.id == this.newMembershipForm.membership_type_id);
+      console.log('Selected type found:', selectedType);
+      
       if (selectedType) {
         this.newMembershipForm.price = selectedType.price;
         this.newMembershipForm.price_paid = selectedType.price;
 
         // Calculate end date based on duration
         if (selectedType.duration_days) {
-          const startDate = new Date(this.newMembershipForm.start_date);
+          const startDateString = this.newMembershipForm.start_date;
+          // Split by dash to avoid timezone shifts when initializing from just the date string
+          const parts = startDateString.split('-');
+          const startDate = new Date(parseInt(parts[0]), parseInt(parts[1]) - 1, parseInt(parts[2]));
+          
           const endDate = new Date(startDate);
           endDate.setDate(endDate.getDate() + selectedType.duration_days);
           this.newMembershipForm.end_date = endDate.toISOString().split('T')[0];
+          console.log('Calculated end date:', this.newMembershipForm.end_date);
         }
       }
     }
@@ -136,13 +156,18 @@ export class ClientMembershipHistoryComponent implements OnInit {
 
   // Handle start date change to recalculate end date
   onStartDateChange(): void {
+    console.log('Start date changed to:', this.newMembershipForm.start_date);
     if (this.newMembershipForm.membership_type_id) {
-      const selectedType = this.membershipTypes.find(type => type.id === this.newMembershipForm.membership_type_id);
+      const selectedType = this.membershipTypes.find(type => type.id == this.newMembershipForm.membership_type_id);
       if (selectedType && selectedType.duration_days) {
-        const startDate = new Date(this.newMembershipForm.start_date);
+        const startDateString = this.newMembershipForm.start_date;
+        const parts = startDateString.split('-');
+        const startDate = new Date(parseInt(parts[0]), parseInt(parts[1]) - 1, parseInt(parts[2]));
+        
         const endDate = new Date(startDate);
         endDate.setDate(endDate.getDate() + selectedType.duration_days);
         this.newMembershipForm.end_date = endDate.toISOString().split('T')[0];
+        console.log('Recalculated end date:', this.newMembershipForm.end_date);
       }
     }
   }
@@ -194,6 +219,11 @@ export class ClientMembershipHistoryComponent implements OnInit {
 
   // Open the membership registration modal
   openNewMembershipModal(): void {
+    // Reset the form first to ensure proper initialization
+    this.resetNewMembershipForm();
+    // Set the client ID
+    this.newMembershipForm.client_id = this.client?.id || 0;
+    // Show the modal
     this.showMembershipModal = true;
   }
 

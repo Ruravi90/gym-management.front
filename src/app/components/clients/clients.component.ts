@@ -164,10 +164,6 @@ export class ClientsComponent implements OnInit, OnDestroy {
   }
 
   registerClient() {
-    if (!this.clientForm.email) {
-      alert('Email es obligatorio');
-      return;
-    }
 
     this.clientService.createClient(this.clientForm).subscribe({
       next: (res) => {
