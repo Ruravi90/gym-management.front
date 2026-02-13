@@ -13,10 +13,14 @@
 }
 
 .page-title {
-  margin: 0;
-  font-size: 1.5rem;
-  font-weight: 600;
-  color: #1f2937;
+    margin: 0;
+    font-size: 2rem;
+    font-weight: 700;
+    color: #1e293b; /* Dark slate color */
+    background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
 }
 
 .page-subtitle {

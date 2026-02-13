@@ -23,14 +23,7 @@
         <span class="nav-icon">👤</span>
         <span class="nav-label" *ngIf="!sidebarCollapsed">Usuarios</span>
       </a>
-      <a routerLink="/checkin" class="nav-item" [title]="sidebarCollapsed ? 'Check-in Facial' : ''" (click)="onNavItemClick()">
-        <span class="nav-icon">📷</span>
-        <span class="nav-label" *ngIf="!sidebarCollapsed">Check-in Facial</span>
-      </a>
-      <a routerLink="/memberships" routerLinkActive="active" class="nav-item" [title]="sidebarCollapsed ? 'Membresías' : ''" (click)="onNavItemClick()">
-        <span class="nav-icon">💳</span>
-        <span class="nav-label" *ngIf="!sidebarCollapsed">Membresías</span>
-      </a>
+      
       <a routerLink="/membership-types" routerLinkActive="active" class="nav-item" *ngIf="getCurrentUser() && (getCurrentUser()?.role === 'admin' || getCurrentUser()?.role === 'super_admin' || getCurrentUser()?.role === 'manager')" [title]="sidebarCollapsed ? 'Tipos de Membresía' : ''" (click)="onNavItemClick()">
         <span class="nav-icon">📋</span>
         <span class="nav-label" *ngIf="!sidebarCollapsed">Tipos de Membresía</span>
@@ -41,14 +34,10 @@
       </a>
 
       <div class="nav-divider" *ngIf="!sidebarCollapsed">Centro de Control</div>
-
-      <a href="#" class="nav-item disabled" [title]="sidebarCollapsed ? 'Clases' : ''">
-        <span class="nav-icon">🏋️</span>
-        <span class="nav-label" *ngIf="!sidebarCollapsed">Clases</span>
-      </a>
-      <a href="#" class="nav-item disabled" [title]="sidebarCollapsed ? 'Reportes' : ''">
-        <span class="nav-icon">📈</span>
-        <span class="nav-label" *ngIf="!sidebarCollapsed">Reportes</span>
+      
+      <a routerLink="/checkin" class="nav-item" [title]="sidebarCollapsed ? 'Check-in Facial' : ''" (click)="onNavItemClick()">
+        <span class="nav-icon">📷</span>
+        <span class="nav-label" *ngIf="!sidebarCollapsed">Check-in Facial</span>
       </a>
     </nav>
 

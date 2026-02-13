@@ -1,113 +1,293 @@
 <div *ngIf="loading" class="loading-state">
-  <div class="loader-premium"></div>
-  <p>Cargando historial de guerreros...</p>
+  <div class="loader"></div>
+  <p>Cargando historial de membresías...</p>
 </div>
 
-<div *ngIf="error" class="error-glass">
-  <span class="icon">⚠️</span>
+<div *ngIf="error" class="error-message">
+  <span class="error-icon">⚠️</span>
   <p>{{ error }}</p>
 </div>
 
 <div *ngIf="!loading && !error" class="history-content">
   <header class="main-header">
     <div class="header-info">
-      <h1 class="page-title">Historial de Guerrero</h1>
+      <h1 class="page-title">Historial de Membresías</h1>
       <p class="page-subtitle">{{ client?.name }} — {{ client?.email }}</p>
     </div>
     <div class="header-actions">
-      <button class="btn-glass-secondary" (click)="loadData()">🔄 Refrescar</button>
+      <button class="app-btn app-btn-secondary" (click)="loadData()">🔄 Refrescar</button>
     </div>
   </header>
 
-  <div class="stats-grid-premium">
-    <div class="stat-glass-card active">
-      <div class="stat-icon-wrapper">✔️</div>
-      <div class="stat-details">
-        <span class="label">Activas</span>
-        <span class="value">{{ getActiveMembershipsCount() }}</span>
-      </div>
+  <!-- Button to open membership registration modal -->
+  <div class="section-header">
+    <h3 class="section-title">Agregar Membresía</h3>
+    <button class="app-btn app-btn-primary" (click)="openNewMembershipModal()">
+      <span>+</span> Nueva Membresía
+    </button>
+  </div>
+
+  <!-- Memberships List -->
+  <div class="history-section">
+    <div class="section-header">
+      <h3 class="section-title">Historial de Membresías</h3>
+      <span class="count-badge">{{ memberships.length }} entradas</span>
     </div>
-    <div class="stat-glass-card expired">
-      <div class="stat-icon-wrapper">⌛</div>
-      <div class="stat-details">
-        <span class="label">Expiradas</span>
-        <span class="value">{{ getExpiredMembershipsCount() }}</span>
-      </div>
+
+    <div *ngIf="memberships.length === 0" class="empty-state">
+      <p>Este cliente aún no tiene historial de membresías.</p>
     </div>
-    <div class="stat-glass-card total">
-      <div class="stat-icon-wrapper">📋</div>
-      <div class="stat-details">
-        <span class="label">Total Planes</span>
-        <span class="value">{{ memberships.length }}</span>
+
+    <!-- Table View for Desktop -->
+    <div class="table-responsive-wrapper desktop-view">
+      <table class="app-table">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Tipo</th>
+            <th>Período</th>
+            <th>Precio</th>
+            <th>Estado</th>
+            <th>Pago</th>
+            <th>Acciones</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let membership of memberships">
+            <td>#{{ membership.id }}</td>
+            <td>
+              <span class="membership-badge" [attr.data-type]="membership.type">
+                {{ membership.type | uppercase }}
+              </span>
+            </td>
+            <td>
+              <div class="date-range">
+                <span>{{ formatDate(membership.start_date) }}</span>
+                <span class="divider">→</span>
+                <span>{{ formatDate(membership.end_date) }}</span>
+              </div>
+              <div class="time-left" *ngIf="isMembershipActive(membership)">
+                <span class="days-count">{{ daysUntilExpiration(membership) }}</span> días restantes
+              </div>
+              <div class="time-left expired" *ngIf="isMembershipExpired(membership)">
+                Venció hace {{ getDaysSinceExpiration(membership) }} días
+              </div>
+            </td>
+            <td>${{ membership.price }}</td>
+            <td>
+              <span class="status-badge" [class]="membership.status">
+                {{ membership.status | titlecase }}
+              </span>
+            </td>
+            <td>
+              <span class="payment-badge" [class]="membership.payment_status">
+                {{ membership.payment_status | titlecase }}
+              </span>
+            </td>
+            <td class="text-right">
+              <div class="action-buttons">
+                <button class="btn-action-icon edit" (click)="openEditModal(membership)" title="Editar">
+                  ✏️
+                </button>
+                <button class="btn-action-icon delete" (click)="deleteMembership(membership.id)" title="Eliminar">
+                  🗑️
+                </button>
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Card View for Mobile -->
+    <div class="cards-container mobile-view">
+      <div class="membership-card" *ngFor="let membership of memberships">
+        <div class="card-header">
+          <div class="header-top">
+            <div class="membership-id">#{{ membership.id }}</div>
+            <span class="membership-badge" [attr.data-type]="membership.type">
+              {{ membership.type | uppercase }}
+            </span>
+          </div>
+          <div class="status-badge" [class]="membership.status">
+            {{ membership.status | titlecase }}
+          </div>
+        </div>
+
+        <div class="card-body">
+          <div class="membership-details">
+            <div class="detail-item">
+              <span class="detail-label">Período:</span>
+              <span class="detail-value">{{ formatDate(membership.start_date) }} → {{ formatDate(membership.end_date) }}</span>
+            </div>
+            <div class="detail-item" *ngIf="isMembershipActive(membership)">
+              <span class="detail-label">Restante:</span>
+              <span class="detail-value highlight-green">{{ daysUntilExpiration(membership) }} días</span>
+            </div>
+            <div class="detail-item" *ngIf="isMembershipExpired(membership)">
+              <span class="detail-label">Expiró:</span>
+              <span class="detail-value highlight-red">Hace {{ getDaysSinceExpiration(membership) }} días</span>
+            </div>
+            <div class="detail-item">
+              <span class="detail-label">Precio:</span>
+              <span class="detail-value">${{ membership.price }}</span>
+            </div>
+            <div class="detail-item">
+              <span class="detail-label">Pago:</span>
+              <span class="payment-badge" [class]="membership.payment_status">
+                {{ membership.payment_status | titlecase }}
+              </span>
+            </div>
+          </div>
+        </div>
+
+        <div class="card-actions">
+          <button class="app-btn app-btn-secondary btn-sm" (click)="openEditModal(membership)">Editar</button>
+          <button class="app-btn app-btn-danger btn-sm" (click)="deleteMembership(membership.id)">Eliminar</button>
+        </div>
       </div>
     </div>
   </div>
 
-  <div class="history-section">
-    <div class="section-header">
-      <h3 class="section-title">Registro de Membresías</h3>
-      <span class="count-pill">{{ memberships.length }} Entradas</span>
-    </div>
+  <!-- Membership Registration Modal -->
+  <div class="modal-backdrop" *ngIf="showMembershipModal">
+    <div class="app-card modal-card">
+      <div class="modal-header">
+        <h3>{{ editingMembershipId ? 'Modificar Membresía' : 'Nueva Alta de Membresía' }}</h3>
+        <button class="btn-close" (click)="closeMembershipModal()">&times;</button>
+      </div>
+      <div class="modal-body">
+        <form (ngSubmit)="createMembership()" #membershipFormRef="ngForm" class="compact-form">
+          <div class="form-grid">
+            <div class="form-group">
+              <label>Tipo de Plan</label>
+              <select
+                class="app-input"
+                [(ngModel)]="newMembershipForm.membership_type_id"
+                name="membership_type_id"
+                (change)="onMembershipTypeChange()"
+                required
+                [disabled]="!!editingMembershipId"
+              >
+                <option value="">Seleccione un tipo...</option>
+                <option *ngFor="let type of membershipTypes" [value]="type.id">
+                  {{ type.name }}
+                </option>
+              </select>
+            </div>
 
-    <div *ngIf="memberships.length === 0" class="no-data-glass">
-      <p>Este guerrero aún no cuenta con historial de membresías.</p>
-    </div>
-
-    <div class="membership-cards-grid">
-      <div *ngFor="let membership of memberships" class="premium-history-card">
-        <div class="card-glow" [style.background]="getStatusColor(membership.status)"></div>
-        
-        <div class="card-header">
-          <div class="type-badge-group">
-            <span class="type-pill" [attr.data-type]="membership.type">{{ membership.type | uppercase }}</span>
-            <span class="status-pill" [style.borderColor]="getStatusColor(membership.status)" [style.color]="getStatusColor(membership.status)">
-              {{ membership.status | uppercase }}
-            </span>
-          </div>
-          <div class="price-pill">${{ membership.price }}</div>
-        </div>
-
-        <div class="card-body">
-          <div class="info-row">
-            <span class="info-icon">📅</span>
-            <div class="info-content">
-              <span class="info-label">Periodo de Vigencia</span>
-              <span class="info-value">{{ formatDate(membership.start_date) }} <span class="divider">→</span> {{ formatDate(membership.end_date) }}</span>
+            <div class="form-group">
+              <label>Importe ($)</label>
+              <input
+                type="number"
+                class="app-input"
+                [(ngModel)]="newMembershipForm.price_paid"
+                name="price_paid"
+                required
+                min="0"
+                step="0.01"
+                readonly
+                title="El importe se calcula automáticamente según el tipo de plan"
+                [disabled]="!!editingMembershipId"
+              />
             </div>
           </div>
 
-          <div class="info-row" *ngIf="isMembershipActive(membership)">
-            <span class="info-icon">⚡</span>
-            <div class="info-content">
-              <span class="info-label">Días Disponibles</span>
-              <span class="info-value highlight-green">{{ daysUntilExpiration(membership) }} días restantes</span>
+          <div class="form-grid">
+            <div class="form-group">
+              <label>Fecha de Inicio</label>
+              <input
+                type="date"
+                class="app-input"
+                [(ngModel)]="newMembershipForm.start_date"
+                name="start_date"
+                (change)="onStartDateChange()"
+                required
+                [disabled]="!!editingMembershipId"
+              />
+            </div>
+
+            <div class="form-group">
+              <label>Vencimiento</label>
+              <input
+                type="date"
+                class="app-input"
+                [(ngModel)]="newMembershipForm.end_date"
+                name="end_date"
+                required
+                readonly
+                title="El vencimiento se calcula automáticamente según la duración del plan"
+                [disabled]="!!editingMembershipId"
+              />
             </div>
           </div>
 
-          <div class="info-row" *ngIf="isMembershipExpired(membership)">
-            <span class="info-icon">⏲️</span>
-            <div class="info-content">
-              <span class="info-label">Expiración</span>
-              <span class="info-value highlight-red">Venció hace {{ getDaysSinceExpiration(membership) }} días</span>
+          <div class="form-grid">
+            <div class="form-group">
+              <label>Estado Administración</label>
+              <select
+                class="app-input"
+                [(ngModel)]="newMembershipForm.status"
+                name="status"
+                required
+              >
+                <option value="available">Disponible</option>
+                <option value="active">Activa</option>
+                <option value="expired">Expirada</option>
+                <option value="suspended">Suspendida</option>
+                <option value="cancelled">Cancelada</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label>Estado del Pago</label>
+              <select
+                class="app-input"
+                [(ngModel)]="newMembershipForm.payment_status"
+                name="payment_status"
+                required
+              >
+                <option value="pending">Pendiente</option>
+                <option value="paid">Pagado</option>
+                <option value="overdue">Atrasado</option>
+              </select>
             </div>
           </div>
 
-          <div class="info-grid">
-            <div class="info-small-box">
-              <span class="small-label">Pago</span>
-              <span class="small-value" [class]="membership.payment_status">{{ membership.payment_status | titlecase }}</span>
-            </div>
-            <div class="info-small-box" *ngIf="membership.payment_method">
-              <span class="small-label">Método</span>
-              <span class="small-value">{{ membership.payment_method | titlecase }}</span>
-            </div>
+          <div class="form-group">
+            <label>Método de Pago</label>
+            <select
+              class="app-input"
+              [(ngModel)]="newMembershipForm.payment_method"
+              name="payment_method"
+            >
+              <option value="">Seleccione método...</option>
+              <option value="cash">Efectivo</option>
+              <option value="card">Tarjeta</option>
+              <option value="bank_transfer">Transferencia bancaria</option>
+              <option value="online">Pago en línea</option>
+            </select>
           </div>
 
-          <div class="notes-box" *ngIf="membership.notes">
-            <span class="notes-label">Notas Administrativas</span>
-            <p class="notes-text text-truncate">{{ membership.notes }}</p>
+          <div class="form-group">
+            <label>Notas Adicionales</label>
+            <textarea
+              class="app-input"
+              [(ngModel)]="newMembershipForm.notes"
+              name="notes"
+              rows="3"
+            ></textarea>
           </div>
-        </div>
+
+          <div class="modal-actions">
+            <button type="button" class="app-btn app-btn-secondary" (click)="closeMembershipModal()">
+              Cancelar
+            </button>
+            <button type="submit" class="app-btn app-btn-primary" [disabled]="!membershipFormRef.form.valid">
+              Confirmar Registro
+            </button>
+          </div>
+        </form>
       </div>
     </div>
   </div>

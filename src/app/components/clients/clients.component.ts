@@ -1,4 +1,5 @@
 import { Component, OnInit, ViewChild, ElementRef, OnDestroy, ChangeDetectorRef } from '@angular/core';
+import { Router } from '@angular/router';
 import { ClientService } from '../../services/client.service';
 import { Client } from '../../services/client.service';
 import { AuthService } from '../../services/auth.service';
@@ -53,6 +54,7 @@ export class ClientsComponent implements OnInit, OnDestroy {
   constructor(
     private clientService: ClientService,
     private authService: AuthService,
+    private router: Router,
     private cdr: ChangeDetectorRef
   ) { }
 
@@ -421,5 +423,16 @@ export class ClientsComponent implements OnInit, OnDestroy {
     }
 
     return pages;
+  }
+
+  // Navigation methods for membership actions
+  navigateToAddMembership(clientId: number) {
+    // Navigate directly to the client membership history page which now includes membership creation
+    this.router.navigate(['/client-membership-history', clientId]);
+  }
+
+  navigateToMembershipHistory(clientId: number) {
+    // Navigate to the client membership history page
+    this.router.navigate(['/client-membership-history', clientId]);
   }
 }

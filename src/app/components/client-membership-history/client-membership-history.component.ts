@@ -1,6 +1,7 @@
 import { Component, OnInit, Input } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { MembershipService, Membership } from '../../services/membership.service';
+import { NgForm } from '@angular/forms';
+import { MembershipService, Membership, MembershipType, CreateMembershipRequest } from '../../services/membership.service';
 import { ClientService } from '../../services/client.service';
 
 @Component({
@@ -10,11 +11,30 @@ import { ClientService } from '../../services/client.service';
 })
 export class ClientMembershipHistoryComponent implements OnInit {
   @Input() clientId?: number;
-  
+
   client: any = null;
   memberships: Membership[] = [];
+  membershipTypes: MembershipType[] = [];
   loading = true;
   error: string | null = null;
+
+  // Modal state
+  showMembershipModal = false;
+
+  // New membership form
+  newMembershipForm: CreateMembershipRequest = {
+    client_id: 0,
+    membership_type_id: undefined,
+    type: 'basic',
+    start_date: new Date().toISOString().split('T')[0],
+    end_date: '',
+    price: 0,
+    price_paid: 0,
+    status: 'active',
+    payment_status: 'pending',
+    payment_method: '',
+    notes: ''
+  };
 
   constructor(
     private route: ActivatedRoute,
@@ -23,10 +43,6 @@ export class ClientMembershipHistoryComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.loadData();
-  }
-
-  loadData(): void {
     // Check if clientId was passed as input, otherwise get from route params
     if (this.clientId) {
       this.loadClientData(this.clientId);
@@ -39,6 +55,20 @@ export class ClientMembershipHistoryComponent implements OnInit {
         this.error = 'Client ID is required';
       }
     }
+
+    // Load membership types
+    this.loadMembershipTypes();
+  }
+
+  loadMembershipTypes(): void {
+    this.membershipService.getMembershipTypes().subscribe({
+      next: (types) => {
+        this.membershipTypes = types;
+      },
+      error: (err) => {
+        console.error('Error loading membership types:', err);
+      }
+    });
   }
 
   loadClientData(clientId: number): void {
@@ -49,7 +79,9 @@ export class ClientMembershipHistoryComponent implements OnInit {
     this.clientService.getClient(clientId).subscribe({
       next: (client) => {
         this.client = client;
-        
+        // Set the client_id in the new membership form
+        this.newMembershipForm.client_id = clientId;
+
         // Load membership history
         this.membershipService.getMembershipHistory(clientId).subscribe({
           next: (memberships) => {
@@ -69,6 +101,168 @@ export class ClientMembershipHistoryComponent implements OnInit {
         this.loading = false;
       }
     });
+  }
+
+  loadData(): void {
+    // Reload data
+    if (this.clientId) {
+      this.loadClientData(this.clientId);
+    } else {
+      const id = this.route.snapshot.paramMap.get('id');
+      if (id) {
+        this.loadClientData(+id);
+      }
+    }
+  }
+
+  // Handle membership type change to update price and end date
+  onMembershipTypeChange(): void {
+    if (this.newMembershipForm.membership_type_id) {
+      const selectedType = this.membershipTypes.find(type => type.id === this.newMembershipForm.membership_type_id);
+      if (selectedType) {
+        this.newMembershipForm.price = selectedType.price;
+        this.newMembershipForm.price_paid = selectedType.price;
+
+        // Calculate end date based on duration
+        if (selectedType.duration_days) {
+          const startDate = new Date(this.newMembershipForm.start_date);
+          const endDate = new Date(startDate);
+          endDate.setDate(endDate.getDate() + selectedType.duration_days);
+          this.newMembershipForm.end_date = endDate.toISOString().split('T')[0];
+        }
+      }
+    }
+  }
+
+  // Handle start date change to recalculate end date
+  onStartDateChange(): void {
+    if (this.newMembershipForm.membership_type_id) {
+      const selectedType = this.membershipTypes.find(type => type.id === this.newMembershipForm.membership_type_id);
+      if (selectedType && selectedType.duration_days) {
+        const startDate = new Date(this.newMembershipForm.start_date);
+        const endDate = new Date(startDate);
+        endDate.setDate(endDate.getDate() + selectedType.duration_days);
+        this.newMembershipForm.end_date = endDate.toISOString().split('T')[0];
+      }
+    }
+  }
+
+  // Create or update a membership
+  createMembership(): void {
+    if (!this.newMembershipForm.client_id) {
+      this.error = 'Client ID is required';
+      return;
+    }
+
+    if (this.editingMembershipId) {
+      // Update existing membership
+      this.membershipService.updateMembership(this.editingMembershipId, this.newMembershipForm).subscribe({
+        next: (updatedMembership) => {
+          // Find and update the membership in the list
+          const index = this.memberships.findIndex(m => m.id === this.editingMembershipId);
+          if (index !== -1) {
+            this.memberships[index] = updatedMembership;
+          }
+          // Close the modal
+          this.closeMembershipModal();
+          // Show success message
+          alert('Membresía actualizada exitosamente');
+        },
+        error: (err) => {
+          console.error('Error updating membership:', err);
+          this.error = 'Error actualizando membresía: ' + (err.error?.detail || err.message);
+        }
+      });
+    } else {
+      // Create new membership
+      this.membershipService.createMembership(this.newMembershipForm).subscribe({
+        next: (newMembership) => {
+          // Add the new membership to the list
+          this.memberships.unshift(newMembership);
+          // Close the modal
+          this.closeMembershipModal();
+          // Show success message
+          alert('Membresía creada exitosamente');
+        },
+        error: (err) => {
+          console.error('Error creating membership:', err);
+          this.error = 'Error creando membresía: ' + (err.error?.detail || err.message);
+        }
+      });
+    }
+  }
+
+  // Open the membership registration modal
+  openNewMembershipModal(): void {
+    this.showMembershipModal = true;
+  }
+
+  // Close the membership registration modal
+  closeMembershipModal(): void {
+    this.showMembershipModal = false;
+    this.editingMembershipId = null;
+    this.resetNewMembershipForm();
+  }
+
+  // Open the edit membership modal
+  openEditModal(membership: Membership): void {
+    // Set the form values to the membership being edited
+    this.newMembershipForm = {
+      client_id: membership.client_id,
+      membership_type_id: membership.membership_type_id,
+      type: membership.type,
+      start_date: membership.start_date.split('T')[0], // Format date properly
+      end_date: membership.end_date.split('T')[0], // Format date properly
+      price: membership.price,
+      price_paid: membership.price_paid || membership.price,
+      status: membership.status,
+      payment_status: membership.payment_status,
+      payment_method: membership.payment_method || '',
+      notes: membership.notes || ''
+    };
+    // Set the ID for the update operation
+    this.editingMembershipId = membership.id;
+    // Show the modal
+    this.showMembershipModal = true;
+  }
+
+  // Editing membership ID
+  editingMembershipId: number | null = null;
+
+  // Delete a membership
+  deleteMembership(id: number): void {
+    if (confirm('¿Estás seguro de que deseas eliminar esta membresía?')) {
+      this.membershipService.deleteMembership(id).subscribe({
+        next: () => {
+          // Remove the membership from the list
+          this.memberships = this.memberships.filter(m => m.id !== id);
+          // Show success message
+          alert('Membresía eliminada exitosamente');
+        },
+        error: (err) => {
+          console.error('Error deleting membership:', err);
+          alert('Error eliminando membresía: ' + (err.error?.detail || err.message));
+        }
+      });
+    }
+  }
+
+  // Reset the new membership form
+  resetNewMembershipForm(): void {
+    this.newMembershipForm = {
+      client_id: this.client?.id || 0,
+      membership_type_id: undefined,
+      type: 'basic',
+      start_date: new Date().toISOString().split('T')[0],
+      end_date: '',
+      price: 0,
+      price_paid: 0,
+      status: 'active',
+      payment_status: 'pending',
+      payment_method: '',
+      notes: ''
+    };
+    this.editingMembershipId = null;
   }
 
   getStatusColor(status: string): string {

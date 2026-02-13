@@ -52,8 +52,8 @@
                     <div class="action-buttons">
                         <button class="btn-action-icon edit" (click)="openEditModal(client)" title="Editar">✏️</button>
                         <button class="btn-action-icon delete" (click)="confirmDelete(client)" title="Eliminar">🗑️</button>
-                        <button class="app-btn app-btn-info btn-sm" [routerLink]="['/audit-logs']" [queryParams]="{entity_type: 'Client', entity_id: client.id}">
-                            🔍 Auditoría
+                        <button class="app-btn app-btn-warning btn-sm" (click)="navigateToMembershipHistory(client.id)">
+                            📋 Membresía
                         </button>
                         <button class="app-btn app-btn-secondary btn-sm" (click)="openFaceScanModal(client)">
                             📷 Rostro
@@ -97,9 +97,9 @@
         </div>
 
         <div class="card-actions">
-            <button class="app-btn app-btn-secondary btn-sm" (click)="openEditModal(client)">Editar</button>
-            <button class="app-btn app-btn-info btn-sm" [routerLink]="['/audit-logs']" [queryParams]="{entity_type: 'Client', entity_id: client.id}">🔍 Auditoría</button>
-            <button class="app-btn app-btn-danger btn-sm" (click)="confirmDelete(client)">Eliminar</button>
+            <button class="app-btn app-btn-secondary btn-sm" (click)="openEditModal(client)">✏️ Editar</button>
+            <button class="app-btn app-btn-warning btn-sm" (click)="navigateToMembershipHistory(client.id)">📋 Membresía</button>
+            <button class="app-btn app-btn-danger btn-sm" (click)="confirmDelete(client)">🗑️ Eliminar</button>
             <button class="app-btn app-btn-primary btn-sm" (click)="openFaceScanModal(client)">📷 Rostro</button>
         </div>
     </div>
