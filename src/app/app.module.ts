@@ -19,6 +19,8 @@ import { ClientMembershipHistoryComponent } from './components/client-membership
 import { MainLayoutComponent } from './components/main-layout/main-layout.component';
 import { ClientsComponent } from './components/clients/clients.component';
 import { UsersAdminComponent } from './components/users-admin/users-admin.component';
+import { AuditLogComponent } from './components/audit-log/audit-log.component';
+import { EntityAuditTrailComponent } from './components/audit-log/entity-audit-trail.component';
 
 import { HTTP_INTERCEPTORS } from '@angular/common/http';
 import { AuthInterceptor } from './interceptors/auth.interceptor';
@@ -34,7 +36,9 @@ import { AuthInterceptor } from './interceptors/auth.interceptor';
     ClientMembershipHistoryComponent,
     MainLayoutComponent,
     ClientsComponent,
-    UsersAdminComponent
+    UsersAdminComponent,
+    AuditLogComponent,
+    EntityAuditTrailComponent
   ],
   imports: [
     BrowserModule,

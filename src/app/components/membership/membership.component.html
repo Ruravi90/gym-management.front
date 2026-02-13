@@ -178,6 +178,13 @@
               ✏️
             </button>
             <button
+              class="btn-action-icon"
+              [routerLink]="['/audit-logs']"
+              [queryParams]="{entity_type: 'Membership', entity_id: membership.id}"
+            >
+              🔍
+            </button>
+            <button
               class="btn-action-icon delete"
               (click)="deleteMembership(membership.id)"
             >
@@ -257,6 +264,7 @@
 
     <div class="card-actions">
       <button class="app-btn app-btn-secondary btn-sm" (click)="openEditModal(membership)">Editar</button>
+      <button class="app-btn app-btn-info btn-sm" [routerLink]="['/audit-logs']" [queryParams]="{entity_type: 'Membership', entity_id: membership.id}">🔍 Auditoría</button>
       <button class="app-btn app-btn-danger btn-sm" (click)="deleteMembership(membership.id)">Eliminar</button>
     </div>
   </div>

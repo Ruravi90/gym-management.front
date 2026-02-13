@@ -1,0 +1,245 @@
+<div class="audit-log-container">
+  <div class="audit-log-header">
+    <h2>Historial de Auditoría</h2>
+    <p>Registro de todas las acciones realizadas en el sistema</p>
+  </div>
+
+  <!-- Filters -->
+  <div class="audit-log-filters card">
+    <h3>Filtros</h3>
+    <div class="filter-row">
+      <div class="form-group">
+        <label>Tipo de Acción:</label>
+        <select [(ngModel)]="filters.action_type" class="form-control">
+          <option value="">Todos</option>
+          <option *ngFor="let type of actionTypes" [value]="type">{{type}}</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label>Tipo de Entidad:</label>
+        <select [(ngModel)]="filters.entity_type" class="form-control">
+          <option value="">Todos</option>
+          <option *ngFor="let type of entityTypes" [value]="type">{{type}}</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label>ID de Entidad:</label>
+        <input type="number" [(ngModel)]="filters.entity_id" class="form-control" placeholder="ID...">
+      </div>
+
+      <div class="form-group">
+        <label>ID de Usuario:</label>
+        <input type="number" [(ngModel)]="filters.user_id" class="form-control" placeholder="Usuario ID...">
+      </div>
+
+      <div class="form-group">
+        <label>Desde Fecha:</label>
+        <input type="date" [(ngModel)]="filters.start_date" class="form-control">
+      </div>
+
+      <div class="form-group">
+        <label>Hasta Fecha:</label>
+        <input type="date" [(ngModel)]="filters.end_date" class="form-control">
+      </div>
+    </div>
+
+    <div class="filter-actions">
+      <button class="btn btn-primary" (click)="applyFilters()">Aplicar Filtros</button>
+      <button class="btn btn-secondary" (click)="resetFilters()">Limpiar Filtros</button>
+    </div>
+  </div>
+
+  <!-- Loading indicator -->
+  <div *ngIf="loading" class="loading">
+    <p>Cargando historial de auditoría...</p>
+  </div>
+
+  <!-- Error message -->
+  <div *ngIf="error" class="alert alert-danger">
+    {{ error }}
+  </div>
+
+  <!-- Audit logs table (Desktop view) -->
+  <div class="audit-log-table-container card desktop-view">
+    <table class="audit-log-table">
+      <thead>
+        <tr>
+          <th>Fecha/Hora</th>
+          <th>Usuario</th>
+          <th>Acción</th>
+          <th>Entidad</th>
+          <th>ID</th>
+          <th>Detalles</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let log of filteredAuditLogs">
+          <td>{{ formatDate(log.timestamp) }}</td>
+          <td>{{ getUserDisplayName(log.user_id) }}</td>
+          <td><span class="badge badge-{{ log.action_type.toLowerCase() }}">{{ log.action_type }}</span></td>
+          <td>{{ log.entity_type }}</td>
+          <td>{{ log.entity_id }}</td>
+          <td>
+            <div *ngIf="log.action_type === 'UPDATE'" class="changes-list">
+              <div *ngFor="let change of getChangedFields(log); let i = index" [hidden]="i >= 3" class="change-item">
+                <strong>{{ change.key }}:</strong>
+                <span class="old-value">{{ getOldValueDisplay(change.key, change.oldValue) }}</span> →
+                <span class="new-value">{{ getNewValueDisplay(change.key, change.newValue) }}</span>
+              </div>
+              <div *ngIf="getChangedFields(log).length > 3">
+                <em>{{ getChangedFields(log).length - 3 }} más...</em>
+              </div>
+            </div>
+            <div *ngIf="log.action_type === 'CREATE'" class="creation-details">
+              <div *ngFor="let key of getObjectKeys(log.new_values); let i = index" [hidden]="i >= 3" class="creation-item">
+                <strong>{{ key }}:</strong> {{ getNewValueDisplay(key, log.new_values![key]) }}
+              </div>
+              <div *ngIf="getObjectKeys(log.new_values).length > 3">
+                <em>{{ getObjectKeys(log.new_values).length - 3 }} más...</em>
+              </div>
+            </div>
+            <div *ngIf="log.action_type === 'DELETE'" class="deletion-details">
+              <div *ngFor="let key of getObjectKeys(log.old_values); let i = index" [hidden]="i >= 3" class="deletion-item">
+                <strong>{{ key }}:</strong> {{ getOldValueDisplay(key, log.old_values![key]) }}
+              </div>
+              <div *ngIf="getObjectKeys(log.old_values).length > 3">
+                <em>{{ getObjectKeys(log.old_values).length - 3 }} más...</em>
+              </div>
+            </div>
+            <button class="btn btn-info btn-sm" (click)="showDetail(log)" style="margin-top: 10px;">Detalles</button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Audit logs cards (Mobile view) -->
+  <div class="cards-container mobile-view" *ngIf="!loading && !error && filteredAuditLogs.length > 0">
+    <div class="audit-log-card" *ngFor="let log of filteredAuditLogs">
+      <div class="card-header">
+        <div class="header-top">
+          <div class="log-timestamp">{{ formatDate(log.timestamp) }}</div>
+          <div class="log-action">
+            <span class="badge badge-{{ log.action_type.toLowerCase() }}">{{ log.action_type }}</span>
+          </div>
+        </div>
+        <div class="header-info">
+          <div class="log-user">{{ getUserDisplayName(log.user_id) }}</div>
+          <div class="log-entity">{{ log.entity_type }} #{{ log.entity_id }}</div>
+        </div>
+      </div>
+
+      <div class="card-body">
+        <div class="summary-info">
+          <p><strong>Acción:</strong> {{ log.action_type }}</p>
+          <p><strong>Entidad:</strong> {{ log.entity_type }} #{{ log.entity_id }}</p>
+          <p><strong>Usuario:</strong> {{ getUserDisplayName(log.user_id) }}</p>
+        </div>
+
+        <div class="card-actions">
+          <button class="btn btn-info btn-sm" (click)="showDetail(log)">Ver Detalles</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Pagination -->
+  <div class="pagination" *ngIf="filteredAuditLogs.length > 0">
+    <button
+      class="btn btn-outline"
+      [disabled]="currentPage === 0"
+      (click)="onPageChange(currentPage - 1)">
+      Anterior
+    </button>
+    <span>Página {{ currentPage + 1 }}</span>
+    <button
+      class="btn btn-outline"
+      [disabled]="(currentPage + 1) * itemsPerPage >= totalItems"
+      (click)="onPageChange(currentPage + 1)">
+      Siguiente
+    </button>
+  </div>
+
+  <!-- Empty state -->
+  <div *ngIf="!loading && !error && filteredAuditLogs.length === 0" class="empty-state">
+    <p>No se encontraron registros de auditoría.</p>
+  </div>
+
+  <!-- Detail Modal -->
+  <div class="modal-backdrop" *ngIf="showDetailModal">
+    <div class="app-card modal-card">
+      <div class="modal-header">
+        <h3>Detalles del Registro de Auditoría</h3>
+        <button class="btn-close" (click)="closeModal()">&times;</button>
+      </div>
+      <div class="modal-body" *ngIf="selectedLog">
+        <div class="detail-row">
+          <span class="detail-label">Fecha/Hora:</span>
+          <span class="detail-value">{{ formatDate(selectedLog.timestamp) }}</span>
+        </div>
+        <div class="detail-row">
+          <span class="detail-label">Usuario:</span>
+          <span class="detail-value">{{ getUserDisplayName(selectedLog.user_id) }}</span>
+        </div>
+        <div class="detail-row">
+          <span class="detail-label">Acción:</span>
+          <span class="detail-badge badge-{{ selectedLog.action_type.toLowerCase() }}">{{ selectedLog.action_type }}</span>
+        </div>
+        <div class="detail-row">
+          <span class="detail-label">Entidad:</span>
+          <span class="detail-value">{{ selectedLog.entity_type }}</span>
+        </div>
+        <div class="detail-row">
+          <span class="detail-label">ID de Entidad:</span>
+          <span class="detail-value">{{ selectedLog.entity_id }}</span>
+        </div>
+        <div class="detail-row" *ngIf="selectedLog.ip_address">
+          <span class="detail-label">Dirección IP:</span>
+          <span class="detail-value">{{ selectedLog.ip_address }}</span>
+        </div>
+        <div class="detail-row" *ngIf="selectedLog.user_agent">
+          <span class="detail-label">Agente de Usuario:</span>
+          <span class="detail-value">{{ selectedLog.user_agent }}</span>
+        </div>
+
+        <div class="detail-section" *ngIf="selectedLog.action_type === 'UPDATE'">
+          <h4>Cambios Realizados</h4>
+          <div class="changes-list">
+            <div *ngFor="let change of getChangedFields(selectedLog)" class="change-item">
+              <div class="change-field"><strong>{{ change.key }}:</strong></div>
+              <div class="change-values">
+                <span class="old-value">{{ getOldValueDisplay(change.key, change.oldValue) }}</span> →
+                <span class="new-value">{{ getNewValueDisplay(change.key, change.newValue) }}</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="detail-section" *ngIf="selectedLog.action_type === 'CREATE'">
+          <h4>Valores Creados</h4>
+          <div class="creation-details">
+            <div *ngFor="let key of getObjectKeys(selectedLog.new_values)" class="creation-item">
+              <div class="creation-field"><strong>{{ key }}:</strong></div>
+              <div class="creation-value">{{ getNewValueDisplay(key, selectedLog.new_values![key]) }}</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="detail-section" *ngIf="selectedLog.action_type === 'DELETE'">
+          <h4>Valores Eliminados</h4>
+          <div class="deletion-details">
+            <div *ngFor="let key of getObjectKeys(selectedLog.old_values)" class="deletion-item">
+              <div class="deletion-field"><strong>{{ key }}:</strong></div>
+              <div class="deletion-value">{{ getOldValueDisplay(key, selectedLog.old_values![key]) }}</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="modal-actions">
+        <button class="app-btn app-btn-secondary" (click)="closeModal()">Cerrar</button>
+      </div>
+    </div>
+  </div>
+</div>

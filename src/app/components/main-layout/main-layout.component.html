@@ -35,6 +35,10 @@
         <span class="nav-icon">📋</span>
         <span class="nav-label" *ngIf="!sidebarCollapsed">Tipos de Membresía</span>
       </a>
+      <a routerLink="/audit-logs" routerLinkActive="active" class="nav-item" *ngIf="getCurrentUser() && (getCurrentUser()?.role === 'admin' || getCurrentUser()?.role === 'super_admin' || getCurrentUser()?.role === 'manager')" [title]="sidebarCollapsed ? 'Auditoría' : ''" (click)="onNavItemClick()">
+        <span class="nav-icon">🔍</span>
+        <span class="nav-label" *ngIf="!sidebarCollapsed">Auditoría</span>
+      </a>
 
       <div class="nav-divider" *ngIf="!sidebarCollapsed">Centro de Control</div>
 

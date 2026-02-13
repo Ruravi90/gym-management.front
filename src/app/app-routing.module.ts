@@ -11,6 +11,7 @@ import { AuthGuard } from './guards/auth.guard';
 import { AdminGuard } from './guards/admin.guard';
 import { UsersAdminComponent } from './components/users-admin/users-admin.component';
 import { ClientsComponent } from './components/clients/clients.component';
+import { AuditLogComponent } from './components/audit-log/audit-log.component';
 
 const routes: Routes = [
   { path: 'login', component: LoginComponent },
@@ -26,6 +27,7 @@ const routes: Routes = [
       { path: 'admin/users', component: UsersAdminComponent, canActivate: [AuthGuard, AdminGuard] },
       { path: 'clients', component: ClientsComponent },
       { path: 'client-membership-history/:id', component: ClientMembershipHistoryComponent },
+      { path: 'audit-logs', component: AuditLogComponent, canActivate: [AuthGuard, AdminGuard] },
       { path: '', redirectTo: 'dashboard', pathMatch: 'full' }
     ]
   },
