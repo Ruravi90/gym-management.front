@@ -47,8 +47,8 @@
               "outputHashing": "all",
               "fileReplacements": [
                 {
-                  "replace": "apps/admin/src/environments/environment.ts",
-                  "with": "apps/admin/src/environments/environment.prod.ts"
+                  "replace": "libs/shared/src/environments/environment.ts",
+                  "with": "libs/shared/src/environments/environment.prod.ts"
                 }
               ]
             },
@@ -104,7 +104,13 @@
                   "maximumError": "3mb"
                 }
               ],
-              "outputHashing": "all"
+              "outputHashing": "all",
+              "fileReplacements": [
+                {
+                  "replace": "libs/shared/src/environments/environment.ts",
+                  "with": "libs/shared/src/environments/environment.prod.ts"
+                }
+              ]
             },
             "development": {
               "buildOptimizer": false,

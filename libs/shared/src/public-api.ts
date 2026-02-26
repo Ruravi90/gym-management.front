@@ -11,3 +11,4 @@ export * from './guards/admin.guard';
 export * from './services/analytics.service';
 export * from './services/audit-log.service';
 export * from './services/user.service';
+export * from './environments/environment';
