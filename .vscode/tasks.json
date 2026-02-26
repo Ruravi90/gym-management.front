@@ -3,6 +3,44 @@
   "version": "2.0.0",
   "tasks": [
     {
+      "label": "npm: start:admin",
+      "type": "npm",
+      "script": "start:admin",
+      "isBackground": true,
+      "problemMatcher": {
+        "owner": "typescript",
+        "pattern": "$tsc",
+        "background": {
+          "activeOnStart": true,
+          "beginsPattern": {
+            "regexp": "(.*?)"
+          },
+          "endsPattern": {
+            "regexp": "bundle generation complete|Compiled successfully"
+          }
+        }
+      }
+    },
+    {
+      "label": "npm: start:member-portal",
+      "type": "npm",
+      "script": "start:member-portal",
+      "isBackground": true,
+      "problemMatcher": {
+        "owner": "typescript",
+        "pattern": "$tsc",
+        "background": {
+          "activeOnStart": true,
+          "beginsPattern": {
+            "regexp": "(.*?)"
+          },
+          "endsPattern": {
+            "regexp": "bundle generation complete|Compiled successfully"
+          }
+        }
+      }
+    },
+    {
       "type": "npm",
       "script": "start",
       "isBackground": true,
@@ -15,7 +53,7 @@
             "regexp": "(.*?)"
           },
           "endsPattern": {
-            "regexp": "bundle generation complete"
+            "regexp": "bundle generation complete|Compiled successfully"
           }
         }
       }

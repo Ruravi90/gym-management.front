@@ -1,9 +1,11 @@
 {
   "name": "gym-management-frontend",
-  "version": "1.0.17",
+  "version": "1.0.32",
   "scripts": {
     "ng": "ng",
     "start": "npm run generate-version && ng serve",
+    "start:admin": "npm run generate-version && ng serve admin --port 4200",
+    "start:member-portal": "npm run generate-version && ng serve member-portal --port 4201",
     "generate-version": "node scripts/generate-version.js",
     "build": "npm run generate-version && ng build --configuration=production",
     "watch": "npm run generate-version && ng build --watch --configuration development",

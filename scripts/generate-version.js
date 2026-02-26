@@ -30,7 +30,8 @@ const versionData = {
   hash: hash
 };
 
-const filePath = path.join(__dirname, '../src/assets/version.json');
+const filePath = path.join(__dirname, '../apps/admin/src/assets/version.json');
+const secondaryPath = path.join(__dirname, '../apps/member-portal/src/assets/version.json');
 
 // Ensure directory exists
 const dir = path.dirname(filePath);
@@ -39,7 +40,10 @@ if (!fs.existsSync(dir)){
 }
 
 fs.writeFileSync(filePath, JSON.stringify(versionData, null, 2));
+if (fs.existsSync(path.dirname(secondaryPath))) {
+    fs.writeFileSync(secondaryPath, JSON.stringify(versionData, null, 2));
+}
 
-console.log(`Version ${newVersion} generated at ${filePath}`);
+console.log(`Version ${newVersion} generated at ${filePath} and ${secondaryPath}`);
 console.log(`Timestamp: ${timestamp}`);
 console.log(`Hash: ${hash}`);
