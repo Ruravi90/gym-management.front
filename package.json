@@ -10,7 +10,7 @@
     "build": "npm run generate-version && ng build --configuration=production",
     "watch": "npm run generate-version && ng build --watch --configuration development",
     "test": "ng test",
-    "vercel-build": "npm run generate-version && ng build --configuration=production"
+    "vercel-build": "npm run generate-version && ng build ${APP_NAME:-admin} --configuration=production"
   },
   "private": true,
   "dependencies": {
