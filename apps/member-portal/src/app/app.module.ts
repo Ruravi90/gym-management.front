@@ -7,6 +7,8 @@ import { AppComponent } from './app.component';
 import { LoginComponent } from './components/login/login.component';
 import { RegisterComponent } from './components/register/register.component';
 import { DashboardComponent } from './components/dashboard/dashboard.component';
+import { MembershipPurchaseComponent } from './components/membership-purchase/membership-purchase.component';
+import { PaymentResultComponent } from './components/payment-result/payment-result.component';
 import { AuthInterceptor } from '@shared';
 
 @NgModule({
@@ -14,7 +16,9 @@ import { AuthInterceptor } from '@shared';
     AppComponent,
     LoginComponent,
     RegisterComponent,
-    DashboardComponent
+    DashboardComponent,
+    MembershipPurchaseComponent,
+    PaymentResultComponent
   ],
   imports: [
     BrowserModule,

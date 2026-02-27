@@ -1,6 +1,6 @@
 {
   "name": "gym-management-frontend",
-  "version": "1.0.33",
+  "version": "1.0.34",
   "scripts": {
     "ng": "ng",
     "start": "npm run generate-version && ng serve",

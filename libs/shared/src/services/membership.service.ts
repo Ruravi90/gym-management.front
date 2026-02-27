@@ -206,4 +206,9 @@ export class MembershipService {
   validateClientAccess(clientId: number): Observable<ValidateAccessResponse> {
     return this.http.get<ValidateAccessResponse>(`${this.apiUrl}/validate-access/${clientId}`, { headers: this.getAuthHeaders() });
   }
+
+  createPaymentPreference(membershipTypeId: number): Observable<any> {
+    const paymentsApiUrl = `${environment.apiUrl}/payments/create-preference`;
+    return this.http.post<any>(paymentsApiUrl, { membership_type_id: membershipTypeId }, { headers: this.getAuthHeaders() });
+  }
 }

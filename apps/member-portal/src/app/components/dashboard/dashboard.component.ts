@@ -15,6 +15,7 @@ import { AuthService, ClientService, AttendanceService } from '@shared';
           <h3>Mi Membresía</h3>
           <p class="status active">Activa</p>
           <p>Próximo vencimiento: 15 de Marzo</p>
+          <button routerLink="/memberships/purchase" class="btn-purchase">Renovar o Cambiar Plan</button>
         </div>
 
         <div class="card attendance-card">
