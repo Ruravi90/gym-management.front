@@ -1,5 +1,7 @@
 import { Component, OnInit } from '@angular/core';
-import { MembershipService, MembershipType } from '@shared';
+import { MembershipService, MembershipType, environment } from '@shared';
+
+declare var MercadoPago: any;
 
 @Component({
   selector: 'app-membership-purchase',
@@ -134,8 +136,20 @@ export class MembershipPurchaseComponent implements OnInit {
     this.loadingPurchase = true;
     this.membershipService.createPaymentPreference(typeId).subscribe({
       next: (res) => {
-        // Redirigir a Mercado Pago
-        window.location.href = res.init_point;
+        this.loadingPurchase = false;
+        
+        // Inicializar SDK de Mercado Pago
+        const mp = new MercadoPago(environment.mpPublicKey, {
+          locale: 'es-MX'
+        });
+
+        // Abrir el checkout en un modal
+        mp.checkout({
+          preference: {
+            id: res.preference_id
+          },
+          autoOpen: true, // Abrir inmediatamente
+        });
       },
       error: (err) => {
         this.loadingPurchase = false;
