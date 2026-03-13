@@ -92,7 +92,18 @@ export class AuditLogComponent implements OnInit {
     this.loading = true;
     this.error = null;
     
-    this.auditLogService.getAuditLogs(this.filters).subscribe({
+    // Create a copy of filters to avoid modifying the ones bound to UI inputs
+    const apiFilters = { ...this.filters };
+    
+    // Append time components for backend Pydantic validation (ISO 8601)
+    if (apiFilters.start_date) {
+      apiFilters.start_date = `${apiFilters.start_date}T00:00:00`;
+    }
+    if (apiFilters.end_date) {
+      apiFilters.end_date = `${apiFilters.end_date}T23:59:59`;
+    }
+
+    this.auditLogService.getAuditLogs(apiFilters).subscribe({
       next: (logs) => {
         this.auditLogs = logs;
         this.filteredAuditLogs = [...logs]; // Copy for client-side filtering
