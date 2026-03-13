@@ -30,7 +30,7 @@
             </tr>
         </thead>
         <tbody>
-            <tr *ngFor="let client of filteredClients" class="client-row">
+            <tr *ngFor="let client of paginatedClients" class="client-row">
                 <td class="id-cell">#{{client.id}}</td>
                 <td class="client-info-cell">
                     <div class="client-info">
@@ -105,17 +105,17 @@
     </div>
 </div>
 
-<!-- Empty state for mobile -->
-<div class="empty-state mobile-view" *ngIf="paginatedClients.length === 0 && filteredClients.length > 0">
+<!-- Empty state -->
+<div class="empty-state" *ngIf="paginatedClients.length === 0 && filteredClients.length > 0">
     <p>No se encontraron clientes en esta página</p>
 </div>
 
-<div class="empty-state mobile-view" *ngIf="filteredClients.length === 0">
+<div class="empty-state" *ngIf="filteredClients.length === 0">
     <p>No se encontraron clientes</p>
 </div>
 
-<!-- Pagination Controls for Mobile -->
-<div class="pagination-controls mobile-view" *ngIf="totalPages > 1">
+<!-- Pagination Controls -->
+<div class="pagination-controls" *ngIf="totalPages > 1">
     <div class="pagination-info">
         Página {{currentPage}} de {{totalPages}}
     </div>

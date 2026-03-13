@@ -7,14 +7,16 @@
       "type": "chrome",
       "request": "launch",
       "url": "http://localhost:4200",
-      "webRoot": "${workspaceFolder}/apps/admin"
+      "webRoot": "${workspaceFolder}/apps/admin",
+      "preLaunchTask": "npm: start:admin"
     },
     {
       "name": "Debug Member Portal",
       "type": "chrome",
       "request": "launch",
       "url": "http://localhost:4201",
-      "webRoot": "${workspaceFolder}/apps/member-portal"
+      "webRoot": "${workspaceFolder}/apps/member-portal",
+      "preLaunchTask": "npm: start:member-portal"
     },
     {
       "name": "ng test",

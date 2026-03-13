@@ -16,7 +16,7 @@ export class ClientsComponent implements OnInit, OnDestroy {
 
   // Pagination properties
   currentPage: number = 1;
-  itemsPerPage: number = 5; // Show 5 items per page on mobile
+  itemsPerPage: number = 10; // Show 10 items per page
   totalPages: number = 0;
   paginatedClients: Client[] = [];
 
@@ -113,8 +113,9 @@ export class ClientsComponent implements OnInit, OnDestroy {
       this.filteredClients = [];
       for (let i = 0; i < this.clients.length; i++) {
         const client = this.clients[i];
-        if (client.name.toLowerCase().indexOf(this.searchTerm) !== -1 ||
-            client.email.toLowerCase().indexOf(this.searchTerm) !== -1) {
+        const nameMatch = client.name ? client.name.toLowerCase().indexOf(this.searchTerm) !== -1 : false;
+        const emailMatch = client.email ? client.email.toLowerCase().indexOf(this.searchTerm) !== -1 : false;
+        if (nameMatch || emailMatch) {
           this.filteredClients.push(client);
         }
       }
