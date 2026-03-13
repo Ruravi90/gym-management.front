@@ -121,7 +121,7 @@
 
   <!-- Pagination -->
   <!-- Pagination Controls -->
-  <div class="pagination-controls" *ngIf="filteredAuditLogs.length > 0">
+  <div class="pagination-controls" *ngIf="totalPages > 1 || currentPage > 0">
     <div class="pagination-info">
       Página {{ currentPage + 1 }} de {{ totalPages }}
     </div>
@@ -144,7 +144,7 @@
       </span>
 
       <button class="app-btn app-btn-secondary btn-sm"
-              [disabled]="(currentPage + 1) * itemsPerPage >= totalItems"
+              [disabled]="currentPage >= totalPages - 1"
               (click)="onPageChange(currentPage + 1)">
         Siguiente
       </button>

@@ -41,6 +41,16 @@ export class AuditLogComponent implements OnInit {
   ngOnInit(): void {
     // Subscribe to query parameters to handle entity-specific views
     this.route.queryParams.subscribe(params => {
+      // Default to today if no date provided in params
+      const today = new Date().toISOString().split('T')[0];
+      
+      this.filters = {
+        skip: 0,
+        limit: this.itemsPerPage,
+        start_date: params['start_date'] || today,
+        end_date: params['end_date'] || today
+      };
+
       // Apply filters from query parameters if present
       if (params['entity_type']) {
         this.filters.entity_type = params['entity_type'];
@@ -53,12 +63,6 @@ export class AuditLogComponent implements OnInit {
       }
       if (params['action_type']) {
         this.filters.action_type = params['action_type'];
-      }
-      if (params['start_date']) {
-        this.filters.start_date = params['start_date'];
-      }
-      if (params['end_date']) {
-        this.filters.end_date = params['end_date'];
       }
 
       // Load audit logs with the applied filters
@@ -92,6 +96,16 @@ export class AuditLogComponent implements OnInit {
       next: (logs) => {
         this.auditLogs = logs;
         this.filteredAuditLogs = [...logs]; // Copy for client-side filtering
+        
+        // Dynamic pagination trick since API doesn't return total count
+        // If we got limit items, there might be more. Estimate total to allow Next page.
+        if (logs.length === this.itemsPerPage) {
+           this.totalItems = this.filters.skip! + this.itemsPerPage + 1; 
+        } else {
+           // We reached the end
+           this.totalItems = this.filters.skip! + logs.length;
+        }
+
         this.extractEntityTypes();
         this.loading = false;
       },
@@ -111,21 +125,25 @@ export class AuditLogComponent implements OnInit {
 
   applyFilters(): void {
     this.currentPage = 0; // Reset to first page when applying filters
+    this.filters.skip = 0;
     this.loadAuditLogs();
   }
 
   resetFilters(): void {
+    const today = new Date().toISOString().split('T')[0];
     this.filters = {
       skip: 0,
-      limit: 50
+      limit: this.itemsPerPage,
+      start_date: today,
+      end_date: today
     };
     this.applyFilters();
   }
 
   onPageChange(page: number): void {
     this.currentPage = page;
-    // In a real implementation, this would make an API call for the specific page
-    // For now, we'll just update the displayed items
+    this.filters.skip = page * this.itemsPerPage;
+    this.loadAuditLogs();
   }
 
   get totalPages(): number {
