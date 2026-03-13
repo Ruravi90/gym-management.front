@@ -71,19 +71,6 @@
 }
 .status-badge.active { background: #f0fdf4; color: var(--app-success); }
 
-/* --- Action Buttons --- */
-.action-buttons { display: flex; gap: 8px; justify-content: flex-end; align-items: center; }
-
-.btn-action-icon {
-    width: 34px; height: 34px; border-radius: 8px; border: 1px solid var(--app-border);
-    background: white; color: var(--text-muted); cursor: pointer;
-    display: flex; align-items: center; justify-content: center; transition: all 0.2s;
-    font-size: 1.1rem;
-}
-
-.btn-action-icon:hover { border-color: var(--app-primary); color: var(--app-primary); background: #f8fafc; }
-.btn-action-icon.delete:hover { border-color: var(--app-danger); color: var(--app-danger); background: #fef2f2; }
-
 /* --- Form Grids --- */
 .compact-form { display: flex; flex-direction: column; gap: 1.25rem; }
 .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.25rem; }
@@ -279,6 +266,63 @@
     font-size: 0.8rem;
 }
 
+/* --- Empty State Enhancements --- */
+.empty-state-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 3rem 1rem;
+    width: 100%;
+}
+
+.empty-state-card {
+    background: white;
+    border-radius: 16px;
+    border: 1px dashed var(--app-border, #cbd5e1);
+    padding: 3rem 2rem;
+    text-align: center;
+    max-width: 450px;
+    width: 100%;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.empty-icon-wrapper {
+    width: 80px;
+    height: 80px;
+    background: #f1f5f9;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 1rem;
+}
+
+.empty-icon {
+    font-size: 2.5rem;
+}
+
+.empty-state-card h3 {
+    margin: 0;
+    font-size: 1.5rem;
+    color: var(--text-main, #1e293b);
+    font-weight: 700;
+}
+
+.empty-state-card p {
+    margin: 0 0 1rem 0;
+    color: var(--text-muted, #64748b);
+    line-height: 1.5;
+    font-size: 0.95rem;
+}
+
+.mt-3 {
+    margin-top: 1rem;
+}
+
 /* --- Mobile Card Layout --- */
 .desktop-view {
     display: block;
@@ -428,48 +472,11 @@
     }
 
     /* Empty state for mobile */
-    .empty-state {
-        text-align: center;
-        padding: 2rem;
-        color: var(--text-muted);
+    .empty-state-card {
+        padding: 2rem 1.5rem;
+        border: none;
+        box-shadow: none;
+        background: transparent;
     }
 
-    /* Pagination Controls for Mobile */
-    .pagination-controls {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        gap: 1rem;
-        margin-top: 1.5rem;
-        padding: 1rem;
-    }
-
-    .pagination-info {
-        font-size: 0.9rem;
-        color: var(--text-main);
-        font-weight: 500;
-    }
-
-    .pagination-buttons {
-        display: flex;
-        align-items: center;
-        gap: 0.5rem;
-        flex-wrap: wrap;
-        justify-content: center;
-    }
-
-    .pagination-buttons .app-btn {
-        min-width: 40px;
-        padding: 0.5rem 0.75rem;
-        font-size: 0.85rem;
-    }
-
-    .page-numbers {
-        display: flex;
-        gap: 0.25rem;
-    }
-
-    .page-numbers .app-btn {
-        min-width: 36px;
-    }
 }

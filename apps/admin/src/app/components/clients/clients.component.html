@@ -13,12 +13,13 @@
 <div class="dashboard-actions">
     <div class="search-bar">
         <span class="search-icon">🔍</span>
-        <input type="text" class="app-input" placeholder="Buscar socios por nombre o email..." (input)="onSearch($event)">
+        <input type="text" class="app-input" placeholder="Buscar socios por nombre o email..."
+            (input)="onSearch($event)">
     </div>
 </div>
 
 <!-- Table View for Desktop -->
-<div class="table-responsive-wrapper desktop-view">
+<div class="table-responsive-wrapper desktop-view" *ngIf="paginatedClients.length > 0">
     <table class="app-table">
         <thead>
             <tr>
@@ -50,13 +51,17 @@
                 </td>
                 <td class="actions-cell text-right">
                     <div class="action-buttons">
-                        <button class="btn-action-icon edit" (click)="openEditModal(client)" title="Editar">✏️</button>
-                        <button class="btn-action-icon delete" (click)="confirmDelete(client)" title="Eliminar">🗑️</button>
-                        <button class="app-btn app-btn-warning btn-sm" (click)="navigateToMembershipHistory(client.id)">
-                            📋 Membresía
+                        <button class="btn-action-icon edit" (click)="openEditModal(client)"
+                            title="Editar">✏️
                         </button>
-                        <button class="app-btn app-btn-secondary btn-sm" (click)="openFaceScanModal(client)">
-                            📷 Rostro
+                        <button class="btn-action-icon" (click)="navigateToMembershipHistory(client.id)" 
+                            title="Historial de Membresías">📋
+                        </button>
+                        <button class="btn-action-icon" (click)="openFaceScanModal(client)"
+                            title="Registrar Rostro">📷
+                        </button>
+                        <button class="btn-action-icon delete" (click)="confirmDelete(client)"
+                            title="Eliminar">🗑️
                         </button>
                     </div>
                 </td>
@@ -98,7 +103,8 @@
 
         <div class="card-actions">
             <button class="app-btn app-btn-secondary btn-sm" (click)="openEditModal(client)">✏️ Editar</button>
-            <button class="app-btn app-btn-warning btn-sm" (click)="navigateToMembershipHistory(client.id)">📋 Membresía</button>
+            <button class="app-btn app-btn-warning btn-sm" (click)="navigateToMembershipHistory(client.id)">📋
+                Membresía</button>
             <button class="app-btn app-btn-danger btn-sm" (click)="confirmDelete(client)">🗑️ Eliminar</button>
             <button class="app-btn app-btn-primary btn-sm" (click)="openFaceScanModal(client)">📷 Rostro</button>
         </div>
@@ -106,12 +112,24 @@
 </div>
 
 <!-- Empty state -->
-<div class="empty-state" *ngIf="paginatedClients.length === 0 && filteredClients.length > 0">
-    <p>No se encontraron clientes en esta página</p>
+<div class="empty-state-container" *ngIf="paginatedClients.length === 0 && filteredClients.length > 0">
+    <div class="empty-state-card">
+        <div class="empty-icon-wrapper">
+            <span class="empty-icon">📄</span>
+        </div>
+        <h3>Página sin resultados</h3>
+        <p>No se encontraron clientes en esta página.</p>
+    </div>
 </div>
 
-<div class="empty-state" *ngIf="filteredClients.length === 0">
-    <p>No se encontraron clientes</p>
+<div class="empty-state-container" *ngIf="filteredClients.length === 0">
+    <div class="empty-state-card">
+        <div class="empty-icon-wrapper">
+            <span class="empty-icon">👥</span>
+        </div>
+        <h3>Aún no hay socios</h3>
+        <p>Comienza a construir tu comunidad registrando a tu primer socio.</p>
+    </div>
 </div>
 
 <!-- Pagination Controls -->
@@ -120,23 +138,17 @@
         Página {{currentPage}} de {{totalPages}}
     </div>
     <div class="pagination-buttons">
-        <button class="app-btn app-btn-secondary btn-sm"
-                [disabled]="currentPage === 1"
-                (click)="prevPage()">
+        <button class="app-btn app-btn-secondary btn-sm" [disabled]="currentPage === 1" (click)="prevPage()">
             Anterior
         </button>
         <span class="page-numbers">
-            <button *ngFor="let page of getPageNumbers()"
-                    class="app-btn btn-sm"
-                    [class.app-btn-primary]="page === currentPage"
-                    [class.app-btn-secondary]="page !== currentPage"
-                    (click)="goToPage(page)">
+            <button *ngFor="let page of getPageNumbers()" class="app-btn btn-sm"
+                [class.app-btn-primary]="page === currentPage" [class.app-btn-secondary]="page !== currentPage"
+                (click)="goToPage(page)">
                 {{page}}
             </button>
         </span>
-        <button class="app-btn app-btn-secondary btn-sm"
-                [disabled]="currentPage === totalPages"
-                (click)="nextPage()">
+        <button class="app-btn app-btn-secondary btn-sm" [disabled]="currentPage === totalPages" (click)="nextPage()">
             Siguiente
         </button>
     </div>
@@ -176,8 +188,10 @@
                     </div>
                 </div>
                 <div class="modal-actions">
-                    <button type="button" class="app-btn app-btn-secondary" (click)="closeClientModal()">Cancelar</button>
-                    <button type="submit" class="app-btn app-btn-primary">{{editingClient ? 'Actualizar' : 'Registrar'}}</button>
+                    <button type="button" class="app-btn app-btn-secondary"
+                        (click)="closeClientModal()">Cancelar</button>
+                    <button type="submit" class="app-btn app-btn-primary">{{editingClient ? 'Actualizar' :
+                        'Registrar'}}</button>
                 </div>
             </form>
         </div>
@@ -210,15 +224,18 @@
                     </button>
                 </div>
             </div>
-            <p class="hint" *ngIf="!registrationMessage">Asegúrate de que el rostro encaje en la guía y esté bien iluminado.</p>
+            <p class="hint" *ngIf="!registrationMessage">Asegúrate de que el rostro encaje en la guía y esté bien
+                iluminado.</p>
 
             <!-- Dynamic Status Message -->
-            <div class="registration-status" *ngIf="registrationMessage" [class.success]="registrationSuccess" [class.error]="!registrationSuccess && !isRegistering">
+            <div class="registration-status" *ngIf="registrationMessage" [class.success]="registrationSuccess"
+                [class.error]="!registrationSuccess && !isRegistering">
                 <span class="status-icon">{{ registrationSuccess ? '✅' : isRegistering ? '⌛' : '⚠️' }}</span>
                 {{ registrationMessage }}
             </div>
 
-            <button class="app-btn app-btn-primary" (click)="captureFace()" [disabled]="isRegistering || registrationSuccess">
+            <button class="app-btn app-btn-primary" (click)="captureFace()"
+                [disabled]="isRegistering || registrationSuccess">
                 {{ isRegistering ? 'Procesando...' : registrationSuccess ? 'Completado' : 'Capturar e Identificar' }}
             </button>
         </div>
@@ -231,7 +248,8 @@
         <div class="modal-body centered">
             <span class="alert-icon">⚠️</span>
             <h3>¿Eliminar Guerrero?</h3>
-            <p>¿Estás seguro de que deseas eliminar permanentemente a <strong class="highlight">{{deletingClient?.name}}</strong>?</p>
+            <p>¿Estás seguro de que deseas eliminar permanentemente a <strong
+                    class="highlight">{{deletingClient?.name}}</strong>?</p>
             <div class="modal-actions centered">
                 <button class="app-btn app-btn-secondary" (click)="closeDeleteConfirmation()">Conservar</button>
                 <button class="app-btn app-btn-danger" (click)="deleteClient()">Sí, Eliminar</button>

@@ -166,6 +166,53 @@ body {
   border-color: #94a3b8;
 }
 
+/* --- Action Icons (Tables & Lists) --- */
+.action-buttons {
+  display: flex;
+  gap: 8px;
+  justify-content: flex-end;
+  align-items: center;
+}
+
+.btn-action-icon {
+  width: 34px;
+  height: 34px;
+  border-radius: 8px;
+  border: 1px solid var(--app-border);
+  background: white;
+  color: var(--text-muted);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+  font-size: 1.1rem;
+}
+
+.btn-action-icon:hover {
+  border-color: var(--app-primary);
+  color: var(--app-primary);
+  background: #f8fafc;
+}
+
+.btn-action-icon.edit {
+  color: #3b82f6; 
+}
+
+.btn-action-icon.edit:hover {
+  background-color: #dbeafe;
+}
+
+.btn-action-icon.delete {
+  color: #ef4444;
+}
+
+.btn-action-icon.delete:hover {
+  border-color: var(--app-danger);
+  color: var(--app-danger);
+  background: #fef2f2;
+}
+
 /* --- Standard Modals --- */
 
 .modal-backdrop {
@@ -227,4 +274,81 @@ body {
   padding: 1.25rem 1.5rem;
   border-top: 1px solid var(--app-border);
   background: #f8fafc;
+}
+
+/* --- Global Pagination Controls --- */
+.pagination-controls {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem;
+  margin-top: 1.5rem;
+  background: var(--app-surface);
+  border: 1px solid var(--app-border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-sm);
+}
+
+.pagination-info {
+  font-size: 0.9rem;
+  color: var(--text-muted);
+  font-weight: 500;
+}
+
+.pagination-buttons {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.pagination-buttons .app-btn {
+  padding: 0.5rem 0.75rem;
+  font-size: 0.85rem;
+  border-radius: var(--radius-md);
+  min-width: 36px;
+  min-height: 36px;
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.pagination-buttons .page-numbers {
+  display: flex;
+  gap: 0.25rem;
+}
+
+.pagination-buttons .app-btn-secondary {
+  background: white;
+  border-color: var(--app-border);
+  color: var(--text-main);
+}
+
+.pagination-buttons .app-btn-secondary:hover:not(:disabled) {
+  background: #f1f5f9;
+  border-color: #cbd5e1;
+}
+
+.pagination-buttons .app-btn-primary {
+  background: var(--app-primary);
+  color: white;
+  border-color: var(--app-primary);
+  font-weight: 700;
+}
+
+/* Disabled state */
+.pagination-buttons .app-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
+@media (max-width: 768px) {
+  .pagination-controls {
+    flex-direction: column;
+    gap: 1rem;
+  }
+  .pagination-buttons {
+    flex-wrap: wrap;
+    justify-content: center;
+  }
 }

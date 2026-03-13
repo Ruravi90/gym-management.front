@@ -364,49 +364,6 @@
     color: #dc2626;
 }
 
-.action-buttons {
-    display: flex;
-    gap: 0.5rem;
-    justify-content: flex-end;
-}
-
-.btn-action-icon {
-    width: 36px;
-    height: 36px;
-    border: none;
-    border-radius: 8px;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background: #f1f5f9; /* Gray-100 */
-    color: #475569; /* Gray-600 */
-    font-size: 0.9rem;
-    transition: all 0.2s ease;
-}
-
-.btn-action-icon:hover {
-    background: #e2e8f0; /* Gray-200 */
-    transform: scale(1.05);
-}
-
-.btn-action-icon.edit {
-    background: #dbeafe; /* Blue-100 */
-    color: #2563eb; /* Blue-600 */
-}
-
-.btn-action-icon.edit:hover {
-    background: #bfdbfe; /* Blue-200 */
-}
-
-.btn-action-icon.delete {
-    background: #fee2e2; /* Red-100 */
-    color: #dc2626; /* Red-600 */
-}
-
-.btn-action-icon.delete:hover {
-    background: #fecaca; /* Red-200 */
-}
 
 /* --- Card View for Mobile --- */
 .mobile-view {

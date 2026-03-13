@@ -120,20 +120,35 @@
   </div>
 
   <!-- Pagination -->
-  <div class="pagination" *ngIf="filteredAuditLogs.length > 0">
-    <button
-      class="btn btn-outline"
-      [disabled]="currentPage === 0"
-      (click)="onPageChange(currentPage - 1)">
-      Anterior
-    </button>
-    <span>Página {{ currentPage + 1 }}</span>
-    <button
-      class="btn btn-outline"
-      [disabled]="(currentPage + 1) * itemsPerPage >= totalItems"
-      (click)="onPageChange(currentPage + 1)">
-      Siguiente
-    </button>
+  <!-- Pagination Controls -->
+  <div class="pagination-controls" *ngIf="filteredAuditLogs.length > 0">
+    <div class="pagination-info">
+      Página {{ currentPage + 1 }} de {{ totalPages }}
+    </div>
+    <div class="pagination-buttons">
+      <button class="app-btn app-btn-secondary btn-sm"
+              [disabled]="currentPage === 0"
+              (click)="onPageChange(currentPage - 1)">
+        Anterior
+      </button>
+      
+      <!-- Page sequence display matched with other components -->
+      <span class="page-numbers">
+        <button *ngFor="let page of getPageNumbers()"
+                class="app-btn btn-sm"
+                [class.app-btn-primary]="page === currentPage"
+                [class.app-btn-secondary]="page !== currentPage"
+                (click)="onPageChange(page)">
+          {{ page + 1 }}
+        </button>
+      </span>
+
+      <button class="app-btn app-btn-secondary btn-sm"
+              [disabled]="(currentPage + 1) * itemsPerPage >= totalItems"
+              (click)="onPageChange(currentPage + 1)">
+        Siguiente
+      </button>
+    </div>
   </div>
 
   <!-- Empty state -->

@@ -128,6 +128,30 @@ export class AuditLogComponent implements OnInit {
     // For now, we'll just update the displayed items
   }
 
+  get totalPages(): number {
+    return Math.ceil(this.totalItems / this.itemsPerPage) || 1;
+  }
+
+  // Helper method to generate page numbers for pagination UI (0-indexed for this component)
+  getPageNumbers(): number[] {
+    const pages = [];
+    const maxVisiblePages = 5;
+
+    let startPage = Math.max(0, this.currentPage - Math.floor(maxVisiblePages / 2));
+    let endPage = Math.min(this.totalPages - 1, startPage + maxVisiblePages - 1);
+
+    // Adjust start page if we're near the end
+    if (endPage - startPage + 1 < maxVisiblePages) {
+      startPage = Math.max(0, endPage - maxVisiblePages + 1);
+    }
+
+    for (let i = startPage; i <= endPage; i++) {
+      pages.push(i);
+    }
+
+    return pages;
+  }
+
   formatDate(dateString: string): string {
     const date = new Date(dateString);
     return date.toLocaleDateString() + ' ' + date.toLocaleTimeString();

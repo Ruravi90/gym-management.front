@@ -40,9 +40,6 @@
       <div class="empty-icon">📝</div>
       <h3>Sin Historial</h3>
       <p>Este cliente aún no tiene ninguna membresía registrada en el sistema.</p>
-      <button class="app-btn app-btn-primary btn-sm" (click)="openNewMembershipModal()">
-        Registrar Primera Membresía
-      </button>
     </div>
 
     <!-- Table View for Desktop -->
@@ -93,10 +90,10 @@
             </td>
             <td class="text-right">
               <div class="action-buttons">
-                <button class="btn-action-icon" (click)="openEditModal(membership)" title="Editar">
+                <button class="btn-action-icon edit" (click)="openEditModal(membership)" title="Editar">
                   ✏️
                 </button>
-                <button class="btn-action-icon" (click)="deleteMembership(membership.id)" title="Eliminar">
+                <button class="btn-action-icon delete" (click)="deleteMembership(membership.id)" title="Eliminar">
                   🗑️
                 </button>
               </div>
@@ -125,7 +122,8 @@
           <div class="membership-details">
             <div class="detail-item">
               <span class="detail-label">Período:</span>
-              <span class="detail-value">{{ formatDate(membership.start_date) }} → {{ formatDate(membership.end_date) }}</span>
+              <span class="detail-value">{{ formatDate(membership.start_date) }} → {{ formatDate(membership.end_date)
+                }}</span>
             </div>
             <div class="detail-item" *ngIf="isMembershipActive(membership)">
               <span class="detail-label">Restante:</span>
@@ -168,14 +166,8 @@
           <div class="form-grid">
             <div class="form-group">
               <label>Tipo de Plan</label>
-              <select
-                class="app-input"
-                [(ngModel)]="newMembershipForm.membership_type_id"
-                name="membership_type_id"
-                (ngModelChange)="onMembershipTypeChange()"
-                required
-                [disabled]="!!editingMembershipId"
-              >
+              <select class="app-input" [(ngModel)]="newMembershipForm.membership_type_id" name="membership_type_id"
+                (ngModelChange)="onMembershipTypeChange()" required [disabled]="!!editingMembershipId">
                 <option value="">Seleccione un tipo...</option>
                 <option *ngFor="let type of membershipTypes" [value]="type.id">
                   {{ type.name }}
@@ -185,58 +177,30 @@
 
             <div class="form-group">
               <label>Importe ($)</label>
-              <input
-                type="number"
-                class="app-input"
-                [(ngModel)]="newMembershipForm.price_paid"
-                name="price_paid"
-                required
-                min="0"
-                step="0.01"
-                readonly
-                title="El importe se calcula automáticamente según el tipo de plan"
-                [disabled]="true"
-              />
+              <input type="number" class="app-input" [(ngModel)]="newMembershipForm.price_paid" name="price_paid"
+                required min="0" step="0.01" readonly
+                title="El importe se calcula automáticamente según el tipo de plan" [disabled]="true" />
             </div>
           </div>
 
           <div class="form-grid">
             <div class="form-group">
               <label>Fecha de Inicio</label>
-              <input
-                type="date"
-                class="app-input"
-                [(ngModel)]="newMembershipForm.start_date"
-                name="start_date"
-                (change)="onStartDateChange()"
-                required
-                [disabled]="!!editingMembershipId"
-              />
+              <input type="date" class="app-input" [(ngModel)]="newMembershipForm.start_date" name="start_date"
+                (change)="onStartDateChange()" required [disabled]="!!editingMembershipId" />
             </div>
 
             <div class="form-group">
               <label>Vencimiento</label>
-              <input
-                type="date"
-                class="app-input"
-                [(ngModel)]="newMembershipForm.end_date"
-                name="end_date"
-                required
-                title="El vencimiento se calcula automáticamente según la duración del plan"
-                [disabled]="true"
-              />
+              <input type="date" class="app-input" [(ngModel)]="newMembershipForm.end_date" name="end_date" required
+                title="El vencimiento se calcula automáticamente según la duración del plan" [disabled]="true" />
             </div>
           </div>
 
           <div class="form-grid">
             <div class="form-group">
               <label>Estado Administración</label>
-              <select
-                class="app-input"
-                [(ngModel)]="newMembershipForm.status"
-                name="status"
-                required
-              >
+              <select class="app-input" [(ngModel)]="newMembershipForm.status" name="status" required>
                 <option value="available">Disponible</option>
                 <option value="active">Activa</option>
                 <option value="expired">Expirada</option>
@@ -247,12 +211,7 @@
 
             <div class="form-group">
               <label>Estado del Pago</label>
-              <select
-                class="app-input"
-                [(ngModel)]="newMembershipForm.payment_status"
-                name="payment_status"
-                required
-              >
+              <select class="app-input" [(ngModel)]="newMembershipForm.payment_status" name="payment_status" required>
                 <option value="pending">Pendiente</option>
                 <option value="paid">Pagado</option>
                 <option value="overdue">Atrasado</option>
@@ -262,11 +221,7 @@
 
           <div class="form-group">
             <label>Método de Pago</label>
-            <select
-              class="app-input"
-              [(ngModel)]="newMembershipForm.payment_method"
-              name="payment_method"
-            >
+            <select class="app-input" [(ngModel)]="newMembershipForm.payment_method" name="payment_method">
               <option value="">Seleccione método...</option>
               <option value="cash">Efectivo</option>
               <option value="card">Tarjeta</option>
@@ -277,12 +232,7 @@
 
           <div class="form-group">
             <label>Notas Adicionales</label>
-            <textarea
-              class="app-input"
-              [(ngModel)]="newMembershipForm.notes"
-              name="notes"
-              rows="3"
-            ></textarea>
+            <textarea class="app-input" [(ngModel)]="newMembershipForm.notes" name="notes" rows="3"></textarea>
           </div>
 
           <div class="modal-actions">

@@ -35,7 +35,6 @@
       <tr>
         <th>ID</th>
         <th>Nombre</th>
-        <th>Detalles</th>
         <th>Duración</th>
         <th>Accesos</th>
         <th>Precio</th>
@@ -48,10 +47,6 @@
         <td class="id-cell">#{{ type.id }}</td>
         <td class="name-cell">
           <span class="type-name">{{ type.name }}</span>
-        </td>
-        <td class="details-cell">
-          <div class="type-description" *ngIf="type.description">{{ type.description }}</div>
-          <div class="type-description empty" *ngIf="!type.description">Sin descripción</div>
         </td>
         <td class="duration-cell">
           <span class="duration-info" *ngIf="type.duration_days">{{ type.duration_days }} días</span>
@@ -135,29 +130,23 @@
   <p>No se encontraron tipos de membresía</p>
 </div>
 
-<!-- Pagination Controls for Mobile -->
-<div class="pagination-controls mobile-view" *ngIf="totalPages > 1">
+<!-- Pagination Controls -->
+<div class="pagination-controls" *ngIf="totalPages > 1">
   <div class="pagination-info">
     Página {{currentPage}} de {{totalPages}}
   </div>
   <div class="pagination-buttons">
-    <button class="app-btn app-btn-secondary btn-sm"
-            [disabled]="currentPage === 1"
-            (click)="prevPage()">
+    <button class="app-btn app-btn-secondary btn-sm" [disabled]="currentPage === 1" (click)="prevPage()">
       Anterior
     </button>
     <span class="page-numbers">
-      <button *ngFor="let page of getPageNumbers()"
-              class="app-btn btn-sm"
-              [class.app-btn-primary]="page === currentPage"
-              [class.app-btn-secondary]="page !== currentPage"
-              (click)="goToPage(page)">
+      <button *ngFor="let page of getPageNumbers()" class="app-btn btn-sm"
+        [class.app-btn-primary]="page === currentPage" [class.app-btn-secondary]="page !== currentPage"
+        (click)="goToPage(page)">
         {{page}}
       </button>
     </span>
-    <button class="app-btn app-btn-secondary btn-sm"
-            [disabled]="currentPage === totalPages"
-            (click)="nextPage()">
+    <button class="app-btn app-btn-secondary btn-sm" [disabled]="currentPage === totalPages" (click)="nextPage()">
       Siguiente
     </button>
   </div>
@@ -191,7 +180,8 @@
 
           <div class="form-group">
             <label>Accesos Permitidos</label>
-            <input type="number" class="app-input" [(ngModel)]="typeForm.accesses_allowed" name="accesses_allowed" min="0">
+            <input type="number" class="app-input" [(ngModel)]="typeForm.accesses_allowed" name="accesses_allowed"
+              min="0">
             <small class="form-help">Dejar vacío para accesos ilimitados</small>
           </div>
         </div>
@@ -199,7 +189,8 @@
         <div class="form-grid">
           <div class="form-group">
             <label>Precio ($)</label>
-            <input type="number" class="app-input" [(ngModel)]="typeForm.price" name="price" required min="0" step="0.01">
+            <input type="number" class="app-input" [(ngModel)]="typeForm.price" name="price" required min="0"
+              step="0.01">
           </div>
 
           <div class="form-group">
