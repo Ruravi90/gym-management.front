@@ -22,8 +22,13 @@ export class DashboardComponent implements OnInit {
   revenueData: any[] = [];
   membershipTypeData: any[] = [];
   
+  // New Derived Stats
+  activeMembersPercentage: number = 0;
+  revenueGoalProgress: number = 0;
+  monthlyRevenueGoal: number = 5000; // Default goal
+  
   legendPosition = LegendPosition.Right;
-  curve: any = shape.curveBasis;
+  curve: any = shape.curveCardinal;
 
   colorScheme: Color = {
     name: 'vibrant',
@@ -103,6 +108,15 @@ export class DashboardComponent implements OnInit {
 
     // Process Membership Distribution
     this.membershipTypeData = data.membership_distribution;
+
+    // Calculate Percentages
+    if (this.stats && this.stats.total_memberships > 0) {
+      this.activeMembersPercentage = Math.round((this.stats.active_memberships / this.stats.total_memberships) * 100);
+    }
+    
+    if (this.analytics) {
+      this.revenueGoalProgress = Math.min(100, Math.round((this.analytics.total_revenue_month / this.monthlyRevenueGoal) * 100));
+    }
   }
 
   loadClientsCount(): Promise<void> {

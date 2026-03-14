@@ -1,138 +1,184 @@
 <header class="main-header">
     <div class="header-info">
-        <h1 class="page-title">Panorámica del Gimnasio</h1>
-        <p class="page-subtitle">Indicadores clave de rendimiento y salud de tu comunidad</p>
+        <h1 class="page-title">Panel de Control Guerrero</h1>
+        <p class="page-subtitle">Monitoreo en tiempo real de tu comunidad y crecimiento</p>
     </div>
 </header>
 
 <div *ngIf="loading" class="loading-overlay">
-    <div class="loader-premium"></div>
-    <p>Analizando datos de los guerreros...</p>
+    <div class="pulse-loader"></div>
+    <p>Sincronizando biometría y estadísticas...</p>
 </div>
 
-<div *ngIf="!loading" class="dashboard-grid">
-    <!-- Primary Stats Row -->
-    <div class="stats-row">
-        <div class="app-card stat-card primary">
-            <div class="stat-icon-wrapper">👥</div>
-            <div class="stat-details">
-                <span class="label">Total Guerrero</span>
-                <span class="value">{{totalClients}}</span>
-                <p class="trend-text">Miembros activos</p>
-            </div>
-        </div>
-
-        <div class="app-card stat-card success" *ngIf="analytics">
-            <div class="stat-icon-wrapper">💰</div>
-            <div class="stat-details">
-                <span class="label">Ingresos del Mes</span>
-                <span class="value">{{analytics.total_revenue_month | currency}}</span>
-                <p class="trend-text">{{analytics.check_ins_today}} ingresos hoy</p>
-            </div>
-        </div>
-
-        <div class="app-card stat-card danger" *ngIf="stats">
-            <div class="stat-icon-wrapper">⌛</div>
-            <div class="stat-details">
-                <span class="label">Acciones Urgentes</span>
-                <span class="value">{{stats.upcoming_expirations}}</span>
-                <p class="trend-text danger">Vencimientos próximos</p>
-            </div>
-        </div>
-    </div>
-
-    <!-- Charts Row 1: Attendance & Revenue -->
-    <div class="charts-row">
-        <div class="app-card chart-card">
-            <div class="chart-header">
-                <h3>Tendencia de Asistencia</h3>
-                <p>Últimos 30 días</p>
-            </div>
-            <div class="chart-container">
-                <ngx-charts-area-chart
-                    [scheme]="colorScheme"
-                    [results]="attendanceData"
-                    [gradient]="true"
-                    [xAxis]="true"
-                    [yAxis]="true"
-                    [legend]="false"
-                    [showXAxisLabel]="false"
-                    [showYAxisLabel]="false"
-                    [autoScale]="true"
-                    [curve]="curve">
-                </ngx-charts-area-chart>
-            </div>
-        </div>
-
-        <div class="app-card chart-card">
-            <div class="chart-header">
-                <h3>Flujo de Ingresos</h3>
-                <p>Nuevas membresías (30d)</p>
-            </div>
-            <div class="chart-container">
-                <ngx-charts-bar-vertical
-                    [scheme]="revenueColorScheme"
-                    [results]="revenueData[0]?.series"
-                    [gradient]="false"
-                    [xAxis]="true"
-                    [yAxis]="true"
-                    [legend]="false"
-                    [showXAxisLabel]="false"
-                    [showYAxisLabel]="false">
-                </ngx-charts-bar-vertical>
-            </div>
-        </div>
-    </div>
-
-    <!-- Charts Row 2 & Info -->
-    <div class="analytics-content">
-        <div class="charts-area">
-            <div class="app-card chart-card distribution">
-                <div class="chart-header">
-                    <h3>Distribución de Membresías</h3>
+<div *ngIf="!loading" class="dashboard-container">
+    
+    <!-- Hero Metrics: High-impact stats with visual indicators -->
+    <div class="hero-metrics">
+        <!-- Members Count and Health -->
+        <div class="glass-card metric-card">
+            <div class="metric-info">
+                <h4>Comunidad Total</h4>
+                <span class="metric-value">{{totalClients}}</span>
+                <div class="metric-trend up" *ngIf="stats">
+                    <span>↑</span> {{stats.active_memberships}} Activos
                 </div>
-                <div class="chart-container pie-container">
+            </div>
+            <div class="visual-indicator" title="Porcentaje de retención activo">
+                <svg class="progress-ring" width="80" height="80">
+                    <circle class="progress-ring-circle-bg" stroke="#f1f5f9" stroke-width="6" fill="transparent" r="34" cx="40" cy="40"/>
+                    <circle class="progress-ring-circle" stroke="#6366f1" stroke-width="6" stroke-linecap="round" fill="transparent" 
+                        r="34" cx="40" cy="40" 
+                        [style.stroke-dasharray]="'213.6'"
+                        [style.stroke-dashoffset]="213.6 - (213.6 * activeMembersPercentage / 100)"/>
+                </svg>
+                <div class="percentage-label">{{activeMembersPercentage}}%</div>
+            </div>
+        </div>
+
+        <!-- Revenue and Growth -->
+        <div class="glass-card metric-card" *ngIf="analytics">
+            <div class="metric-info">
+                <h4>Ingresos del Mes</h4>
+                <span class="metric-value">{{analytics.total_revenue_month | currency}}</span>
+                <div class="metric-trend up">
+                    <span>📈</span> Meta: {{monthlyRevenueGoal | currency}}
+                </div>
+            </div>
+            <div class="visual-indicator">
+                <svg class="progress-ring" width="80" height="80">
+                    <circle class="progress-ring-circle-bg" stroke="#f1f5f9" stroke-width="6" fill="transparent" r="34" cx="40" cy="40"/>
+                    <circle class="progress-ring-circle" stroke="#10b981" stroke-width="6" stroke-linecap="round" fill="transparent" 
+                        r="34" cx="40" cy="40" 
+                        [style.stroke-dasharray]="'213.6'"
+                        [style.stroke-dashoffset]="213.6 - (213.6 * revenueGoalProgress / 100)"/>
+                </svg>
+                <div class="percentage-label">{{revenueGoalProgress}}%</div>
+            </div>
+        </div>
+
+        <!-- Real-time Attendance Pulse -->
+        <div class="glass-card metric-card" *ngIf="analytics">
+            <div class="metric-info">
+                <h4>Asistencia Hoy</h4>
+                <span class="metric-value">{{analytics.check_ins_today}}</span>
+                <div class="metric-trend" [class.up]="analytics.check_ins_today > 0">
+                    <span>⚡</span> Pulso en vivo
+                </div>
+            </div>
+            <div class="visual-indicator">
+                <div class="stat-icon-wrapper" style="font-size: 2rem; color: #f59e0b;">📷</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Content Area: Charts and detailed lists -->
+    <div class="main-sections">
+        
+        <div class="chart-section">
+            <!-- Attendance Trend -->
+            <div class="glass-card chart-card">
+                <div class="chart-card-header">
+                    <h3>Tendencia de Combate (Asistencia)</h3>
+                    <div class="badge primary">Últimos 30 días</div>
+                </div>
+                <div class="chart-container">
+                    <ngx-charts-area-chart
+                        [scheme]="colorScheme"
+                        [results]="attendanceData"
+                        [gradient]="true"
+                        [xAxis]="true"
+                        [yAxis]="true"
+                        [legend]="false"
+                        [showXAxisLabel]="false"
+                        [showYAxisLabel]="false"
+                        [autoScale]="true"
+                        [curve]="curve">
+                    </ngx-charts-area-chart>
+                </div>
+            </div>
+
+            <!-- Revenue Flow -->
+            <div class="glass-card chart-card">
+                <div class="chart-card-header">
+                    <h3>Flujo de Membresías</h3>
+                    <div class="badge success">Volumen de ventas</div>
+                </div>
+                <div class="chart-container">
+                    <ngx-charts-bar-vertical
+                        [scheme]="revenueColorScheme"
+                        [results]="revenueData[0]?.series"
+                        [gradient]="false"
+                        [xAxis]="true"
+                        [yAxis]="true"
+                        [legend]="false"
+                        [showXAxisLabel]="false"
+                        [showYAxisLabel]="false">
+                    </ngx-charts-bar-vertical>
+                </div>
+            </div>
+        </div>
+
+        <!-- Sidebar Side Widgets -->
+        <div class="sidebar-widgets">
+            
+            <!-- Revenue Progress -->
+            <div class="glass-card revenue-widget" *ngIf="analytics">
+                <h4>Progreso de Objetivos</h4>
+                <div class="progress-bar-container">
+                    <div class="progress-fill" [style.width]="revenueGoalProgress + '%'"></div>
+                </div>
+                <div class="progress-labels">
+                    <span>Recaudado: {{analytics.total_revenue_month | currency}}</span>
+                    <span>Meta: {{monthlyRevenueGoal | currency}}</span>
+                </div>
+            </div>
+
+            <!-- Distribution Chart -->
+            <div class="glass-card chart-card distribution">
+                <div class="chart-card-header">
+                    <h3>Distribución</h3>
+                </div>
+                <div class="chart-container" style="height: 250px;">
                     <ngx-charts-pie-chart
                         [scheme]="colorScheme"
                         [results]="membershipTypeData"
                         [gradient]="true"
-                        [legend]="true"
-                        [legendPosition]="legendPosition"
+                        [legend]="false"
                         [labels]="true"
                         [doughnut]="true">
                     </ngx-charts-pie-chart>
                 </div>
             </div>
-            <div class="app-card section-card">
-                <div class="section-header">
-                    <h3>Próximas Expiraciones</h3>
-                    <span class="badge warning">{{stats?.upcoming_expirations}} Críticas</span>
+
+            <!-- Urgent Actions / Expirations -->
+            <div class="glass-card section-card">
+                <div class="widget-title">
+                    <span>⌛</span> Alertas Expiración
                 </div>
                 <div class="expirations-list" *ngIf="stats?.upcoming_expirations_list?.length">
-                    <div *ngFor="let m of stats?.upcoming_expirations_list" class="exp-item">
-                        <div class="exp-info">
-                            <span class="client-name">{{m.client_id}} (ID)</span>
-                            <span class="expiry-date">Vence: {{m.end_date | date:'shortDate'}}</span>
+                    <div *ngFor="let m of stats?.upcoming_expirations_list" class="expiration-item">
+                        <div class="client-initials">{{m.client_id}}</div>
+                        <div class="exp-details">
+                            <span class="exp-name">Contrato #{{m.id}}</span>
+                            <span class="exp-date">Expira el {{m.end_date | date:'shortDate'}}</span>
                         </div>
-                        <span class="status-pill warning">Pronto</span>
+                        <div class="badge warning">Pronto</div>
                     </div>
                 </div>
-                <div class="no-data" *ngIf="!stats?.upcoming_expirations_list?.length">
-                    No hay membresías por vencer en los próximos días.
+                <div *ngIf="!stats?.upcoming_expirations_list?.length" class="empty-list-msg">
+                    Sin alertas críticas hoy.
                 </div>
             </div>
+
+            <!-- Quick Action Card -->
+            <div class="glass-card action-card">
+                <h3>Nuevo Guerrero?</h3>
+                <p>Registra rápidamente a un nuevo miembro del equipo.</p>
+                <a routerLink="/clients" class="white-btn">Registrar Ahora</a>
+            </div>
+
         </div>
 
-        <div class="side-widgets">
-            <div class="app-card profile-preview">
-                <div class="avatar-large">PW</div>
-                <h3>Staff Admin</h3>
-                <p class="access-level">Nivel de Acceso: Superior</p>
-                <div class="quick-actions">
-                    <a routerLink="/clients" class="app-btn app-btn-secondary">Gestionar Socios</a>
-                    <a routerLink="/memberships" class="app-btn app-btn-secondary">Ver Planes</a>
-                </div>
-            </div>
-        </div>
     </div>
+
 </div>
