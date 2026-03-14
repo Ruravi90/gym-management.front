@@ -5,7 +5,7 @@
     </div>
     <div class="header-actions">
         <button class="app-btn app-btn-primary" (click)="openRegisterModal()">
-            <span>+</span> Nuevo Socio
+            <span>+</span> Nuevo Guerrero
         </button>
     </div>
 </header>
@@ -13,7 +13,7 @@
 <div class="dashboard-actions">
     <div class="search-bar">
         <span class="search-icon">🔍</span>
-        <input type="text" class="app-input" placeholder="Buscar socios por nombre o email..."
+        <input type="text" class="app-input" placeholder="Buscar guerreros por nombre o email..."
             (input)="onSearch($event)">
     </div>
 </div>
@@ -24,7 +24,7 @@
         <thead>
             <tr>
                 <th>ID</th>
-                <th>Información del Socio</th>
+                <th>Guerrero</th>
                 <th>Plan / Membresía</th>
                 <th>Estado</th>
                 <th class="text-right">Centro de Acción</th>
@@ -51,17 +51,14 @@
                 </td>
                 <td class="actions-cell text-right">
                     <div class="action-buttons">
-                        <button class="btn-action-icon edit" (click)="openEditModal(client)"
-                            title="Editar">✏️
+                        <button class="btn-action-icon edit" (click)="openEditModal(client)" title="Editar">✏️
                         </button>
-                        <button class="btn-action-icon" (click)="navigateToMembershipHistory(client.id)" 
+                        <button class="btn-action-icon" (click)="navigateToMembershipHistory(client.id)"
                             title="Historial de Membresías">📋
                         </button>
-                        <button class="btn-action-icon" (click)="openFaceScanModal(client)"
-                            title="Registrar Rostro">📷
+                        <button class="btn-action-icon" (click)="openFaceScanModal(client)" title="Registrar Rostro">📷
                         </button>
-                        <button class="btn-action-icon delete" (click)="confirmDelete(client)"
-                            title="Eliminar">🗑️
+                        <button class="btn-action-icon delete" (click)="confirmDelete(client)" title="Eliminar">🗑️
                         </button>
                     </div>
                 </td>

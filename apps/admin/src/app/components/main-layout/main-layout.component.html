@@ -11,31 +11,40 @@
     </div>
 
     <nav class="nav-menu">
-      <a routerLink="/dashboard" routerLinkActive="active" class="nav-item" [title]="sidebarCollapsed ? 'Estadísticas' : ''" (click)="onNavItemClick()">
+      <a routerLink="/dashboard" routerLinkActive="active" class="nav-item"
+        [title]="sidebarCollapsed ? 'Estadísticas' : ''" (click)="onNavItemClick()">
         <span class="nav-icon">📊</span>
         <span class="nav-label" *ngIf="!sidebarCollapsed">Estadísticas</span>
       </a>
-      <a routerLink="/clients" routerLinkActive="active" class="nav-item" [title]="sidebarCollapsed ? 'Clientes' : ''" (click)="onNavItemClick()">
+      <a routerLink="/clients" routerLinkActive="active" class="nav-item" [title]="sidebarCollapsed ? 'Clientes' : ''"
+        (click)="onNavItemClick()">
         <span class="nav-icon">👥</span>
-        <span class="nav-label" *ngIf="!sidebarCollapsed">Clientes</span>
+        <span class="nav-label" *ngIf="!sidebarCollapsed">Guerreros</span>
       </a>
-      <a routerLink="/admin/users" routerLinkActive="active" class="nav-item" *ngIf="getCurrentUser() && (getCurrentUser()?.role === 'admin' || getCurrentUser()?.role === 'super_admin' || getCurrentUser()?.role === 'receptionist')" [title]="sidebarCollapsed ? 'Usuarios' : ''" (click)="onNavItemClick()">
+      <a routerLink="/admin/users" routerLinkActive="active" class="nav-item"
+        *ngIf="getCurrentUser() && (getCurrentUser()?.role === 'admin' || getCurrentUser()?.role === 'super_admin' || getCurrentUser()?.role === 'receptionist')"
+        [title]="sidebarCollapsed ? 'Usuarios' : ''" (click)="onNavItemClick()">
         <span class="nav-icon">👤</span>
         <span class="nav-label" *ngIf="!sidebarCollapsed">Usuarios</span>
       </a>
-      
-      <a routerLink="/membership-types" routerLinkActive="active" class="nav-item" *ngIf="getCurrentUser() && (getCurrentUser()?.role === 'admin' || getCurrentUser()?.role === 'super_admin' || getCurrentUser()?.role === 'manager')" [title]="sidebarCollapsed ? 'Tipos de Membresía' : ''" (click)="onNavItemClick()">
+
+      <a routerLink="/membership-types" routerLinkActive="active" class="nav-item"
+        *ngIf="getCurrentUser() && (getCurrentUser()?.role === 'admin' || getCurrentUser()?.role === 'super_admin' || getCurrentUser()?.role === 'manager')"
+        [title]="sidebarCollapsed ? 'Tipos de Membresía' : ''" (click)="onNavItemClick()">
         <span class="nav-icon">📋</span>
         <span class="nav-label" *ngIf="!sidebarCollapsed">Tipos de Membresía</span>
       </a>
-      <a routerLink="/audit-logs" routerLinkActive="active" class="nav-item" *ngIf="getCurrentUser() && (getCurrentUser()?.role === 'admin' || getCurrentUser()?.role === 'super_admin' || getCurrentUser()?.role === 'manager')" [title]="sidebarCollapsed ? 'Auditoría' : ''" (click)="onNavItemClick()">
+      <a routerLink="/audit-logs" routerLinkActive="active" class="nav-item"
+        *ngIf="getCurrentUser() && (getCurrentUser()?.role === 'admin' || getCurrentUser()?.role === 'super_admin' || getCurrentUser()?.role === 'manager')"
+        [title]="sidebarCollapsed ? 'Auditoría' : ''" (click)="onNavItemClick()">
         <span class="nav-icon">🔍</span>
         <span class="nav-label" *ngIf="!sidebarCollapsed">Auditoría</span>
       </a>
 
       <div class="nav-divider" *ngIf="!sidebarCollapsed">Centro de Control</div>
-      
-      <a routerLink="/checkin" class="nav-item" [title]="sidebarCollapsed ? 'Check-in Facial' : ''" (click)="onNavItemClick()">
+
+      <a routerLink="/checkin" class="nav-item" [title]="sidebarCollapsed ? 'Check-in Facial' : ''"
+        (click)="onNavItemClick()">
         <span class="nav-icon">📷</span>
         <span class="nav-label" *ngIf="!sidebarCollapsed">Check-in Facial</span>
       </a>
@@ -47,7 +56,7 @@
         <small class="version-text" *ngIf="versionService.currentVersion">v{{ versionService.currentVersion }}</small>
       </div>
       <button class="btn-logout-premium" (click)="logout()" [title]="sidebarCollapsed ? 'Cerrar Sesión' : ''">
-        <span class="logout-icon">🚪</span> 
+        <span class="logout-icon">🚪</span>
         <span class="logout-label" *ngIf="!sidebarCollapsed">Cerrar Sesión</span>
       </button>
     </div>
