@@ -13,13 +13,14 @@ import { KaizenHabit, KaizenService } from '../kaizen.service';
       </div>
       
       <div class="habit-list">
-        <div class="habit-item" *ngFor="let habit of habits">
-          <!-- Encabezado del Hábito: Título y Stats -->
-          <div class="habit-top-row">
+        <div class="habit-item" *ngFor="let habit of habits" [class.is-expanded]="expandedHabitId === habit.id">
+          <!-- Encabezado del Hábito: Título y Stats (Siempre visible) -->
+          <div class="habit-top-row" (click)="toggleExpand(habit)">
             <div class="habit-title-container">
-              <h3 *ngIf="!habit['_isEditing']" (click)="habit['_isEditing'] = true">{{ habit.name }}</h3>
-              <input *ngIf="habit['_isEditing']" [(ngModel)]="habit.name" (blur)="saveHabitName(habit)" (keyup.enter)="saveHabitName(habit)" class="edit-name-input" autofocus>
-              <button class="btn-icon-small" (click)="habit['_isEditing'] = true" *ngIf="!habit['_isEditing']">✏️</button>
+              <span class="expand-chevron" [class.rotated]="expandedHabitId === habit.id">▼</span>
+              <h3 *ngIf="!habit['_isEditing']">{{ habit.name }}</h3>
+              <input *ngIf="habit['_isEditing']" [(ngModel)]="habit.name" (click)="$event.stopPropagation()" (blur)="saveHabitName(habit)" (keyup.enter)="saveHabitName(habit)" class="edit-name-input" autofocus>
+              <button class="btn-icon-small" (click)="habit['_isEditing'] = true; $event.stopPropagation()" *ngIf="!habit['_isEditing']">✏️</button>
             </div>
             <div class="habit-stats-compact">
               <div class="stat-badge vic">
@@ -30,57 +31,60 @@ import { KaizenHabit, KaizenService } from '../kaizen.service';
                 <span class="label">DER</span>
                 <span class="value">{{ getDerCount(habit) }}</span>
               </div>
-              <button class="btn-icon-delete" (click)="deleteHabit(habit)" title="Eliminar">🗑️</button>
+              <button class="btn-icon-delete" (click)="deleteHabit(habit); $event.stopPropagation()" title="Eliminar">🗑️</button>
             </div>
           </div>
 
-          <!-- Meta del Hábito: Inmediatamente debajo del título -->
-          <div class="habit-goal-section">
-            <div class="goal-input-wrapper">
-              <span class="goal-label">META:</span>
-              <input type="text" [(ngModel)]="habit.goal" (blur)="updateHabit(habit)" placeholder="Define tu objetivo del mes...">
-            </div>
-          </div>
-          
-          <!-- Grid de Días: El progreso visual -->
-          <div class="days-container">
-            <div class="days-grid">
-              <div class="day-cell" *ngFor="let day of getDaysInMonth(); let i = index" 
-                   [class.is-vic]="getLogStatus(habit, i + 1) === 'victory'"
-                   [class.is-der]="getLogStatus(habit, i + 1) === 'defeat'"
-                   [class.is-selected]="selectedDay === i + 1"
-                   (click)="selectDay(i + 1)">
-                {{ i + 1 }}
+          <!-- Contenido Colapsable -->
+          <div class="habit-details-container" *ngIf="expandedHabitId === habit.id">
+            <!-- Meta del Hábito -->
+            <div class="habit-goal-section">
+              <div class="goal-input-wrapper">
+                <span class="goal-label">META:</span>
+                <input type="text" [(ngModel)]="habit.goal" (blur)="updateHabit(habit)" placeholder="Define tu objetivo del mes...">
               </div>
             </div>
-          </div>
+            
+            <!-- Grid de Días -->
+            <div class="days-container">
+              <div class="days-grid">
+                <div class="day-cell" *ngFor="let day of getDaysInMonth(); let i = index" 
+                     [class.is-vic]="getLogStatus(habit, i + 1) === 'victory'"
+                     [class.is-der]="getLogStatus(habit, i + 1) === 'defeat'"
+                     [class.is-selected]="selectedDay === i + 1"
+                     (click)="selectDay(i + 1)">
+                  {{ i + 1 }}
+                </div>
+              </div>
+            </div>
 
-          <!-- Acciones de Registro: Botones grandes y centrales -->
-          <div class="action-section" *ngIf="selectedDay">
-            <p class="action-prompt">Registrar día {{ selectedDay }}</p>
-            <div class="log-button-group">
-              <button class="btn-action btn-victory" 
-                      [class.active]="getLogStatus(habit, selectedDay) === 'victory'" 
-                      (click)="setLogStatus(habit, selectedDay, 'victory')">
-                <span class="icon">🏆</span> Victoria
-              </button>
-              <button class="btn-action btn-defeat" 
-                      [class.active]="getLogStatus(habit, selectedDay) === 'defeat'" 
-                      (click)="setLogStatus(habit, selectedDay, 'defeat')">
-                <span class="icon">💀</span> Derrota
+            <!-- Acciones de Registro -->
+            <div class="action-section" *ngIf="selectedDay">
+              <p class="action-prompt">Registrar día {{ selectedDay }}</p>
+              <div class="log-button-group">
+                <button class="btn-action btn-victory" 
+                        [class.active]="getLogStatus(habit, selectedDay) === 'victory'" 
+                        (click)="setLogStatus(habit, selectedDay, 'victory')">
+                  <span class="icon">🏆</span> Victoria
+                </button>
+                <button class="btn-action btn-defeat" 
+                        [class.active]="getLogStatus(habit, selectedDay) === 'defeat'" 
+                        (click)="setLogStatus(habit, selectedDay, 'defeat')">
+                  <span class="icon">💀</span> Derrota
+                </button>
+              </div>
+              <button class="btn-reset" *ngIf="getLogStatus(habit, selectedDay) !== 'pending'" (click)="setLogStatus(habit, selectedDay, 'pending')">
+                Restablecer día
               </button>
             </div>
-            <button class="btn-reset" *ngIf="getLogStatus(habit, selectedDay) !== 'pending'" (click)="setLogStatus(habit, selectedDay, 'pending')">
-              Restablecer día
-            </button>
-          </div>
-          
-          <!-- Reflexión: Espacio amplio para escribir -->
-          <div class="reflection-section" *ngIf="selectedDay">
-            <label class="section-label">Reflexión Diaria</label>
-            <textarea [ngModel]="getDailyReflection(habit, selectedDay)" 
-                      (ngModelChange)="updateDailyReflection(habit, selectedDay, $event)" 
-                      placeholder="¿Cómo te fue hoy? ¿Qué podrías mejorar?"></textarea>
+            
+            <!-- Reflexión -->
+            <div class="reflection-section" *ngIf="selectedDay">
+              <label class="section-label">Reflexión Diaria</label>
+              <textarea [ngModel]="getDailyReflection(habit, selectedDay)" 
+                        (ngModelChange)="updateDailyReflection(habit, selectedDay, $event)" 
+                        placeholder="¿Cómo te fue hoy? ¿Qué podrías mejorar?"></textarea>
+            </div>
           </div>
         </div>
       </div>
@@ -145,24 +149,31 @@ import { KaizenHabit, KaizenService } from '../kaizen.service';
 
     .habit-item {
       background: rgba(255, 255, 255, 0.03);
-      border-radius: 28px;
-      padding: 1.75rem;
-      margin-bottom: 2rem;
+      border-radius: 24px;
+      padding: 1.25rem;
+      margin-bottom: 1rem;
       border: 1px solid rgba(255, 255, 255, 0.04);
       transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+      overflow: hidden;
     }
 
-    .habit-item:hover {
-      background: rgba(255, 255, 255, 0.05);
-      border-color: rgba(255, 255, 255, 0.1);
-      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+    .habit-item.is-expanded {
+      background: rgba(255, 255, 255, 0.06);
+      border-color: rgba(255, 255, 255, 0.12);
+      padding: 1.75rem;
     }
 
     .habit-top-row {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      margin-bottom: 1.25rem;
+      cursor: pointer;
+    }
+
+    .habit-item.is-expanded .habit-top-row {
+      margin-bottom: 1.5rem;
+      padding-bottom: 1rem;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
     }
 
     .habit-title-container {
@@ -171,17 +182,33 @@ import { KaizenHabit, KaizenService } from '../kaizen.service';
       gap: 0.75rem;
     }
 
+    .expand-chevron {
+      font-size: 0.7rem;
+      opacity: 0.3;
+      transition: transform 0.3s ease;
+    }
+
+    .expand-chevron.rotated {
+      transform: rotate(180deg);
+      opacity: 1;
+      color: #f9d423;
+    }
+
     .habit-title-container h3 {
       margin: 0;
-      font-size: 1.5rem;
+      font-size: 1.25rem;
       font-weight: 800;
       color: #f9d423;
-      cursor: pointer;
+      transition: all 0.3s;
+    }
+
+    .habit-item.is-expanded .habit-title-container h3 {
+      font-size: 1.5rem;
     }
 
     .habit-stats-compact {
       display: flex;
-      gap: 0.75rem;
+      gap: 0.5rem;
       align-items: center;
     }
 
@@ -189,16 +216,25 @@ import { KaizenHabit, KaizenService } from '../kaizen.service';
       display: flex;
       flex-direction: column;
       align-items: center;
-      padding: 0.4rem 0.8rem;
-      border-radius: 12px;
-      min-width: 50px;
+      padding: 0.3rem 0.6rem;
+      border-radius: 10px;
+      min-width: 45px;
     }
 
     .stat-badge.vic { background: rgba(74, 222, 128, 0.1); border: 1px solid rgba(74, 222, 128, 0.2); color: #4ade80; }
     .stat-badge.der { background: rgba(248, 113, 113, 0.1); border: 1px solid rgba(248, 113, 113, 0.2); color: #f87171; }
 
-    .stat-badge .label { font-size: 0.6rem; font-weight: 800; opacity: 0.7; }
-    .stat-badge .value { font-size: 1rem; font-weight: 900; }
+    .stat-badge .label { font-size: 0.5rem; font-weight: 800; opacity: 0.7; }
+    .stat-badge .value { font-size: 0.9rem; font-weight: 900; }
+
+    .habit-details-container {
+      animation: fadeInDown 0.3s ease-out;
+    }
+
+    @keyframes fadeInDown {
+      from { opacity: 0; transform: translateY(-10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
 
     .habit-goal-section {
       margin-bottom: 1.5rem;
@@ -392,14 +428,14 @@ import { KaizenHabit, KaizenService } from '../kaizen.service';
       color: #f9d423;
       padding: 0.4rem 0.8rem;
       border-radius: 10px;
-      font-size: 1.3rem;
+      font-size: 1.1rem;
       font-weight: 800;
       width: 100%;
     }
 
     @media (max-width: 600px) {
-      .habit-top-row { flex-direction: column; align-items: flex-start; gap: 1rem; }
-      .habit-stats-compact { width: 100%; justify-content: space-between; }
+      .habit-top-row { flex-direction: row; justify-content: space-between; align-items: center; }
+      .habit-stats-compact { gap: 0.3rem; }
       .log-button-group { flex-direction: column; align-items: stretch; }
       .btn-action { max-width: none; }
     }
@@ -410,6 +446,7 @@ export class HabitTrackerComponent {
   @Output() logUpdate = new EventEmitter<void>();
 
   selectedDay: number = new Date().getDate();
+  expandedHabitId: any = null;
 
   constructor(private kaizenService: KaizenService) {}
 
@@ -417,6 +454,14 @@ export class HabitTrackerComponent {
     const today = new Date();
     const days = new Date(today.getFullYear(), today.getMonth() + 1, 0).getDate();
     return Array(days).fill(0);
+  }
+
+  toggleExpand(habit: KaizenHabit) {
+    if (this.expandedHabitId === habit.id) {
+      this.expandedHabitId = null; // Colapsar si ya está abierto
+    } else {
+      this.expandedHabitId = habit.id; // Abrir el nuevo
+    }
   }
 
   selectDay(day: number) {
