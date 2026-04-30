@@ -65,77 +65,132 @@ import { KaizenService } from '../kaizen/kaizen.service';
   `,
   styles: [`
     .dashboard-container { 
-      padding: 2rem; 
+      padding: 1rem; 
       font-family: 'Inter', system-ui, -apple-system, sans-serif;
       color: #eee;
     }
+    @media (min-width: 768px) {
+      .dashboard-container {
+        padding: 2rem;
+      }
+    }
     header { 
       display: flex; 
+      flex-direction: column;
+      gap: 1rem;
       justify-content: space-between; 
-      align-items: center; 
-      margin-bottom: 2rem; 
-      background: linear-gradient(135deg, rgba(255,255,255,0.05), rgba(255,255,255,0));
-      backdrop-filter: blur(10px);
-      -webkit-backdrop-filter: blur(10px);
-      border: 1px solid rgba(255,255,255,0.1);
-      box-shadow: 0 8px 32px 0 rgba(0,0,0,0.37);
-      padding: 2rem;
-      border-radius: 20px;
-      background-color: #1a1a1a;
+      align-items: flex-start; 
+      margin-bottom: 1.5rem; 
+      background: rgba(18, 18, 18, 0.7);
+      backdrop-filter: blur(25px);
+      -webkit-backdrop-filter: blur(25px);
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      box-shadow: 0 15px 35px rgba(0,0,0,0.5);
+      padding: 1.5rem;
+      border-radius: 24px;
+    }
+    @media (min-width: 768px) {
+      header {
+        flex-direction: row;
+        align-items: center;
+        padding: 2.5rem;
+        border-radius: 32px;
+      }
     }
     header h1 {
-      font-size: 2.5rem;
+      font-size: 2rem;
       font-weight: 800;
       margin: 0;
       background: linear-gradient(to right, #f9d423 0%, #ff4e50 100%);
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
+      line-height: 1.1;
+    }
+    @media (min-width: 768px) {
+      header h1 {
+        font-size: 3rem;
+      }
     }
     main {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
-      gap: 2rem;
+      grid-template-columns: 1fr;
+      gap: 1.5rem;
+    }
+    @media (min-width: 1024px) {
+      main {
+        grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+        gap: 2rem;
+      }
     }
     .card { 
-      background: #222; 
-      padding: 2rem; 
-      border-radius: 16px; 
-      box-shadow: 0 10px 30px rgba(0,0,0,0.5); 
+      background: rgba(18, 18, 18, 0.7); 
+      backdrop-filter: blur(25px);
+      -webkit-backdrop-filter: blur(25px);
+      padding: 1.5rem; 
+      border-radius: 32px; 
+      box-shadow: 0 20px 40px rgba(0,0,0,0.4); 
       border: 1px solid rgba(255,255,255,0.05);
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    @media (min-width: 768px) {
+      .card {
+        padding: 2.5rem;
+      }
+    }
+    .card:hover {
+      transform: translateY(-5px);
+      background: rgba(255, 255, 255, 0.02);
+      border-color: rgba(255, 255, 255, 0.1);
     }
     .card h3 {
       color: #fff;
-      font-weight: 600;
-      border-bottom: 2px solid #333;
+      font-weight: 800;
+      border-bottom: 1px solid rgba(255,255,255,0.05);
       padding-bottom: 1rem;
       margin-top: 0;
+      font-size: 1.5rem;
+      letter-spacing: -0.5px;
     }
-    .status.active { color: #4ade80; font-weight: bold; }
+    .status.active { 
+      color: #4ade80; 
+      font-weight: 800; 
+      background: rgba(74, 222, 128, 0.05);
+      border: 1px solid rgba(74, 222, 128, 0.1);
+      padding: 0.25rem 0.75rem;
+      border-radius: 10px;
+      display: inline-block;
+      font-size: 0.8rem;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
     .btn-purchase, .btn-logout { 
-      padding: 0.8rem 1.5rem; 
-      border-radius: 30px; 
+      padding: 0.9rem 1.8rem; 
+      border-radius: 18px; 
       border: none; 
-      font-weight: bold;
+      font-weight: 800;
       cursor: pointer; 
-      transition: transform 0.2s, box-shadow 0.2s;
+      transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
     }
     .btn-purchase {
       background: linear-gradient(to right, #f9d423 0%, #ff4e50 100%);
       color: black;
       width: 100%;
-      margin-top: 1rem;
+      margin-top: 1.5rem;
+      box-shadow: 0 8px 20px rgba(249, 212, 35, 0.25);
+      font-size: 1rem;
     }
     .btn-purchase:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 5px 15px rgba(249, 212, 35, 0.4);
+      transform: translateY(-3px) scale(1.02);
+      box-shadow: 0 12px 28px rgba(249, 212, 35, 0.4);
     }
     .btn-logout {
-      background: rgba(255,255,255,0.1);
+      background: rgba(255,255,255,0.05);
       color: white;
-      border: 1px solid rgba(255,255,255,0.2);
+      border: 1px solid rgba(255,255,255,0.1);
+      font-size: 0.9rem;
     }
     .btn-logout:hover {
-      background: rgba(255,255,255,0.2);
+      background: rgba(255,255,255,0.15);
       transform: translateY(-2px);
     }
     ul {
@@ -143,12 +198,36 @@ import { KaizenService } from '../kaizen/kaizen.service';
       padding: 0;
     }
     ul li {
-      padding: 0.8rem 0;
-      border-bottom: 1px solid #333;
+      padding: 1rem 0;
+      border-bottom: 1px solid rgba(255,255,255,0.05);
       color: #aaa;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    ul li::before {
+      content: '📅';
+      font-size: 1.1rem;
     }
     ul li:last-child {
       border-bottom: none;
+    }
+
+    /* Fix for ngx-charts visibility in dark mode */
+    ::ng-deep .ngx-charts text {
+      fill: #fff !important;
+    }
+    ::ng-deep .ngx-charts .legend-title-text {
+      color: #fff !important;
+    }
+    ::ng-deep .ngx-charts .legend-label-text {
+      color: #aaa !important;
+    }
+    ::ng-deep .ngx-charts .legend-label-text:hover {
+      color: #fff !important;
+    }
+    ::ng-deep .ngx-charts .tick text {
+      fill: #bbb !important;
     }
   `]
 })

@@ -7,6 +7,7 @@ export interface KaizenLog {
   id?: number;
   date: string;
   status: 'pending' | 'victory' | 'defeat';
+  reflection?: string;
   habit_id?: number;
   created_at?: string;
 }
@@ -52,8 +53,8 @@ export class KaizenService {
     return this.http.delete<void>(`${this.apiUrl}/habits/${id}`);
   }
 
-  recordLog(habitId: number, date: string, status: 'pending' | 'victory' | 'defeat'): Observable<KaizenLog> {
-    return this.http.post<KaizenLog>(`${this.apiUrl}/habits/${habitId}/logs`, { date, status });
+  recordLog(habitId: number, date: string, status: 'pending' | 'victory' | 'defeat', reflection?: string): Observable<KaizenLog> {
+    return this.http.post<KaizenLog>(`${this.apiUrl}/habits/${habitId}/logs`, { date, status, reflection });
   }
 
   getMedals(): Observable<KaizenMedal[]> {

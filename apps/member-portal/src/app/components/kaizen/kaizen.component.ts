@@ -46,95 +46,111 @@ import { KaizenService, KaizenHabit, KaizenMedal } from './kaizen.service';
   `,
   styles: [`
     .kaizen-container {
-      padding: 2rem;
+      padding: 1rem;
       max-width: 1400px;
       margin: 0 auto;
       font-family: 'Inter', system-ui, -apple-system, sans-serif;
+      background-color: #111;
+      min-height: 100vh;
+      color: #eee;
     }
     .kaizen-header {
-      margin-bottom: 2rem;
+      margin-bottom: 1.5rem;
       text-align: center;
-      background: linear-gradient(135deg, rgba(255,255,255,0.1), rgba(255,255,255,0));
-      backdrop-filter: blur(10px);
-      -webkit-backdrop-filter: blur(10px);
-      border: 1px solid rgba(255,255,255,0.18);
-      box-shadow: 0 8px 32px 0 rgba(0,0,0,0.37);
-      padding: 3rem;
-      border-radius: 20px;
+      background: rgba(18, 18, 18, 0.7);
+      backdrop-filter: blur(25px);
+      -webkit-backdrop-filter: blur(25px);
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      box-shadow: 0 15px 35px rgba(0,0,0,0.5);
+      padding: 2rem 1.5rem;
+      border-radius: 24px;
       color: #fff;
-      background-color: #1a1a1a;
     }
     .kaizen-header h1 {
-      font-size: 3rem;
+      font-size: 2.2rem;
       font-weight: 800;
-      margin: 0 0 1rem 0;
+      margin: 0 0 0.5rem 0;
       background: linear-gradient(to right, #f9d423 0%, #ff4e50 100%);
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
+      line-height: 1.2;
     }
     .kaizen-header h1 span {
+      display: block;
+      font-size: 1.2rem;
       font-weight: 300;
       opacity: 0.8;
       background: none;
       -webkit-text-fill-color: #fff;
+      margin-top: 0.2rem;
     }
     .kaizen-header p {
-      font-size: 1.2rem;
+      font-size: 1rem;
       color: #aaa;
       max-width: 600px;
       margin: 0 auto;
+      line-height: 1.5;
     }
     .btn-back {
-      background: rgba(255,255,255,0.1);
+      background: rgba(255,255,255,0.05);
       color: white;
-      border: 1px solid rgba(255,255,255,0.2);
-      padding: 0.5rem 1rem;
+      border: 1px solid rgba(255,255,255,0.1);
+      padding: 0.6rem 1.2rem;
       border-radius: 20px;
       cursor: pointer;
       font-weight: 500;
       transition: all 0.2s;
+      font-size: 0.9rem;
     }
     .btn-back:hover {
-      background: rgba(255,255,255,0.2);
+      background: rgba(255,255,255,0.1);
       transform: translateX(-5px);
     }
     .btn-tutorial {
       background: linear-gradient(to right, #f9d423 0%, #ff4e50 100%);
       color: black;
       border: none;
-      padding: 0.8rem 1.5rem;
+      padding: 0.8rem 1.8rem;
       border-radius: 30px;
-      font-weight: bold;
+      font-weight: 700;
       cursor: pointer;
-      font-size: 1rem;
+      font-size: 0.95rem;
       margin-top: 1.5rem;
-      transition: transform 0.2s, box-shadow 0.2s;
+      transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      box-shadow: 0 4px 15px rgba(249, 212, 35, 0.2);
     }
     .btn-tutorial:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 5px 15px rgba(249, 212, 35, 0.4);
+      transform: translateY(-2px) scale(1.02);
+      box-shadow: 0 8px 20px rgba(249, 212, 35, 0.4);
     }
     .tutorial-card {
-      background: #1e1e1e;
-      border: 1px solid #f9d423;
-      border-radius: 16px;
-      padding: 2rem;
+      background: rgba(18, 18, 18, 0.85);
+      backdrop-filter: blur(15px);
+      -webkit-backdrop-filter: blur(15px);
+      border: 1px solid rgba(249, 212, 35, 0.3);
+      border-radius: 24px;
+      padding: 1.5rem;
       margin-bottom: 2rem;
       color: #ddd;
-      box-shadow: 0 10px 30px rgba(249, 212, 35, 0.1);
-      animation: fadeIn 0.3s ease-in-out;
+      box-shadow: 0 15px 40px rgba(0, 0, 0, 0.5);
+      animation: slideDown 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
     }
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(-10px); }
+    @keyframes slideDown {
+      from { opacity: 0; transform: translateY(-20px); }
       to { opacity: 1; transform: translateY(0); }
     }
     .tutorial-card h3 {
       color: #f9d423;
       margin-top: 0;
+      font-size: 1.3rem;
     }
     .tutorial-card ul {
-      line-height: 1.8;
-      padding-left: 1.5rem;
+      line-height: 1.6;
+      padding-left: 1.2rem;
+      font-size: 0.95rem;
+    }
+    .tutorial-card li {
+      margin-bottom: 0.8rem;
     }
     .tutorial-card .icon {
       font-weight: bold;
@@ -143,7 +159,27 @@ import { KaizenService, KaizenHabit, KaizenMedal } from './kaizen.service';
     .kaizen-content {
       display: grid;
       grid-template-columns: 2fr 1fr;
-      gap: 2rem;
+      gap: 1.5rem;
+    }
+    @media (min-width: 768px) {
+      .kaizen-container {
+        padding: 2rem;
+      }
+      .kaizen-header {
+        padding: 3rem;
+        border-radius: 32px;
+      }
+      .kaizen-header h1 {
+        font-size: 3.5rem;
+      }
+      .kaizen-header h1 span {
+        display: inline;
+        font-size: 3.5rem;
+        margin-left: 0.5rem;
+      }
+      .kaizen-header p {
+        font-size: 1.2rem;
+      }
     }
     @media (max-width: 1024px) {
       .kaizen-content {
