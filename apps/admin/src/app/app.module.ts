@@ -25,7 +25,8 @@ import { AuditLogComponent } from './components/audit-log/audit-log.component';
 import { EntityAuditTrailComponent } from './components/audit-log/entity-audit-trail.component';
 
 import { HTTP_INTERCEPTORS } from '@angular/common/http';
-import { AuthInterceptor } from '@shared';
+import { AuthInterceptor, environment } from '@shared';
+import { ServiceWorkerModule } from '@angular/service-worker';
 
 @NgModule({
   declarations: [
@@ -48,7 +49,11 @@ import { AuthInterceptor } from '@shared';
     AppRoutingModule,
     HttpClientModule,
     FormsModule,
-    NgxChartsModule
+    NgxChartsModule,
+    ServiceWorkerModule.register('ngsw-worker.js', {
+      enabled: environment.production,
+      registrationStrategy: 'registerWhenStable:30000'
+    })
   ],
   providers: [
     { provide: LOCALE_ID, useValue: 'es' },

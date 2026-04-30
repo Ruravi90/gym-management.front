@@ -1,7 +1,7 @@
 {
   "name": "GYMCONTROL",
   "short_name": "GYMCONTROL",
-  "description": "Portal del socio.",
+  "description": "Panel de control para la gestión de gimnasios.",
   "start_url": "/",
   "scope": "/",
   "display": "standalone",

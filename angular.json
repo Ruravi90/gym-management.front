@@ -23,7 +23,8 @@
             "tsConfig": "apps/admin/tsconfig.app.json",
             "assets": [
               "apps/admin/src/favicon.ico",
-              "apps/admin/src/assets"
+              "apps/admin/src/assets",
+              "apps/admin/src/manifest.webmanifest"
             ],
             "styles": [
               "apps/admin/src/styles.css"
@@ -50,7 +51,9 @@
                   "replace": "libs/shared/src/environments/environment.ts",
                   "with": "libs/shared/src/environments/environment.prod.ts"
                 }
-              ]
+              ],
+              "serviceWorker": true,
+              "ngswConfigPath": "apps/admin/ngsw-config.json"
             },
             "development": {
               "buildOptimizer": false,
@@ -91,7 +94,11 @@
             "main": "apps/member-portal/src/main.ts",
             "polyfills": ["zone.js"],
             "tsConfig": "apps/member-portal/tsconfig.app.json",
-            "assets": ["apps/member-portal/src/favicon.ico", "apps/member-portal/src/assets"],
+            "assets": [
+              "apps/member-portal/src/favicon.ico",
+              "apps/member-portal/src/assets",
+              "apps/member-portal/src/manifest.webmanifest"
+            ],
             "styles": ["apps/member-portal/src/styles.css"],
             "scripts": []
           },
@@ -110,7 +117,9 @@
                   "replace": "libs/shared/src/environments/environment.ts",
                   "with": "libs/shared/src/environments/environment.prod.ts"
                 }
-              ]
+              ],
+              "serviceWorker": true,
+              "ngswConfigPath": "apps/member-portal/ngsw-config.json"
             },
             "development": {
               "buildOptimizer": false,

@@ -11,7 +11,8 @@ import { RegisterComponent } from './components/register/register.component';
 import { DashboardComponent } from './components/dashboard/dashboard.component';
 import { MembershipPurchaseComponent } from './components/membership-purchase/membership-purchase.component';
 import { PaymentResultComponent } from './components/payment-result/payment-result.component';
-import { AuthInterceptor } from '@shared';
+import { AuthInterceptor, environment } from '@shared';
+import { ServiceWorkerModule } from '@angular/service-worker';
 
 @NgModule({
   declarations: [
@@ -28,7 +29,11 @@ import { AuthInterceptor } from '@shared';
     AppRoutingModule,
     HttpClientModule,
     FormsModule,
-    NgxChartsModule
+    NgxChartsModule,
+    ServiceWorkerModule.register('ngsw-worker.js', {
+      enabled: environment.production,
+      registrationStrategy: 'registerWhenStable:30000'
+    })
   ],
   providers: [
     {

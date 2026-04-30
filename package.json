@@ -1,6 +1,6 @@
 {
   "name": "gym-management-frontend",
-  "version": "1.0.39",
+  "version": "1.0.40",
   "scripts": {
     "ng": "ng",
     "start": "npm run generate-version && ng serve",
@@ -23,6 +23,7 @@
     "@angular/platform-browser": "^16.2.0",
     "@angular/platform-browser-dynamic": "^16.2.0",
     "@angular/router": "^16.2.0",
+    "@angular/service-worker": "^16.2.12",
     "@swimlane/ngx-charts": "^20.4.1",
     "core-js": "^3.48.0",
     "d3": "^7.9.0",
