@@ -14,6 +14,7 @@ const routes: Routes = [
   { path: 'payment/success', component: PaymentResultComponent },
   { path: 'payment/failure', component: PaymentResultComponent },
   { path: 'payment/pending', component: PaymentResultComponent },
+  { path: 'mejora-continua', loadChildren: () => import('./components/kaizen/kaizen.module').then(m => m.KaizenModule) },
   { path: '', redirectTo: '/login', pathMatch: 'full' }
 ];
 
