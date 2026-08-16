@@ -1,4 +1,6 @@
 export * from './models/user.model';
+export * from './models/exercise.model';
+export * from './models/measurement.model';
 export * from './services/auth.service';
 export * from './services/storage.service';
 export * from './services/version.service';
@@ -11,4 +13,8 @@ export * from './guards/admin.guard';
 export * from './services/analytics.service';
 export * from './services/audit-log.service';
 export * from './services/user.service';
+export * from './services/exercise.service';
+export * from './services/routine.service';
+export * from './services/mentor.service';
+export * from './services/measurement.service';
 export * from './environments/environment';

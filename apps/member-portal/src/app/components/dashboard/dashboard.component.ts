@@ -52,6 +52,14 @@ import { KaizenService } from '../kaizen/kaizen.service';
           <button routerLink="/mejora-continua" class="btn-purchase" style="margin-top: 10px;">Ver Mis Hábitos y Logros</button>
         </div>
 
+        <div class="card routines-card">
+          <h3 style="color: #4ade80;">Mis Rutinas 🏋️</h3>
+          <p style="color: #aaa;">Sigue tus días de entrenamiento, registra tus series y consulta a tu mentor con IA.</p>
+          <button routerLink="/rutinas" class="btn-purchase" style="margin-top: 10px;">Ver Mis Rutinas</button>
+          <button routerLink="/rutinas/mentor" class="btn-purchase" style="margin-top: 10px;">🤖 Hablar con FitMentor</button>
+          <button routerLink="/rutinas/medidas" class="btn-purchase" style="margin-top: 10px;">📏 Registrar Mis Medidas</button>
+        </div>
+
         <div class="card attendance-card">
           <h3>Mis últimas asistencias</h3>
           <ul>

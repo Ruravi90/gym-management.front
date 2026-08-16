@@ -1,0 +1,266 @@
+.page-container {
+  padding: 2rem;
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  color: #eee;
+}
+
+.page-header h1 {
+  font-size: 2rem;
+  margin: 0;
+  background: linear-gradient(to right, #f9d423 0%, #ff4e50 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.page-header p {
+  color: #aaa;
+  margin-top: 0.5rem;
+}
+
+.toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  margin: 1.5rem 0;
+  background: rgba(18, 18, 18, 0.7);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  border-radius: 16px;
+  padding: 1rem;
+}
+
+.input-field {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 10px;
+  color: #eee;
+  padding: 0.6rem 0.9rem;
+  font-size: 0.9rem;
+  outline: none;
+  flex: 1;
+  min-width: 180px;
+}
+
+.input-field:focus {
+  border-color: #f9d423;
+}
+
+.select {
+  flex: 0 1 auto;
+}
+
+.btn {
+  padding: 0.6rem 1.2rem;
+  border-radius: 10px;
+  border: none;
+  font-weight: 600;
+  cursor: pointer;
+  font-size: 0.9rem;
+  transition: all 0.2s;
+}
+
+.btn-primary {
+  background: linear-gradient(to right, #f9d423, #ff4e50);
+  color: #000;
+}
+
+.btn-secondary {
+  background: rgba(255, 255, 255, 0.08);
+  color: #eee;
+}
+
+.btn-accent {
+  background: #ff4e50;
+  color: #fff;
+}
+
+.btn-small {
+  background: rgba(255, 255, 255, 0.08);
+  color: #eee;
+  padding: 0.35rem 0.75rem;
+  font-size: 0.8rem;
+}
+
+.btn-danger {
+  background: rgba(255, 78, 80, 0.15);
+  color: #ff6b6b;
+}
+
+.btn-toggle {
+  background: rgba(249, 212, 35, 0.1);
+  color: #f9d423;
+}
+
+.loading {
+  text-align: center;
+  color: #aaa;
+  padding: 3rem;
+}
+
+.exercise-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 1.25rem;
+}
+
+.exercise-card {
+  background: rgba(18, 18, 18, 0.7);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  border-radius: 18px;
+  overflow: hidden;
+  transition: all 0.3s;
+}
+
+.exercise-card:hover {
+  transform: translateY(-4px);
+  border-color: rgba(255, 255, 255, 0.15);
+}
+
+.card-media {
+  position: relative;
+  height: 180px;
+  background: #000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.card-media img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.no-media {
+  color: #666;
+  font-size: 2rem;
+}
+
+.badge {
+  position: absolute;
+  top: 0.6rem;
+  right: 0.6rem;
+  background: #ff4e50;
+  color: #fff;
+  font-size: 0.7rem;
+  padding: 0.25rem 0.6rem;
+  border-radius: 8px;
+}
+
+.card-body {
+  padding: 1rem;
+}
+
+.card-body h3 {
+  margin: 0 0 0.5rem;
+  font-size: 1.05rem;
+  color: #fff;
+}
+
+.meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  margin-bottom: 0.6rem;
+}
+
+.chip {
+  background: rgba(249, 212, 35, 0.12);
+  color: #f9d423;
+  font-size: 0.75rem;
+  padding: 0.2rem 0.6rem;
+  border-radius: 8px;
+}
+
+.chip-outline {
+  background: transparent;
+  color: #aaa;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+}
+
+.target {
+  color: #f9d423;
+  font-size: 0.85rem;
+  margin: 0.3rem 0;
+}
+
+.instructions {
+  color: #999;
+  font-size: 0.85rem;
+  line-height: 1.4;
+}
+
+.actions {
+  display: flex;
+  gap: 0.5rem;
+  margin-top: 0.75rem;
+}
+
+.empty-state {
+  grid-column: 1 / -1;
+  text-align: center;
+  color: #888;
+  padding: 3rem;
+}
+
+/* Modal */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.7);
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  padding: 2rem;
+  z-index: 100;
+  overflow-y: auto;
+}
+
+.modal {
+  background: #161616;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 20px;
+  padding: 1.5rem;
+  width: 100%;
+  max-width: 640px;
+  color: #eee;
+}
+
+.modal h2 {
+  margin-top: 0;
+  color: #f9d423;
+}
+
+.modal-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+}
+
+.modal-grid label {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+  font-size: 0.85rem;
+  color: #bbb;
+}
+
+.modal-grid .full {
+  grid-column: 1 / -1;
+}
+
+.modal-preview {
+  margin-top: 1rem;
+}
+
+.modal-preview img {
+  max-height: 160px;
+  border-radius: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.75rem;
+  margin-top: 1.5rem;
+}

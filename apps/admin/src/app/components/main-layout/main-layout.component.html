@@ -21,6 +21,16 @@
         <span class="nav-icon">👥</span>
         <span class="nav-label" *ngIf="!sidebarCollapsed">Guerreros</span>
       </a>
+      <a routerLink="/routines" routerLinkActive="active" class="nav-item" [title]="sidebarCollapsed ? 'Rutinas' : ''"
+        (click)="onNavItemClick()">
+        <span class="nav-icon">🏋️</span>
+        <span class="nav-label" *ngIf="!sidebarCollapsed">Rutinas</span>
+      </a>
+      <a routerLink="/exercises" routerLinkActive="active" class="nav-item" [title]="sidebarCollapsed ? 'Ejercicios' : ''"
+        (click)="onNavItemClick()">
+        <span class="nav-icon">💪</span>
+        <span class="nav-label" *ngIf="!sidebarCollapsed">Ejercicios</span>
+      </a>
       <a routerLink="/admin/users" routerLinkActive="active" class="nav-item"
         *ngIf="getCurrentUser() && (getCurrentUser()?.role === 'admin' || getCurrentUser()?.role === 'super_admin' || getCurrentUser()?.role === 'receptionist')"
         [title]="sidebarCollapsed ? 'Usuarios' : ''" (click)="onNavItemClick()">

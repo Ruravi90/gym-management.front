@@ -23,6 +23,8 @@ import { ClientsComponent } from './components/clients/clients.component';
 import { UsersAdminComponent } from './components/users-admin/users-admin.component';
 import { AuditLogComponent } from './components/audit-log/audit-log.component';
 import { EntityAuditTrailComponent } from './components/audit-log/entity-audit-trail.component';
+import { ExercisesComponent } from './components/exercises/exercises.component';
+import { RoutinesComponent } from './components/routines/routines.component';
 
 import { HTTP_INTERCEPTORS } from '@angular/common/http';
 import { AuthInterceptor, environment } from '@shared';
@@ -41,7 +43,9 @@ import { ServiceWorkerModule } from '@angular/service-worker';
     ClientsComponent,
     UsersAdminComponent,
     AuditLogComponent,
-    EntityAuditTrailComponent
+    EntityAuditTrailComponent,
+    ExercisesComponent,
+    RoutinesComponent
   ],
   imports: [
     BrowserModule,

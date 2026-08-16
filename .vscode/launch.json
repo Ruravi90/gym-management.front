@@ -4,26 +4,35 @@
   "configurations": [
     {
       "name": "Debug Admin",
-      "type": "chrome",
+      "type": "pwa-chrome",
       "request": "launch",
       "url": "http://localhost:4200",
-      "webRoot": "${workspaceFolder}/apps/admin",
+      "webRoot": "${workspaceFolder}",
+      "sourceMaps": true,
+      "smartStep": true,
+      "skipFiles": ["<node_internals>/**", "**/node_modules/**"],
       "preLaunchTask": "npm: start:admin"
     },
     {
       "name": "Debug Member Portal",
-      "type": "chrome",
+      "type": "pwa-chrome",
       "request": "launch",
       "url": "http://localhost:4201",
-      "webRoot": "${workspaceFolder}/apps/member-portal",
+      "webRoot": "${workspaceFolder}",
+      "sourceMaps": true,
+      "smartStep": true,
+      "skipFiles": ["<node_internals>/**", "**/node_modules/**"],
       "preLaunchTask": "npm: start:member-portal"
     },
     {
       "name": "ng test",
-      "type": "chrome",
+      "type": "pwa-chrome",
       "request": "launch",
       "preLaunchTask": "npm: test",
-      "url": "http://localhost:9876/debug.html"
+      "url": "http://localhost:9876/debug.html",
+      "sourceMaps": true,
+      "smartStep": true,
+      "skipFiles": ["<node_internals>/**", "**/node_modules/**"]
     }
   ]
 }

@@ -1,0 +1,102 @@
+<div class="page-container">
+  <header class="page-header">
+    <h1>💪 Catálogo de Ejercicios</h1>
+    <p>Gestiona los ejercicios disponibles para las rutinas, con GIFs de demostración.</p>
+  </header>
+
+  <div class="toolbar">
+    <input type="text" class="input-field" placeholder="🔍 Buscar ejercicio..." [(ngModel)]="searchTerm" (keyup.enter)="applyFilters()">
+    <select class="input-field select" [(ngModel)]="muscleGroup" (change)="applyFilters()">
+      <option value="">Todos los grupos musculares</option>
+      <option *ngFor="let mg of muscleGroups" [value]="mg.value">{{ mg.label }}</option>
+    </select>
+    <button class="btn btn-primary" (click)="applyFilters()">Filtrar</button>
+    <button class="btn btn-secondary" (click)="clearFilters()">Limpiar</button>
+    <button class="btn btn-accent" (click)="openNewModal()">+ Nuevo Ejercicio</button>
+  </div>
+
+  <div *ngIf="loading" class="loading">Cargando ejercicios...</div>
+
+  <div class="exercise-grid" *ngIf="!loading">
+    <div class="exercise-card" *ngFor="let exercise of exercises">
+      <div class="card-media">
+        <img *ngIf="exercise.gif_url" [src]="exercise.gif_url" [alt]="exercise.name" loading="lazy">
+        <div *ngIf="!exercise.gif_url" class="no-media">🎥 Sin GIF</div>
+        <span class="badge" *ngIf="!exercise.is_active">Inactivo</span>
+      </div>
+      <div class="card-body">
+        <h3>{{ exercise.name }}</h3>
+        <div class="meta">
+          <span class="chip">{{ muscleLabel(exercise.muscle_group) }}</span>
+          <span class="chip chip-outline">{{ exercise.equipment || 'Sin equipo' }}</span>
+        </div>
+        <p class="target" *ngIf="exercise.target">Objetivo: {{ exercise.target }}</p>
+        <p class="instructions" *ngIf="exercise.instructions">{{ exercise.instructions | slice:0:120 }}{{ exercise.instructions.length > 120 ? '...' : '' }}</p>
+        <div class="actions">
+          <button class="btn btn-small" (click)="openEditModal(exercise)">✏️ Editar</button>
+          <button class="btn btn-small btn-toggle" (click)="toggleActive(exercise)">
+            {{ exercise.is_active ? 'Desactivar' : 'Activar' }}
+          </button>
+          <button class="btn btn-small btn-danger" (click)="deleteExercise(exercise)">🗑️</button>
+        </div>
+      </div>
+    </div>
+    <div class="empty-state" *ngIf="exercises.length === 0">
+      <p>No se encontraron ejercicios.</p>
+    </div>
+  </div>
+</div>
+
+<!-- Modal crear/editar -->
+<div class="modal-overlay" *ngIf="showModal" (click.self)="closeModal()">
+  <div class="modal">
+    <h2>{{ editing ? 'Editar Ejercicio' : 'Nuevo Ejercicio' }}</h2>
+    <div class="modal-grid">
+      <label>Nombre *
+        <input type="text" class="input-field" [(ngModel)]="form.name">
+      </label>
+      <label>Grupo muscular
+        <select class="input-field select" [(ngModel)]="form.muscle_group">
+          <option value="">—</option>
+          <option *ngFor="let mg of muscleGroups" [value]="mg.value">{{ mg.label }}</option>
+        </select>
+      </label>
+      <label>Equipamiento
+        <input type="text" class="input-field" placeholder="barbell, dumbbell, body weight..." [(ngModel)]="form.equipment">
+      </label>
+      <label>Dificultad
+        <select class="input-field select" [(ngModel)]="form.difficulty">
+          <option value="beginner">Principiante</option>
+          <option value="intermediate">Intermedio</option>
+          <option value="expert">Avanzado</option>
+        </select>
+      </label>
+      <label>Músculo objetivo
+        <input type="text" class="input-field" [(ngModel)]="form.target">
+      </label>
+      <label>Músculos secundarios
+        <input type="text" class="input-field" [(ngModel)]="form.secondary_muscles">
+      </label>
+      <label class="full">Descripción
+        <textarea class="input-field" rows="2" [(ngModel)]="form.description"></textarea>
+      </label>
+      <label class="full">Instrucciones (español)
+        <textarea class="input-field" rows="4" [(ngModel)]="form.instructions"></textarea>
+      </label>
+      <label class="full">URL del GIF de demostración
+        <input type="text" class="input-field" placeholder="https://..." [(ngModel)]="form.gif_url">
+      </label>
+      <label class="full">URL de imagen
+        <input type="text" class="input-field" placeholder="https://..." [(ngModel)]="form.image_url">
+      </label>
+    </div>
+    <div class="modal-preview" *ngIf="form.gif_url">
+      <p>Vista previa:</p>
+      <img [src]="form.gif_url" alt="Vista previa GIF" (error)="onPreviewError($event)">
+    </div>
+    <div class="modal-actions">
+      <button class="btn btn-secondary" (click)="closeModal()">Cancelar</button>
+      <button class="btn btn-primary" (click)="save()">Guardar</button>
+    </div>
+  </div>
+</div>

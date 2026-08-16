@@ -11,6 +11,8 @@ import { AdminGuard } from '@shared';
 import { UsersAdminComponent } from './components/users-admin/users-admin.component';
 import { ClientsComponent } from './components/clients/clients.component';
 import { AuditLogComponent } from './components/audit-log/audit-log.component';
+import { ExercisesComponent } from './components/exercises/exercises.component';
+import { RoutinesComponent } from './components/routines/routines.component';
 
 const routes: Routes = [
   { path: 'login', component: LoginComponent },
@@ -24,6 +26,8 @@ const routes: Routes = [
       { path: 'membership-types', component: MembershipTypesComponent, canActivate: [AuthGuard, AdminGuard] },
       { path: 'admin/users', component: UsersAdminComponent, canActivate: [AuthGuard, AdminGuard] },
       { path: 'clients', component: ClientsComponent },
+      { path: 'exercises', component: ExercisesComponent },
+      { path: 'routines', component: RoutinesComponent },
       { path: 'client-membership-history/:id', component: ClientMembershipHistoryComponent },
       { path: 'audit-logs', component: AuditLogComponent, canActivate: [AuthGuard, AdminGuard] },
       { path: '', redirectTo: 'dashboard', pathMatch: 'full' }

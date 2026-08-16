@@ -1,0 +1,139 @@
+<div class="page-container">
+  <header class="page-header">
+    <h1>🏋️ Rutinas de Entrenamiento</h1>
+    <p>Crea rutinas con días y ejercicios, y asígnalas a los clientes.</p>
+  </header>
+
+  <div class="toolbar">
+    <select class="input-field select" [(ngModel)]="filterClientId" (change)="applyFilters()">
+      <option value="">Todos los clientes</option>
+      <option *ngFor="let client of clients" [value]="client.id">{{ client.name }}</option>
+    </select>
+    <input type="text" class="input-field" placeholder="🔍 Buscar por nombre..." [(ngModel)]="searchTerm" (keyup.enter)="applyFilters()">
+    <button class="btn btn-primary" (click)="applyFilters()">Filtrar</button>
+    <button class="btn btn-secondary" (click)="clearFilters()">Limpiar</button>
+    <button class="btn btn-accent" (click)="openNewModal()">+ Nueva Rutina</button>
+  </div>
+
+  <div *ngIf="loading" class="loading">Cargando rutinas...</div>
+
+  <div class="routine-list" *ngIf="!loading">
+    <div class="routine-card" *ngFor="let routine of routines">
+      <div class="routine-header">
+        <div>
+          <h3>{{ routine.name }} <span class="badge" [class.badge-inactive]="!routine.is_active">{{ routine.is_active ? 'Activa' : 'Inactiva' }}</span></h3>
+          <p class="client-line">👤 {{ clientName(routine.client_id) }}</p>
+        </div>
+        <div class="routine-actions">
+          <button class="btn btn-small" (click)="openEditModal(routine)">✏️ Editar</button>
+          <button class="btn btn-small btn-toggle" (click)="toggleActive(routine)">{{ routine.is_active ? 'Desactivar' : 'Activar' }}</button>
+          <button class="btn btn-small btn-danger" (click)="deleteRoutine(routine)">🗑️</button>
+        </div>
+      </div>
+      <p class="routine-desc" *ngIf="routine.description">{{ routine.description }}</p>
+      <div class="days">
+        <div class="day" *ngFor="let day of routine.days">
+          <div class="day-title">
+            <strong>{{ day.name }}</strong>
+            <span class="chip">{{ dayName(day.day_of_week) }}</span>
+          </div>
+          <ul>
+            <li *ngFor="let re of day.exercises">
+              <span class="ex-name">{{ re.exercise ? re.exercise.name : ('#' + re.exercise_id) }}</span>
+              <span class="ex-detail">{{ re.sets }} × {{ re.reps }}{{ re.weight ? ' · ' + re.weight : '' }}{{ re.rest_seconds ? ' · ' + re.rest_seconds + 's descanso' : '' }}</span>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    <div class="empty-state" *ngIf="routines.length === 0">
+      <p>No hay rutinas. ¡Crea la primera!</p>
+    </div>
+  </div>
+</div>
+
+<!-- Modal crear/editar -->
+<div class="modal-overlay" *ngIf="showModal" (click.self)="closeModal()">
+  <div class="modal modal-wide">
+    <h2>{{ editing ? 'Editar Rutina' : 'Nueva Rutina' }}</h2>
+
+    <div class="form-row">
+      <label class="grow">Nombre *
+        <input type="text" class="input-field" [(ngModel)]="form.name">
+      </label>
+      <label>Cliente *
+        <select class="input-field select" [(ngModel)]="form.client_id">
+          <option [ngValue]="null" disabled>Selecciona...</option>
+          <option *ngFor="let client of clients" [ngValue]="client.id">{{ client.name }}</option>
+        </select>
+      </label>
+    </div>
+    <div class="form-row">
+      <label class="grow">Descripción
+        <input type="text" class="input-field" placeholder="Objetivo de la rutina..." [(ngModel)]="form.description">
+      </label>
+      <label>Estado
+        <select class="input-field select" [(ngModel)]="form.is_active">
+          <option [ngValue]="true">Activa</option>
+          <option [ngValue]="false">Inactiva</option>
+        </select>
+      </label>
+    </div>
+
+    <div class="days-editor">
+      <div class="section-title">
+        <h3>Días de entrenamiento</h3>
+        <button class="btn btn-small btn-accent" (click)="addDay()">+ Agregar Día</button>
+      </div>
+
+      <div class="day-editor" *ngFor="let day of form.days; let di = index">
+        <div class="day-editor-header">
+          <input type="text" class="input-field" [(ngModel)]="day.name" placeholder="Nombre del día">
+          <select class="input-field select" [(ngModel)]="day.day_of_week">
+            <option [ngValue]="null">Día flexible</option>
+            <option *ngFor="let d of daysOfWeek; let i = index" [ngValue]="i">{{ d }}</option>
+          </select>
+          <button class="btn btn-small btn-danger" (click)="removeDay(di)">🗑️</button>
+        </div>
+
+        <div class="day-exercises">
+          <div class="day-exercise" *ngFor="let re of day.exercises; let ei = index">
+            <span class="ex-name">{{ re.exercise ? re.exercise.name : exerciseName(re.exercise_id) }}</span>
+            <span class="ex-detail">{{ re.sets }} × {{ re.reps }}{{ re.weight ? ' · ' + re.weight : '' }}{{ re.rest_seconds ? ' · ' + re.rest_seconds + 's' : '' }}</span>
+            <button class="btn btn-small btn-danger" (click)="removeExerciseFromDay(di, ei)">✕</button>
+          </div>
+          <button class="btn btn-small btn-outline" (click)="openExercisePicker(di)">+ Agregar ejercicio</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Picker de ejercicio -->
+    <div class="picker" *ngIf="exercisePicker.dayIndex >= 0">
+      <h4>Agregar ejercicio al día {{ exercisePicker.dayIndex + 1 }}</h4>
+      <div class="picker-row">
+        <select class="input-field" [(ngModel)]="exercisePicker.exercise_id">
+          <option [ngValue]="null" disabled>Selecciona un ejercicio...</option>
+          <option *ngFor="let ex of exercises" [ngValue]="ex.id">{{ ex.name }}</option>
+        </select>
+      </div>
+      <div class="picker-row">
+        <label>Series <input type="number" min="1" class="input-field" [(ngModel)]="exercisePicker.sets"></label>
+        <label>Reps <input type="text" class="input-field" placeholder="10, 8-12, AMRAP" [(ngModel)]="exercisePicker.reps"></label>
+        <label>Peso <input type="text" class="input-field" placeholder="20 kg" [(ngModel)]="exercisePicker.weight"></label>
+        <label>Descanso (s) <input type="number" min="0" class="input-field" [(ngModel)]="exercisePicker.rest_seconds"></label>
+      </div>
+      <div class="picker-row">
+        <label class="grow">Notas <input type="text" class="input-field" placeholder="Opcional" [(ngModel)]="exercisePicker.notes"></label>
+      </div>
+      <div class="picker-actions">
+        <button class="btn btn-secondary" (click)="exercisePicker.dayIndex = -1">Cancelar</button>
+        <button class="btn btn-primary" (click)="addExerciseToDay()">Agregar</button>
+      </div>
+    </div>
+
+    <div class="modal-actions">
+      <button class="btn btn-secondary" (click)="closeModal()">Cancelar</button>
+      <button class="btn btn-primary" (click)="save()">Guardar Rutina</button>
+    </div>
+  </div>
+</div>
