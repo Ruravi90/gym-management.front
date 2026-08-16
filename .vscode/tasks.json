@@ -1,11 +1,33 @@
 {
   // For more information, visit: https://go.microsoft.com/fwlink/?LinkId=733558
+  // Las tareas "kill:*" matan procesos huérfanos que ocupen el puerto
+  // (p. ej. un ng serve de una sesión de debug anterior) para que F5
+  // no falle con "puerto en uso / aplicación ejecutándose dos veces".
   "version": "2.0.0",
   "tasks": [
+    {
+      "label": "kill:4200",
+      "type": "shell",
+      "command": "pids=$(lsof -ti:4200 2>/dev/null); if [ -n \"$pids\" ]; then kill -9 $pids 2>/dev/null; fi",
+      "presentation": { "reveal": "silent", "panel": "shared" }
+    },
+    {
+      "label": "kill:4201",
+      "type": "shell",
+      "command": "pids=$(lsof -ti:4201 2>/dev/null); if [ -n \"$pids\" ]; then kill -9 $pids 2>/dev/null; fi",
+      "presentation": { "reveal": "silent", "panel": "shared" }
+    },
+    {
+      "label": "kill:9876",
+      "type": "shell",
+      "command": "pids=$(lsof -ti:9876 2>/dev/null); if [ -n \"$pids\" ]; then kill -9 $pids 2>/dev/null; fi",
+      "presentation": { "reveal": "silent", "panel": "shared" }
+    },
     {
       "label": "npm: start:admin",
       "type": "npm",
       "script": "start:admin",
+      "dependsOn": "kill:4200",
       "isBackground": true,
       "problemMatcher": {
         "owner": "typescript",
@@ -25,6 +47,7 @@
       "label": "npm: start:member-portal",
       "type": "npm",
       "script": "start:member-portal",
+      "dependsOn": "kill:4201",
       "isBackground": true,
       "problemMatcher": {
         "owner": "typescript",
@@ -43,6 +66,7 @@
     {
       "type": "npm",
       "script": "start",
+      "dependsOn": "kill:4200",
       "isBackground": true,
       "problemMatcher": {
         "owner": "typescript",
@@ -61,6 +85,7 @@
     {
       "type": "npm",
       "script": "test",
+      "dependsOn": "kill:9876",
       "isBackground": true,
       "problemMatcher": {
         "owner": "typescript",
