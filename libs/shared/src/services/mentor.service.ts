@@ -22,7 +22,18 @@ export interface RoutineGenerationResult {
   routine_name?: string;
 }
 
-export interface RoutineGenerationPayload {
+export interface PhysicalProfile {
+  body_type?: string | null;
+  height_cm?: number | null;
+  weight_kg?: number | null;
+  age?: number | null;
+  sex?: string | null;
+  daily_activity?: string | null;
+  injuries?: string | null;
+  bmi?: number | null;
+}
+
+export interface RoutineGenerationPayload extends PhysicalProfile {
   body_type: string;
   goal: string;
   days_per_week: number;
@@ -70,6 +81,19 @@ export const TRAINING_EXPERIENCE: { value: string; label: string }[] = [
   { value: 'avanzado', label: 'Avanzado' }
 ];
 
+export const SEX_OPTIONS: { value: string; label: string }[] = [
+  { value: 'masculino', label: 'Masculino' },
+  { value: 'femenino', label: 'Femenino' },
+  { value: 'otro', label: 'Otro' }
+];
+
+export const ACTIVITY_LEVELS: { value: string; label: string }[] = [
+  { value: 'sedentario', label: 'Sedentario (poco movimiento en el día)' },
+  { value: 'ligero', label: 'Ligero (caminas o estás de pie)' },
+  { value: 'moderado', label: 'Moderado (trabajo activo o ejercicio ocasional)' },
+  { value: 'activo', label: 'Activo (trabajo físico o entrenas seguido)' }
+];
+
 @Injectable({
   providedIn: 'root'
 })
@@ -92,6 +116,14 @@ export class MentorService {
 
   saveBodyType(bodyType: string): Observable<BodyTypeResult> {
     return this.http.post<BodyTypeResult>(`${this.apiUrl}/body-type`, { body_type: bodyType });
+  }
+
+  getProfile(): Observable<PhysicalProfile> {
+    return this.http.get<PhysicalProfile>(`${this.apiUrl}/profile`);
+  }
+
+  saveProfile(profile: Partial<PhysicalProfile>): Observable<PhysicalProfile> {
+    return this.http.post<PhysicalProfile>(`${this.apiUrl}/profile`, profile);
   }
 
   generateRoutine(payload: RoutineGenerationPayload): Observable<RoutineGenerationResult> {

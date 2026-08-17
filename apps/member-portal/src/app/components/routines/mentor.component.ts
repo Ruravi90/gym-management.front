@@ -5,7 +5,9 @@ import {
   BODY_TYPES,
   TRAINING_GOALS,
   TRAINING_EQUIPMENT,
-  TRAINING_EXPERIENCE
+  TRAINING_EXPERIENCE,
+  SEX_OPTIONS,
+  ACTIVITY_LEVELS
 } from '@shared';
 
 interface ChatMessage {
@@ -41,7 +43,7 @@ interface ChatMessage {
         </div>
 
         <ng-container *ngIf="wizardStep === 'body'">
-          <p class="wizard-question">Para diseñar tu rutina ideal, primero necesito saber: ¿qué tipo de cuerpo tienes? 🧬</p>
+          <p class="wizard-question">Como tu instructor, primero necesito conocer tu cuerpo. ¿Qué tipo de cuerpo tienes? 🧬</p>
           <div class="body-types">
             <button *ngFor="let bt of bodyTypes" class="body-card" (click)="selectBodyType(bt.value)">
               <strong>{{ bt.label }}</strong>
@@ -50,10 +52,38 @@ interface ChatMessage {
           </div>
         </ng-container>
 
-        <ng-container *ngIf="wizardStep === 'details'">
-          <p class="wizard-question">Perfecto, <strong>{{ bodyTypeLabel }}</strong> 💪. Ahora cuéntame sobre tu entrenamiento:</p>
+        <ng-container *ngIf="wizardStep === 'physical'">
+          <p class="wizard-question">Perfecto, <strong>{{ bodyTypeLabel }}</strong> 💪. Ahora tus datos físicos (necesarios para calcular tu IMC y adaptar el plan):</p>
           <div class="wizard-grid">
-            <label>Objetivo
+            <label>Altura
+              <input type="number" class="input" [(ngModel)]="heightCm" placeholder="Ej. 175">
+              <span class="unit">cm</span>
+            </label>
+            <label>Peso actual (opcional)
+              <input type="number" class="input" [(ngModel)]="weightKg" placeholder="Ej. 75">
+              <span class="unit">kg</span>
+            </label>
+            <label>Edad
+              <input type="number" class="input" [(ngModel)]="age" placeholder="Ej. 25">
+              <span class="unit">años</span>
+            </label>
+            <label>Sexo
+              <select [(ngModel)]="sex">
+                <option value="">Selecciona...</option>
+                <option *ngFor="let s of sexOptions" [value]="s.value">{{ s.label }}</option>
+              </select>
+            </label>
+          </div>
+          <div class="wizard-actions">
+            <button class="btn-back" (click)="goBackToBody()">⬅️ Tipo de cuerpo</button>
+            <button class="btn-next" (click)="nextToTraining()">Siguiente: objetivo y entrenamiento ➤</button>
+          </div>
+        </ng-container>
+
+        <ng-container *ngIf="wizardStep === 'training'">
+          <p class="wizard-question">Ya casi. Ahora cuéntame sobre tu objetivo y tu entrenamiento 🎯:</p>
+          <div class="wizard-grid">
+            <label>Objetivo principal
               <select [(ngModel)]="goal">
                 <option *ngFor="let g of goals" [value]="g.value">{{ g.label }}</option>
               </select>
@@ -78,9 +108,18 @@ interface ChatMessage {
                 <option *ngFor="let m of durationOptions" [value]="m">{{ m }} min</option>
               </select>
             </label>
+            <label>Actividad diaria (fuera del gym)
+              <select [(ngModel)]="dailyActivity">
+                <option value="">Selecciona...</option>
+                <option *ngFor="let a of activityLevels" [value]="a.value">{{ a.label }}</option>
+              </select>
+            </label>
           </div>
+          <label class="full">¿Lesiones o limitaciones físicas? (opcional)
+            <textarea class="input" rows="2" [(ngModel)]="injuries" placeholder="Ej. dolor de rodilla al sentadillar, hernia lumbar..."></textarea>
+          </label>
           <div class="wizard-actions">
-            <button class="btn-back" (click)="goBackToBody()">⬅️ Tipo de cuerpo</button>
+            <button class="btn-back" (click)="goBackToPhysical()">⬅️ Datos físicos</button>
             <button class="btn-generate" (click)="generateRoutine()" [disabled]="generating">
               {{ generating ? 'Diseñando tu rutina...' : '🤖 Generar mi rutina' }}
             </button>
@@ -144,8 +183,13 @@ interface ChatMessage {
     .wizard-grid label { display: flex; flex-direction: column; gap: 0.3rem; color: #bbb; font-size: 0.85rem; font-weight: 600; }
     .wizard-grid select { background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.12); border-radius: 10px; color: #eee; padding: 0.6rem 0.7rem; font-size: 0.95rem; outline: none; }
     .wizard-grid select:focus { border-color: #f9d423; }
-    .wizard-actions { display: flex; justify-content: space-between; align-items: center; gap: 0.6rem; margin-top: 1.1rem; }
+    .wizard-actions { display: flex; justify-content: space-between; align-items: center; gap: 0.6rem; margin-top: 1.1rem; flex-wrap: wrap; }
     .wizard-actions .btn-back { font-size: 0.85rem; }
+    .btn-next { background: #ff4e50; color: #fff; border: none; padding: 0.7rem 1.2rem; border-radius: 16px; font-weight: 700; cursor: pointer; font-size: 0.9rem; }
+    .wizard-grid .input { width: 100%; box-sizing: border-box; }
+    .unit { color: #888; font-size: 0.75rem; }
+    .wizard-grid label.full { grid-column: 1 / -1; }
+    textarea.input { resize: vertical; font-family: inherit; }
 
     .chat { display: flex; flex-direction: column; flex: 1; background: rgba(18,18,18,0.7); border-radius: 20px; border: 1px solid rgba(255,255,255,0.05); overflow: hidden; min-height: 55vh; }
     .messages { flex: 1; overflow-y: auto; padding: 1.25rem; display: flex; flex-direction: column; gap: 0.75rem; }
@@ -179,15 +223,24 @@ export class MentorComponent implements OnInit {
   draft = '';
   loading = false;
 
-  // Wizard de generación de rutina
+  // Wizard de generación de rutina (intake del instructor en 3 pasos)
   showWizard = false;
-  wizardStep: 'body' | 'details' = 'body';
+  wizardStep: 'body' | 'physical' | 'training' = 'body';
+  // Paso 1: tipo de cuerpo
   bodyType = '';
+  // Paso 2: datos físicos
+  heightCm: number | null = null;
+  weightKg: number | null = null;
+  age: number | null = null;
+  sex = '';
+  // Paso 3: objetivo y entrenamiento
   goal = 'general';
   daysPerWeek = 3;
   equipment = 'gimnasio';
   experience = 'principiante';
   durationMinutes = 60;
+  dailyActivity = '';
+  injuries = '';
   generating = false;
   generatedRoutineId?: number;
   generatedRoutineName = '';
@@ -196,6 +249,8 @@ export class MentorComponent implements OnInit {
   goals = TRAINING_GOALS;
   equipments = TRAINING_EQUIPMENT;
   experiences = TRAINING_EXPERIENCE;
+  sexOptions = SEX_OPTIONS;
+  activityLevels = ACTIVITY_LEVELS;
   dayOptions = [2, 3, 4, 5, 6];
   durationOptions = [30, 45, 60, 90];
 
@@ -266,15 +321,17 @@ export class MentorComponent implements OnInit {
   openWizard(): void {
     if (this.loading || this.generating) { return; }
     this.showWizard = true;
-    // Si ya conocemos su tipo de cuerpo, saltamos directo a los detalles
-    this.mentorService.getBodyType().subscribe({
-      next: (res) => {
-        if (res.body_type) {
-          this.bodyType = res.body_type;
-          this.wizardStep = 'details';
-        } else {
-          this.wizardStep = 'body';
-        }
+    // Cargar el perfil guardado para saltar los pasos ya completados
+    this.mentorService.getProfile().subscribe({
+      next: (profile) => {
+        if (profile.body_type) { this.bodyType = profile.body_type; }
+        if (profile.height_cm) { this.heightCm = profile.height_cm; }
+        if (profile.weight_kg) { this.weightKg = profile.weight_kg; }
+        if (profile.age) { this.age = profile.age; }
+        if (profile.sex) { this.sex = profile.sex; }
+        if (profile.daily_activity) { this.dailyActivity = profile.daily_activity; }
+        if (profile.injuries) { this.injuries = profile.injuries; }
+        this.wizardStep = this.bodyType ? 'physical' : 'body';
       },
       error: () => { this.wizardStep = 'body'; }
     });
@@ -282,11 +339,19 @@ export class MentorComponent implements OnInit {
 
   selectBodyType(value: string): void {
     this.bodyType = value;
-    this.wizardStep = 'details';
+    this.wizardStep = 'physical';
   }
 
   goBackToBody(): void {
     this.wizardStep = 'body';
+  }
+
+  nextToTraining(): void {
+    this.wizardStep = 'training';
+  }
+
+  goBackToPhysical(): void {
+    this.wizardStep = 'physical';
   }
 
   closeWizard(): void {
@@ -299,6 +364,12 @@ export class MentorComponent implements OnInit {
     this.generating = true;
     this.mentorService.generateRoutine({
       body_type: this.bodyType,
+      height_cm: this.heightCm ?? undefined,
+      weight_kg: this.weightKg ?? undefined,
+      age: this.age ?? undefined,
+      sex: this.sex || undefined,
+      daily_activity: this.dailyActivity || undefined,
+      injuries: this.injuries || undefined,
       goal: this.goal,
       days_per_week: this.daysPerWeek,
       equipment: this.equipment,

@@ -16,7 +16,19 @@ import { MeasurementService, MentorService, BodyMeasurement, MEASUREMENT_FIELDS 
       <div class="grid">
         <!-- Formulario semanal -->
         <section class="card form-card">
-          <h2>Registrar medidas de esta semana</h2>
+          <h2>Tu altura (una sola vez)</h2>
+          <div class="altura-box">
+            <label>Altura
+              <input type="number" step="0.1" min="80" max="250" class="input" [(ngModel)]="heightCm" placeholder="Ej. 175">
+              <span class="unit">cm</span>
+            </label>
+            <button class="btn-altura" (click)="saveHeight()" [disabled]="savingHeight">
+              {{ savingHeight ? 'Guardando...' : '💾 Guardar altura' }}
+            </button>
+          </div>
+          <p class="hint" *ngIf="bmi">📊 Tu IMC actual: <strong>{{ bmi }}</strong> (altura + último peso)</p>
+
+          <h2 class="sec">Registrar medidas de esta semana</h2>
           <label>Fecha
             <input type="date" class="input" [(ngModel)]="form.date" [max]="today">
           </label>
@@ -37,7 +49,7 @@ import { MeasurementService, MentorService, BodyMeasurement, MEASUREMENT_FIELDS 
 
         <!-- Historial -->
         <section class="card history-card">
-          <h2>Historial</h2>
+          <h2>Historial <span class="bmi-badge" *ngIf="bmi">IMC: {{ bmi }}</span></h2>
           <div *ngIf="measurements.length === 0" class="empty">
             <p>Aún no tienes medidas registradas.</p>
             <p class="muted">¡Registra tu primera semana para empezar a ver tu progreso!</p>
@@ -104,7 +116,14 @@ import { MeasurementService, MentorService, BodyMeasurement, MEASUREMENT_FIELDS 
     @media (min-width: 900px) { .grid { grid-template-columns: 340px 1fr; } }
     .card { background: rgba(18,18,18,0.7); border: 1px solid rgba(255,255,255,0.05); border-radius: 20px; padding: 1.25rem; }
     .card h2 { color: #fff; margin-top: 0; font-size: 1.15rem; }
+    .card h2.sec { margin-top: 1.25rem; padding-top: 1rem; border-top: 1px solid rgba(255,255,255,0.07); }
     .card label { display: flex; flex-direction: column; gap: 0.3rem; font-size: 0.85rem; color: #bbb; margin-bottom: 0.75rem; }
+    .altura-box { display: flex; align-items: flex-end; gap: 0.6rem; }
+    .altura-box label { flex: 1; }
+    .unit { color: #888; font-size: 0.75rem; }
+    .btn-altura { background: rgba(249,212,35,0.12); color: #f9d423; border: 1px solid rgba(249,212,35,0.3); padding: 0.65rem 1rem; border-radius: 12px; font-weight: 700; cursor: pointer; font-size: 0.85rem; white-space: nowrap; }
+    .btn-altura:disabled { opacity: 0.5; }
+    .bmi-badge { background: rgba(249,212,35,0.12); color: #f9d423; border: 1px solid rgba(249,212,35,0.3); border-radius: 20px; padding: 0.2rem 0.7rem; font-size: 0.75rem; font-weight: 700; margin-left: 0.5rem; }
     .input { background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 10px; color: #eee; padding: 0.6rem 0.9rem; font-size: 0.9rem; outline: none; width: 100%; box-sizing: border-box; }
     .input:focus { border-color: #f9d423; }
     .fields { display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem; }
@@ -141,6 +160,11 @@ export class MeasurementsComponent implements OnInit {
   report = '';
   today = new Date().toISOString().split('T')[0];
 
+  // Altura (perfil) e IMC calculado
+  heightCm: number | null = null;
+  savingHeight = false;
+  bmi: number | null = null;
+
   form: any = {
     date: new Date().toISOString().split('T')[0],
     weight_kg: null,
@@ -159,13 +183,62 @@ export class MeasurementsComponent implements OnInit {
 
   ngOnInit(): void {
     this.loadData();
+    this.loadProfile();
   }
 
   loadData(): void {
     this.measurementService.getMeasurements(50).subscribe({
-      next: (data) => this.measurements = data,
+      next: (data) => {
+        this.measurements = data;
+        this.computeBmi();
+      },
       error: (err) => console.error('Error loading measurements:', err)
     });
+  }
+
+  loadProfile(): void {
+    this.mentorService.getProfile().subscribe({
+      next: (p) => {
+        if (p.height_cm) { this.heightCm = p.height_cm; }
+        this.computeBmi(p.weight_kg ?? undefined);
+      },
+      error: () => { /* sin perfil todavía */ }
+    });
+  }
+
+  saveHeight(): void {
+    const h = Number(this.heightCm);
+    if (!h || h < 80 || h > 250) { alert('Ingresa una altura válida (80-250 cm)'); return; }
+    this.savingHeight = true;
+    this.mentorService.saveProfile({ height_cm: h }).subscribe({
+      next: (p) => {
+        this.savingHeight = false;
+        this.computeBmi(p.weight_kg ?? undefined);
+      },
+      error: (err) => {
+        this.savingHeight = false;
+        const message = err.error && err.error.detail ? err.error.detail : (err.message || 'Error');
+        alert('Error: ' + message);
+      }
+    });
+  }
+
+  private latestWeight(): number | null {
+    if (this.measurements.length > 0 && this.measurements[0].weight_kg != null) {
+      const n = Number(this.measurements[0].weight_kg);
+      return isNaN(n) ? null : n;
+    }
+    return null;
+  }
+
+  computeBmi(weight?: number | null): void {
+    const w = weight ?? this.latestWeight();
+    if (this.heightCm && w) {
+      const m = this.heightCm / 100;
+      this.bmi = Math.round((w / (m * m)) * 10) / 10;
+    } else {
+      this.bmi = null;
+    }
   }
 
   save(): void {
