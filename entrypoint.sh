@@ -9,6 +9,13 @@ APP_NAME="${APP_NAME:-admin}"
 # y nginx lo proxya al contenedor del backend por su nombre de red.
 API_UPSTREAM="${API_UPSTREAM:-http://mygym-api-jk2wub:8000}"
 
+# Normalizar: asegurar esquema http y sin barra final (nginx exige http:// o https://)
+case "$API_UPSTREAM" in
+  http://*|https://*) ;;
+  *) API_UPSTREAM="http://${API_UPSTREAM}" ;;
+esac
+API_UPSTREAM="${API_UPSTREAM%/}"
+
 # Renderizar la config de nginx con el upstream real del API
 envsubst '${API_UPSTREAM}' < /etc/nginx/conf.d/default.conf.template > /etc/nginx/conf.d/default.conf
 
