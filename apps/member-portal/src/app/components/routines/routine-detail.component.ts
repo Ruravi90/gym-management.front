@@ -184,10 +184,20 @@ import { RoutineService, Routine, WorkoutSession, RoutineDay } from '@shared';
     </div>
 
     <!-- ========== MODAL: GIF ========== -->
-    <div class="modal-overlay" *ngIf="gifUrl" (click.self)="gifUrl = ''">
-      <div class="gif-modal">
-        <img [src]="gifUrl" alt="Demostración del ejercicio">
-        <button class="btn btn-outline mt-2" (click)="gifUrl = ''">Cerrar</button>
+    <div class="modal-overlay gif-overlay" *ngIf="gifUrl" (click.self)="gifUrl = ''">
+      <div class="gif-modal-full">
+        <div class="gif-modal-header">
+          <span class="gif-modal-title">{{ selectedExercise?.exercise?.name || 'Demostración' }}</span>
+          <button class="gif-modal-close" (click)="gifUrl = ''">✕</button>
+        </div>
+        <div class="gif-modal-body">
+          <img [src]="gifUrl" alt="Demostración del ejercicio">
+        </div>
+        <div class="gif-modal-footer" *ngIf="gifUrls.length > 1">
+          <button class="btn btn-ghost btn-sm" (click)="prevGifModal($event)">‹ Anterior</button>
+          <span>{{ currentGifIndex + 1 }} / {{ gifUrls.length }}</span>
+          <button class="btn btn-ghost btn-sm" (click)="nextGifModal($event)">Siguiente ›</button>
+        </div>
       </div>
     </div>
 
@@ -383,18 +393,46 @@ import { RoutineService, Routine, WorkoutSession, RoutineDay } from '@shared';
     }
 
     /* ===== Modals ===== */
-    .gif-modal {
-      text-align: center;
-      max-width: 95vw;
-      max-height: 90vh;
-      padding: 0.5rem;
-      background: transparent;
-      box-shadow: none;
+    .gif-overlay {
+      background: rgba(0,0,0,0.85);
+      backdrop-filter: blur(8px);
+      padding: 0;
     }
-    .gif-modal img {
-      max-width: 95vw; max-height: 88vh; border-radius: var(--radius-lg);
-      background: var(--slate-900); box-shadow: var(--shadow-lg);
+    .gif-modal-full {
+      width: 100%; height: 100vh;
+      display: flex; flex-direction: column;
+      background: var(--slate-900);
     }
+    .gif-modal-header {
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 0.75rem 1rem;
+      background: rgba(0,0,0,0.5);
+      flex-shrink: 0;
+    }
+    .gif-modal-title {
+      font-weight: 700; font-size: 0.95rem; color: white;
+    }
+    .gif-modal-close {
+      background: rgba(255,255,255,0.15); border: none; color: white;
+      width: 32px; height: 32px; border-radius: 50%; font-size: 1rem;
+      cursor: pointer; display: flex; align-items: center; justify-content: center;
+    }
+    .gif-modal-close:hover { background: rgba(255,255,255,0.25); }
+    .gif-modal-body {
+      flex: 1; display: flex; align-items: center; justify-content: center;
+      padding: 1rem; overflow: hidden;
+    }
+    .gif-modal-body img {
+      max-width: 100%; max-height: 100%; object-fit: contain;
+      border-radius: var(--radius-md);
+    }
+    .gif-modal-footer {
+      display: flex; justify-content: center; align-items: center; gap: 1.5rem;
+      padding: 0.75rem 1rem;
+      background: rgba(0,0,0,0.5); flex-shrink: 0;
+    }
+    .gif-modal-footer span { color: rgba(255,255,255,0.7); font-size: 0.85rem; font-weight: 600; }
+    .gif-modal-footer .btn { color: white; }
     .exit-modal { text-align: center; max-width: 340px; }
     .exit-modal h3 { margin: 0 0 0.5rem; }
     .exit-actions { display: flex; gap: 0.75rem; margin-top: 1.25rem; }
@@ -626,6 +664,18 @@ export class RoutineDetailComponent implements OnInit, OnDestroy {
   nextGif(event: Event): void {
     event.stopPropagation();
     this.currentGifIndex = (this.currentGifIndex + 1) % this.gifUrls.length;
+  }
+
+  prevGifModal(event: Event): void {
+    event.stopPropagation();
+    this.prevGif(event);
+    this.gifUrl = this.gifUrls[this.currentGifIndex];
+  }
+
+  nextGifModal(event: Event): void {
+    event.stopPropagation();
+    this.nextGif(event);
+    this.gifUrl = this.gifUrls[this.currentGifIndex];
   }
 
   closeExercise(): void {
