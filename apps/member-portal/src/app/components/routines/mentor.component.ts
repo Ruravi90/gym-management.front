@@ -1,5 +1,7 @@
 import { Component, OnInit } from '@angular/core';
+import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 import { Router } from '@angular/router';
+import { marked } from 'marked';
 import {
   MentorService,
   BODY_TYPES,
@@ -10,9 +12,10 @@ import {
   ACTIVITY_LEVELS
 } from '@shared';
 
-interface ChatMessage {
-  role: 'user' | 'mentor';
+interface Message {
+  role: 'mentor';
   text: string;
+  html?: SafeHtml;
 }
 
 @Component({
@@ -24,18 +27,17 @@ interface ChatMessage {
           <button routerLink="/rutinas" class="btn btn-ghost btn-sm">← Volver a Mis Rutinas</button>
         </div>
         <h1>FitMentor</h1>
-        <p>Tu coach personal con IA. Pregúntale sobre técnica, series, peso o progresión de tu rutina.</p>
+        <p>Tu coach personal con IA. Generá tu rutina personalizada o consultá tu reporte semanal de progreso.</p>
         <div class="header-actions">
           <button class="btn btn-primary" (click)="openWizard()" [disabled]="loading || generating">
             🎯 Generar mi rutina con IA
           </button>
-          <button class="btn btn-outline" (click)="weeklyCheckin()" [disabled]="loading">
-            📅 Generar mi reporte semanal
+          <button class="btn btn-outline" (click)="weeklyCheckin()" [disabled]="loading || generating">
+            📅 Mi reporte semanal
           </button>
         </div>
       </header>
 
-      <!-- Wizard: genera la rutina en 3 pasos (intake del instructor) -->
       <div class="card wizard" *ngIf="showWizard">
         <div class="wizard-head">
           <span class="wizard-title">🤖 FitMentor — Tu instructor</span>
@@ -127,34 +129,25 @@ interface ChatMessage {
         </ng-container>
       </div>
 
-      <div class="chat card">
-        <div class="messages" #scrollContainer>
-          <div class="bubble mentor" *ngFor="let msg of messages">
-            <span class="avatar">{{ msg.role === 'mentor' ? '🤖' : '🧑' }}</span>
-            <div class="text" [class.user-text]="msg.role === 'user'">{{ msg.text }}</div>
-          </div>
-          <div class="bubble mentor" *ngIf="loading || generating">
+      <div class="messages-area card">
+        <div class="messages">
+          <div class="bubble" *ngFor="let msg of messages">
             <span class="avatar">🤖</span>
-            <div class="text typing">{{ generating ? 'Diseñando tu rutina' : 'Escribiendo' }}<span class="dots">...</span></div>
+            <div class="text" [innerHTML]="msg.html"></div>
+          </div>
+          <div class="bubble" *ngIf="loading || generating">
+            <span class="avatar">🤖</span>
+            <div class="text typing">{{ generating ? 'Diseñando tu rutina' : 'Generando tu reporte' }}<span class="dots">...</span></div>
           </div>
           <div class="welcome" *ngIf="messages.length === 0 && !loading && !generating">
             <p>¡Hola! Soy tu mentor de entrenamiento 💪</p>
-            <p class="muted">Puedo ayudarte con tu rutina y progreso. Prueba alguna de estas preguntas:</p>
-            <div class="quick">
-              <button *ngFor="let q of quickQuestions" class="quick-btn" (click)="send(q)">{{ q }}</button>
-            </div>
+            <p class="muted">Generá una rutina personalizada o consultá tu reporte semanal de progreso.</p>
           </div>
         </div>
 
         <div class="cta" *ngIf="generatedRoutineId">
           <span>🎉 Tu rutina <strong>{{ generatedRoutineName }}</strong> está lista, con GIFs y seguimiento.</span>
           <button class="btn btn-primary btn-sm" (click)="openGeneratedRoutine()">Ver mi rutina 🏋️</button>
-        </div>
-
-        <div class="input-bar">
-          <input type="text" class="app-input" [(ngModel)]="draft" (keyup.enter)="send(draft)"
-            placeholder="Pregúntale a tu mentor..." [disabled]="loading || generating">
-          <button class="btn btn-primary" (click)="send(draft)" [disabled]="loading || generating || !draft.trim()">Enviar →</button>
         </div>
       </div>
     </div>
@@ -208,15 +201,15 @@ interface ChatMessage {
       flex-wrap: wrap;
     }
 
-    .chat {
+    .messages-area {
       display: flex;
       flex-direction: column;
       padding: 0;
       overflow: hidden;
-      min-height: 55vh;
+      min-height: 50vh;
     }
     .messages { flex: 1; overflow-y: auto; padding: 1.25rem; display: flex; flex-direction: column; gap: 0.75rem; }
-    .bubble { display: flex; gap: 0.6rem; align-items: flex-start; max-width: 88%; }
+    .bubble { display: flex; gap: 0.6rem; align-items: flex-start; max-width: 92%; }
     .avatar { font-size: 1.5rem; }
     .text {
       background: var(--slate-50);
@@ -224,38 +217,32 @@ interface ChatMessage {
       border-radius: 14px;
       padding: 0.75rem 1rem;
       color: var(--text-main);
-      line-height: 1.55;
-      white-space: pre-wrap;
+      line-height: 1.6;
       font-size: 0.93rem;
     }
-    .user-text {
-      background: var(--app-primary);
-      color: var(--app-on-primary);
-      font-weight: 600;
-      align-self: flex-end;
-      border-color: var(--app-primary);
+    .text :first-child { margin-top: 0; }
+    .text :last-child { margin-bottom: 0; }
+    .text h1, .text h2, .text h3 { margin: 0.8em 0 0.4em; font-weight: 700; }
+    .text h1 { font-size: 1.15rem; }
+    .text h2 { font-size: 1.05rem; }
+    .text h3 { font-size: 0.98rem; }
+    .text ul, .text ol { margin: 0.4em 0; padding-left: 1.4em; }
+    .text li { margin-bottom: 0.25em; }
+    .text strong { font-weight: 700; }
+    .text em { font-style: italic; color: var(--text-muted); }
+    .text p { margin: 0.4em 0; }
+    .text code {
+      background: var(--slate-100, #f1f5f9);
+      padding: 0.15em 0.35em;
+      border-radius: 4px;
+      font-size: 0.88em;
     }
-    .bubble:has(.user-text) { align-self: flex-end; flex-direction: row-reverse; }
+
     .typing { color: var(--text-muted); }
     .dots { animation: blink 1s infinite; }
     @keyframes blink { 50% { opacity: 0; } }
 
     .welcome { text-align: center; padding: 2rem 1rem; }
-    .quick { display: flex; flex-direction: column; gap: 0.5rem; margin: 1rem auto 0; max-width: 440px; }
-    .quick-btn {
-      background: var(--app-primary-soft);
-      color: var(--lime-700);
-      border: 1px solid var(--app-primary-soft-border);
-      border-radius: var(--radius-md);
-      padding: 0.7rem 1rem;
-      cursor: pointer;
-      font-size: 0.9rem;
-      text-align: left;
-      transition: all 0.15s;
-      font-family: var(--font-sans);
-      font-weight: 600;
-    }
-    .quick-btn:hover { background: var(--lime-100); }
 
     .cta {
       display: flex;
@@ -268,26 +255,19 @@ interface ChatMessage {
       background: var(--app-primary-soft);
     }
     .cta span { font-size: 0.9rem; }
-
-    .input-bar { display: flex; gap: 0.5rem; padding: 0.9rem; border-top: 1px solid var(--app-border); }
   `]
 })
 export class MentorComponent implements OnInit {
-  messages: ChatMessage[] = [];
-  draft = '';
+  messages: Message[] = [];
   loading = false;
 
-  // Wizard de generación de rutina (intake del instructor en 3 pasos)
   showWizard = false;
   wizardStep: 'body' | 'physical' | 'training' = 'body';
-  // Paso 1: tipo de cuerpo
   bodyType = '';
-  // Paso 2: datos físicos
   heightCm: number | null = null;
   weightKg: number | null = null;
   age: number | null = null;
   sex = '';
-  // Paso 3: objetivo y entrenamiento
   goal = 'general';
   daysPerWeek = 3;
   equipment = 'gimnasio';
@@ -308,47 +288,22 @@ export class MentorComponent implements OnInit {
   dayOptions = [2, 3, 4, 5, 6];
   durationOptions = [30, 45, 60, 90];
 
-  quickQuestions = [
-    '¿Cómo hago bien el press de banca?',
-    '¿Qué peso debo usar si soy principiante?',
-    '¿Cuánto descanso entre series?',
-    '¿Cómo progreso en mis ejercicios?'
-  ];
+  constructor(
+    private mentorService: MentorService,
+    private router: Router,
+    private sanitizer: DomSanitizer,
+  ) { }
 
-  constructor(private mentorService: MentorService, private router: Router) { }
-
-  ngOnInit(): void {
-    this.messages = [
-      {
-        role: 'mentor',
-        text: '¡Hola! 👋 Soy FitMentor, tu coach personal. Conozco tu rutina y tu progreso. ¿En qué te ayudo hoy?'
-      }
-    ];
-  }
+  ngOnInit(): void { }
 
   get bodyTypeLabel(): string {
     const found = this.bodyTypes.find(b => b.value === this.bodyType);
     return found ? found.label : this.bodyType;
   }
 
-  send(text: string): void {
-    const message = (text || '').trim();
-    if (!message || this.loading || this.generating) { return; }
-    this.messages.push({ role: 'user', text: message });
-    this.draft = '';
-    this.loading = true;
-    this.mentorService.chat(message).subscribe({
-      next: (res) => {
-        this.loading = false;
-        this.messages.push({ role: 'mentor', text: res.reply });
-        this.scrollToBottom();
-      },
-      error: (err) => {
-        this.loading = false;
-        this.messages.push({ role: 'mentor', text: 'No pude conectarme en este momento. Verifica tu conexión e inténtalo de nuevo. 💪' });
-        this.scrollToBottom();
-      }
-    });
+  private addMessage(text: string): void {
+    const html = this.sanitizer.bypassSecurityTrustHtml(marked.parse(text) as string);
+    this.messages.push({ role: 'mentor', text, html });
     this.scrollToBottom();
   }
 
@@ -358,22 +313,18 @@ export class MentorComponent implements OnInit {
     this.mentorService.weeklyCheckin().subscribe({
       next: (res) => {
         this.loading = false;
-        this.messages.push({ role: 'mentor', text: res.reply });
-        this.scrollToBottom();
+        this.addMessage(res.reply);
       },
-      error: (err) => {
+      error: () => {
         this.loading = false;
-        this.messages.push({ role: 'mentor', text: 'No pude generar tu reporte semanal ahora. Inténtalo de nuevo en unos segundos. 💪' });
-        this.scrollToBottom();
+        this.addMessage('No pude generar tu reporte semanal ahora. Inténtalo de nuevo en unos segundos. 💪');
       }
     });
   }
 
-  // ---------- Wizard de generación de rutina ----------
   openWizard(): void {
     if (this.loading || this.generating) { return; }
     this.showWizard = true;
-    // Cargar el perfil guardado para saltar los pasos ya completados
     this.mentorService.getProfile().subscribe({
       next: (profile) => {
         if (profile.body_type) { this.bodyType = profile.body_type; }
@@ -394,17 +345,9 @@ export class MentorComponent implements OnInit {
     this.wizardStep = 'physical';
   }
 
-  goBackToBody(): void {
-    this.wizardStep = 'body';
-  }
-
-  nextToTraining(): void {
-    this.wizardStep = 'training';
-  }
-
-  goBackToPhysical(): void {
-    this.wizardStep = 'physical';
-  }
+  goBackToBody(): void { this.wizardStep = 'body'; }
+  nextToTraining(): void { this.wizardStep = 'training'; }
+  goBackToPhysical(): void { this.wizardStep = 'physical'; }
 
   closeWizard(): void {
     if (this.generating) { return; }
@@ -431,22 +374,19 @@ export class MentorComponent implements OnInit {
       next: (res) => {
         this.generating = false;
         this.showWizard = false;
-        // El mentor pidió primero el tipo de cuerpo
         if (res.ask_body_type) {
           this.wizardStep = 'body';
           this.showWizard = true;
         }
-        this.messages.push({ role: 'mentor', text: res.reply });
+        this.addMessage(res.reply);
         if (res.ok && res.routine_id) {
           this.generatedRoutineId = res.routine_id;
           this.generatedRoutineName = res.routine_name || '';
         }
-        this.scrollToBottom();
       },
-      error: (err) => {
+      error: () => {
         this.generating = false;
-        this.messages.push({ role: 'mentor', text: 'No pude generar tu rutina ahora. Verifica tu conexión e inténtalo de nuevo. 💪' });
-        this.scrollToBottom();
+        this.addMessage('No pude generar tu rutina ahora. Verifica tu conexión e inténtalo de nuevo. 💪');
       }
     });
   }

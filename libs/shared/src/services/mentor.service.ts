@@ -102,10 +102,6 @@ export class MentorService {
 
   constructor(private http: HttpClient) { }
 
-  chat(message: string): Observable<MentorReply> {
-    return this.http.post<MentorReply>(`${this.apiUrl}/chat`, { message });
-  }
-
   weeklyCheckin(): Observable<MentorReply> {
     return this.http.post<MentorReply>(`${this.apiUrl}/weekly-checkin`, {});
   }
