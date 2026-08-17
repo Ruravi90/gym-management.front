@@ -27,8 +27,7 @@ import { ClientService, Client, MeasurementsComponent } from '@shared';
       <app-measurements
         *ngIf="selectedClientId"
         [clientId]="selectedClientId"
-        [hideBackButton]="true"
-        [hideReport]="true">
+        [hideBackButton]="true">
       </app-measurements>
 
       <div *ngIf="!selectedClientId && !loading" class="empty-state">

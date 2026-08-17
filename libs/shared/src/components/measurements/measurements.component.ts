@@ -88,25 +88,6 @@ import { MeasurementService, MentorService, BodyMeasurement, MEASUREMENT_FIELDS 
           </div>
         </section>
       </div>
-
-      <!-- Reporte semanal IA -->
-      <section class="card report-card" *ngIf="!hideReport">
-        <div class="report-header">
-          <div>
-            <h2 class="card-title" style="margin:0 0 0.25rem;">🤖 Reporte semanal con FitMentor</h2>
-            <p class="muted" style="margin:0;">FitMentor analiza tus medidas, tu rutina y tus sesiones de la semana para darte recomendaciones.</p>
-          </div>
-          <button class="btn btn-primary" (click)="generateReport()" [disabled]="reportLoading">
-            {{ reportLoading ? 'Analizando...' : '📅 Generar mi reporte semanal' }}
-          </button>
-        </div>
-        <div class="report" *ngIf="report">
-          <pre>{{ report }}</pre>
-        </div>
-        <div class="hint mt-2" *ngIf="!report && !reportLoading">
-          Necesitas al menos una medición para generar el reporte. El reporte compara semana a semana.
-        </div>
-      </section>
     </div>
   `,
   styles: [`
@@ -157,36 +138,15 @@ import { MeasurementService, MentorService, BodyMeasurement, MEASUREMENT_FIELDS 
     .delta { font-size: 0.75rem; font-weight: 700; }
     .delta.good { color: var(--success); }
     .delta.bad { color: var(--danger); }
-
-    .report-card { margin-top: 1.5rem; }
-    .report-header { display: flex; justify-content: space-between; align-items: flex-start; gap: 1rem; flex-wrap: wrap; }
-    .report {
-      background: var(--slate-50);
-      border: 1px solid var(--app-border);
-      border-radius: var(--radius-md);
-      padding: 1.25rem;
-      margin-top: 1.25rem;
-    }
-    .report pre {
-      white-space: pre-wrap;
-      font-family: var(--font-sans);
-      margin: 0;
-      color: var(--text-main);
-      line-height: 1.6;
-      font-size: 0.92rem;
-    }
   `]
 })
 export class MeasurementsComponent implements OnChanges {
   @Input() clientId?: number;
   @Input() hideBackButton = false;
-  @Input() hideReport = false;
 
   fields = MEASUREMENT_FIELDS;
   measurements: BodyMeasurement[] = [];
   saving = false;
-  reportLoading = false;
-  report = '';
   today = new Date().toISOString().split('T')[0];
 
   heightCm: number | null = null;
@@ -338,20 +298,5 @@ export class MeasurementsComponent implements OnChanges {
   isGoodDelta(f: any, delta: number): boolean {
     if (delta === 0) { return true; }
     return f.increaseIsGood ? delta > 0 : delta < 0;
-  }
-
-  generateReport(): void {
-    this.reportLoading = true;
-    this.report = '';
-    this.mentorService.weeklyCheckin().subscribe({
-      next: (res) => {
-        this.reportLoading = false;
-        this.report = res.reply;
-      },
-      error: (err) => {
-        this.reportLoading = false;
-        this.report = 'No pude generar tu reporte semanal ahora. Inténtalo de nuevo en unos segundos. 💪';
-      }
-    });
   }
 }
