@@ -506,25 +506,32 @@ export class RoutineDetailComponent implements OnInit, OnDestroy {
     if (!day) { return; }
     this.routineService.getActiveSession(this.routine!.id, day.id).subscribe({
       next: (existing) => {
-        if (existing) {
+        if (existing && existing.id) {
           this.session = existing;
           this.sessionMode = true;
           this.selectedExerciseIndex = -1;
           this.setupExerciseTracking(day);
           return;
         }
-        this.routineService.createSession({ routine_id: this.routine!.id, day_id: day.id }).subscribe({
-          next: (session) => {
-            this.session = session;
-            this.sessionMode = true;
-            this.selectedExerciseIndex = -1;
-            this.setupExerciseTracking(day);
-          },
-          error: (err) => {
-            const msg = err.error?.detail || err.message || 'Error';
-            alert('Error al iniciar la sesión: ' + msg);
-          }
-        });
+        this.createSession(day);
+      },
+      error: () => {
+        this.createSession(day);
+      }
+    });
+  }
+
+  private createSession(day: RoutineDay): void {
+    this.routineService.createSession({ routine_id: this.routine!.id, day_id: day.id }).subscribe({
+      next: (session) => {
+        this.session = session;
+        this.sessionMode = true;
+        this.selectedExerciseIndex = -1;
+        this.setupExerciseTracking(day);
+      },
+      error: (err) => {
+        const msg = err.error?.detail || err.message || 'Error';
+        alert('Error al iniciar la sesión: ' + msg);
       }
     });
   }
