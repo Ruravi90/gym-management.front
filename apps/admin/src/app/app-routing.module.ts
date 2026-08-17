@@ -13,6 +13,7 @@ import { ClientsComponent } from './components/clients/clients.component';
 import { AuditLogComponent } from './components/audit-log/audit-log.component';
 import { ExercisesComponent } from './components/exercises/exercises.component';
 import { RoutinesComponent } from './components/routines/routines.component';
+import { AdminMeasurementsComponent } from './components/measurements/admin-measurements.component';
 
 const routes: Routes = [
   { path: 'login', component: LoginComponent },
@@ -28,6 +29,7 @@ const routes: Routes = [
       { path: 'clients', component: ClientsComponent },
       { path: 'exercises', component: ExercisesComponent },
       { path: 'routines', component: RoutinesComponent },
+      { path: 'measurements', component: AdminMeasurementsComponent },
       { path: 'client-membership-history/:id', component: ClientMembershipHistoryComponent },
       { path: 'audit-logs', component: AuditLogComponent, canActivate: [AuthGuard, AdminGuard] },
       { path: '', redirectTo: 'dashboard', pathMatch: 'full' }

@@ -31,6 +31,11 @@
         <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6.5 6.5 17.5 17.5"></path><path d="M21 21 12 12"></path><path d="M15 4.5 19.5 9"></path><path d="M12 21v-9"></path><path d="M3 12h9"></path><path d="M6.5 6.5 3 3"></path><path d="M21 3l-3.5 3.5"></path><path d="M12 12l-4.5 4.5"></path></svg>
         <span class="nav-label" *ngIf="!sidebarCollapsed">Ejercicios</span>
       </a>
+      <a routerLink="/measurements" routerLinkActive="active" class="nav-item" [title]="sidebarCollapsed ? 'Medidas' : ''"
+        (click)="onNavItemClick()">
+        <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"></path><path d="M7 16l4-8 4 4 4-6"></path></svg>
+        <span class="nav-label" *ngIf="!sidebarCollapsed">Medidas</span>
+      </a>
       <a routerLink="/admin/users" routerLinkActive="active" class="nav-item"
         *ngIf="getCurrentUser() && (getCurrentUser()?.role === 'admin' || getCurrentUser()?.role === 'super_admin' || getCurrentUser()?.role === 'receptionist')"
         [title]="sidebarCollapsed ? 'Usuarios' : ''" (click)="onNavItemClick()">

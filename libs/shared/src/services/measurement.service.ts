@@ -12,14 +12,17 @@ export class MeasurementService {
 
   constructor(private http: HttpClient) { }
 
-  getMeasurements(limit?: number): Observable<BodyMeasurement[]> {
+  getMeasurements(limit?: number, clientId?: number): Observable<BodyMeasurement[]> {
     let params = new HttpParams();
     if (limit) { params = params.set('limit', String(limit)); }
+    if (clientId) { params = params.set('client_id', String(clientId)); }
     return this.http.get<BodyMeasurement[]>(this.apiUrl, { params });
   }
 
-  saveMeasurement(measurement: Partial<BodyMeasurement>): Observable<BodyMeasurement> {
-    return this.http.post<BodyMeasurement>(this.apiUrl, measurement);
+  saveMeasurement(measurement: Partial<BodyMeasurement>, clientId?: number): Observable<BodyMeasurement> {
+    let params = new HttpParams();
+    if (clientId) { params = params.set('client_id', String(clientId)); }
+    return this.http.post<BodyMeasurement>(this.apiUrl, measurement, { params });
   }
 
   updateMeasurement(id: number, measurement: Partial<BodyMeasurement>): Observable<BodyMeasurement> {

@@ -70,38 +70,22 @@
 <!-- Card View for Mobile -->
 <div class="cards-container mobile-view" *ngIf="paginatedClients.length > 0">
     <div class="client-card" *ngFor="let client of paginatedClients">
-        <div class="card-header">
-            <div class="header-top">
-                <div class="client-id">#{{client.id}}</div>
-                <div class="client-name">{{client.name}}</div>
-            </div>
-            <div class="header-tags">
-                <span class="membership-badge" [attr.data-type]="getClientMembershipType(client)">
-                    {{getClientMembershipType(client) | uppercase}}
-                </span>
-                <div class="status-badge" [class.active]="client.status">
-                    {{client.status ? 'ACTIVO' : 'INACTIVO'}}
-                </div>
+        <div class="card-top">
+            <span class="client-id">#{{client.id}}</span>
+            <span class="client-name">{{client.name}}</span>
+            <div class="status-badge" [class.active]="client.status">
+                {{client.status ? 'ACTIVO' : 'INACTIVO'}}
             </div>
         </div>
-
-        <div class="card-body">
-            <div class="client-details">
-                <div class="detail-item">
-                    <span class="detail-label">Email:</span>
-                    <span class="detail-value">{{client.email}}</span>
-                </div>
-                <div class="detail-item">
-                    <span class="detail-label">Teléfono:</span>
-                    <span class="detail-value">{{client.phone || 'N/A'}}</span>
-                </div>
-            </div>
+        <div class="card-meta">
+            <span class="membership-badge" [attr.data-type]="getClientMembershipType(client)">
+                {{getClientMembershipType(client) | uppercase}}
+            </span>
+            <span class="client-contact">{{client.email}}<span *ngIf="client.phone"> · {{client.phone}}</span></span>
         </div>
-
         <div class="card-actions">
             <button class="app-btn app-btn-secondary btn-sm" (click)="openEditModal(client)">Editar</button>
-            <button class="app-btn app-btn-warning btn-sm" (click)="navigateToMembershipHistory(client.id)">
-                Membresía</button>
+            <button class="app-btn app-btn-warning btn-sm" (click)="navigateToMembershipHistory(client.id)">Membresía</button>
             <button class="app-btn app-btn-danger btn-sm" (click)="confirmDelete(client)">Eliminar</button>
             <button class="app-btn app-btn-primary btn-sm" (click)="openFaceScanModal(client)">Rostro</button>
         </div>

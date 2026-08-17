@@ -6,7 +6,7 @@ import { RouterModule, Routes } from '@angular/router';
 import { RoutinesComponent } from './routines.component';
 import { RoutineDetailComponent } from './routine-detail.component';
 import { MentorComponent } from './mentor.component';
-import { MeasurementsComponent } from './measurements.component';
+import { MeasurementsComponent } from '@shared';
 
 const routes: Routes = [
   { path: '', component: RoutinesComponent },
@@ -19,13 +19,13 @@ const routes: Routes = [
   declarations: [
     RoutinesComponent,
     RoutineDetailComponent,
-    MentorComponent,
-    MeasurementsComponent
+    MentorComponent
   ],
   imports: [
     CommonModule,
     FormsModule,
-    RouterModule.forChild(routes)
+    RouterModule.forChild(routes),
+    MeasurementsComponent
   ]
 })
 export class RoutinesModule { }

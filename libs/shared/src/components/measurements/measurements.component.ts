@@ -1,12 +1,17 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Input, OnChanges, SimpleChanges } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
+import { RouterModule } from '@angular/router';
 import { MeasurementService, MentorService, BodyMeasurement, MEASUREMENT_FIELDS } from '@shared';
 
 @Component({
   selector: 'app-measurements',
+  standalone: true,
+  imports: [CommonModule, FormsModule, RouterModule],
   template: `
     <div class="page-container">
       <header class="page-header">
-        <div class="back-row">
+        <div class="back-row" *ngIf="!hideBackButton">
           <button routerLink="/rutinas" class="btn btn-ghost btn-sm">← Volver a Mis Rutinas</button>
         </div>
         <h1>📏 Mis Medidas</h1>
@@ -57,39 +62,35 @@ import { MeasurementService, MentorService, BodyMeasurement, MEASUREMENT_FIELDS 
             <p>Aún no tienes medidas registradas.</p>
             <p class="muted">¡Registra tu primera semana para empezar a ver tu progreso!</p>
           </div>
-          <div class="table-responsive-wrapper mt-2" *ngIf="measurements.length > 0">
-            <table class="app-table">
-              <thead>
-                <tr>
-                  <th>Fecha</th>
-                  <th *ngFor="let f of fields">{{ f.label }}</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr *ngFor="let m of measurements; let i = index">
-                  <td class="date-cell">
-                    {{ m.date | date:'dd MMM' }}
-                    <button class="btn btn-danger btn-sm del" (click)="remove(m)" title="Eliminar">✕</button>
-                  </td>
-                  <td *ngFor="let f of fields" [class.is-latest]="i === 0">
-                    <ng-container *ngIf="cellValue(m, f) !== null">
-                      {{ cellValue(m, f) }} {{ f.unit }}
-                      <span *ngIf="deltaValue(m, f) !== null"
-                        class="delta" [class.good]="isGoodDelta(f, deltaValue(m, f)!)" [class.bad]="!isGoodDelta(f, deltaValue(m, f)!)">
-                        {{ deltaValue(m, f)! > 0 ? '▲' : (deltaValue(m, f)! < 0 ? '▼' : '•') }} {{ deltaValue(m, f) }}
-                      </span>
-                    </ng-container>
-                    <span *ngIf="cellValue(m, f) === null">—</span>
-                  </td>
-                </tr>
-              </tbody>
-            </table>
+          <div class="measurement-cards mt-2" *ngIf="measurements.length > 0">
+            <div class="measurement-card" *ngFor="let m of measurements; let i = index"
+                 [class.is-latest]="i === 0">
+              <div class="mc-header">
+                <span class="mc-date">{{ m.date | date:'dd MMM, yyyy' }}</span>
+                <button class="btn btn-danger btn-sm" (click)="remove(m)" title="Eliminar">✕</button>
+              </div>
+              <div class="mc-grid">
+                <div class="mc-field" *ngFor="let f of fields">
+                  <span class="mc-label">{{ f.label }}</span>
+                  <ng-container *ngIf="cellValue(m, f) !== null">
+                    <span class="mc-value">{{ cellValue(m, f) }} {{ f.unit }}</span>
+                    <span *ngIf="deltaValue(m, f) !== null"
+                          class="delta" [class.good]="isGoodDelta(f, deltaValue(m, f)!)"
+                          [class.bad]="!isGoodDelta(f, deltaValue(m, f)!)">
+                      {{ deltaValue(m, f)! > 0 ? '▲' : (deltaValue(m, f)! < 0 ? '▼' : '•') }}
+                      {{ deltaValue(m, f) }}
+                    </span>
+                  </ng-container>
+                  <span *ngIf="cellValue(m, f) === null" class="mc-empty">—</span>
+                </div>
+              </div>
+            </div>
           </div>
         </section>
       </div>
 
       <!-- Reporte semanal IA -->
-      <section class="card report-card">
+      <section class="card report-card" *ngIf="!hideReport">
         <div class="report-header">
           <div>
             <h2 class="card-title" style="margin:0 0 0.25rem;">🤖 Reporte semanal con FitMentor</h2>
@@ -121,12 +122,41 @@ import { MeasurementService, MentorService, BodyMeasurement, MEASUREMENT_FIELDS 
     .hint { color: var(--text-muted); font-size: 0.82rem; margin: 0.7rem 0 0; }
     .fields { display: grid; grid-template-columns: 1fr; gap: 0; }
     @media (min-width: 520px) { .fields { grid-template-columns: 1fr 1fr; gap: 0 0.9rem; } }
-    .date-cell { font-weight: 700; color: var(--lime-700); white-space: nowrap; }
-    .is-latest { font-weight: 700; }
-    .delta { font-size: 0.75rem; margin-left: 0.3rem; font-weight: 700; }
+
+    .measurement-cards { display: flex; flex-direction: column; gap: 0.75rem; }
+    .measurement-card {
+      border: 1px solid var(--app-border);
+      border-radius: var(--radius-lg);
+      padding: 1rem;
+      background: var(--app-surface);
+    }
+    .measurement-card.is-latest { border-left: 3px solid var(--app-primary); }
+    .mc-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 0.75rem;
+    }
+    .mc-date { font-weight: 700; color: var(--lime-700); font-size: 0.95rem; }
+    .mc-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 0.75rem;
+    }
+    @media (min-width: 700px) { .mc-grid { grid-template-columns: repeat(3, 1fr); } }
+    .mc-field { display: flex; flex-direction: column; gap: 0.15rem; }
+    .mc-label {
+      font-size: 0.72rem;
+      font-weight: 600;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.03em;
+    }
+    .mc-value { font-size: 0.95rem; font-weight: 700; color: var(--text-main); }
+    .mc-empty { font-size: 0.85rem; color: var(--slate-400); }
+    .delta { font-size: 0.75rem; font-weight: 700; }
     .delta.good { color: var(--success); }
     .delta.bad { color: var(--danger); }
-    .del { margin-left: 0.5rem; padding: 0.15rem 0.45rem; font-size: 0.72rem; }
 
     .report-card { margin-top: 1.5rem; }
     .report-header { display: flex; justify-content: space-between; align-items: flex-start; gap: 1rem; flex-wrap: wrap; }
@@ -147,7 +177,11 @@ import { MeasurementService, MentorService, BodyMeasurement, MEASUREMENT_FIELDS 
     }
   `]
 })
-export class MeasurementsComponent implements OnInit {
+export class MeasurementsComponent implements OnChanges {
+  @Input() clientId?: number;
+  @Input() hideBackButton = false;
+  @Input() hideReport = false;
+
   fields = MEASUREMENT_FIELDS;
   measurements: BodyMeasurement[] = [];
   saving = false;
@@ -155,7 +189,6 @@ export class MeasurementsComponent implements OnInit {
   report = '';
   today = new Date().toISOString().split('T')[0];
 
-  // Altura (perfil) e IMC calculado
   heightCm: number | null = null;
   savingHeight = false;
   bmi: number | null = null;
@@ -176,13 +209,21 @@ export class MeasurementsComponent implements OnInit {
     private mentorService: MentorService
   ) { }
 
+  ngOnChanges(changes: SimpleChanges): void {
+    if (changes['clientId']) {
+      this.loadData();
+    }
+  }
+
   ngOnInit(): void {
     this.loadData();
-    this.loadProfile();
+    if (!this.clientId) {
+      this.loadProfile();
+    }
   }
 
   loadData(): void {
-    this.measurementService.getMeasurements(50).subscribe({
+    this.measurementService.getMeasurements(50, this.clientId).subscribe({
       next: (data) => {
         this.measurements = data;
         this.computeBmi();
@@ -197,7 +238,7 @@ export class MeasurementsComponent implements OnInit {
         if (p.height_cm) { this.heightCm = p.height_cm; }
         this.computeBmi(p.weight_kg ?? undefined);
       },
-      error: () => { /* sin perfil todavía */ }
+      error: () => { }
     });
   }
 
@@ -244,10 +285,11 @@ export class MeasurementsComponent implements OnInit {
       const value = this.form[f.field];
       payload[f.field] = (value !== null && value !== undefined && value !== '') ? Number(value) : null;
     }
-    this.measurementService.saveMeasurement(payload).subscribe({
+    this.measurementService.saveMeasurement(payload, this.clientId).subscribe({
       next: () => {
         this.saving = false;
         this.loadData();
+        this.resetForm();
       },
       error: (err) => {
         this.saving = false;
@@ -255,6 +297,19 @@ export class MeasurementsComponent implements OnInit {
         alert('Error: ' + message);
       }
     });
+  }
+
+  resetForm(): void {
+    this.form = {
+      date: new Date().toISOString().split('T')[0],
+      weight_kg: null,
+      waist_cm: null,
+      abdomen_low_cm: null,
+      thigh_cm: null,
+      arm_relaxed_cm: null,
+      arm_flexed_cm: null,
+      notes: ''
+    };
   }
 
   remove(m: BodyMeasurement): void {

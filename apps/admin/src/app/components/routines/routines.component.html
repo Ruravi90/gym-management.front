@@ -5,11 +5,11 @@
   </header>
 
   <div class="toolbar">
-    <select class="input-field select" [(ngModel)]="filterClientId" (change)="applyFilters()">
+    <select class="app-input" [(ngModel)]="filterClientId" (change)="applyFilters()">
       <option value="">Todos los clientes</option>
       <option *ngFor="let client of clients" [value]="client.id">{{ client.name }}</option>
     </select>
-    <input type="text" class="input-field" placeholder="Buscar por nombre..." [(ngModel)]="searchTerm" (keyup.enter)="applyFilters()">
+    <input type="text" class="app-input" placeholder="Buscar por nombre..." [(ngModel)]="searchTerm" (keyup.enter)="applyFilters()">
     <button class="btn btn-primary" (click)="applyFilters()">Filtrar</button>
     <button class="btn btn-secondary" (click)="clearFilters()">Limpiar</button>
     <button class="btn btn-accent" (click)="openNewModal()">+ Nueva Rutina</button>
@@ -59,10 +59,10 @@
 
     <div class="form-row">
       <label class="grow">Nombre *
-        <input type="text" class="input-field" [(ngModel)]="form.name">
+        <input type="text" class="app-input" [(ngModel)]="form.name">
       </label>
       <label>Cliente *
-        <select class="input-field select" [(ngModel)]="form.client_id">
+        <select class="app-input" [(ngModel)]="form.client_id">
           <option [ngValue]="null" disabled>Selecciona...</option>
           <option *ngFor="let client of clients" [ngValue]="client.id">{{ client.name }}</option>
         </select>
@@ -70,10 +70,10 @@
     </div>
     <div class="form-row">
       <label class="grow">Descripción
-        <input type="text" class="input-field" placeholder="Objetivo de la rutina..." [(ngModel)]="form.description">
+        <input type="text" class="app-input" placeholder="Objetivo de la rutina..." [(ngModel)]="form.description">
       </label>
       <label>Estado
-        <select class="input-field select" [(ngModel)]="form.is_active">
+        <select class="app-input" [(ngModel)]="form.is_active">
           <option [ngValue]="true">Activa</option>
           <option [ngValue]="false">Inactiva</option>
         </select>
@@ -88,8 +88,8 @@
 
       <div class="day-editor" *ngFor="let day of form.days; let di = index">
         <div class="day-editor-header">
-          <input type="text" class="input-field" [(ngModel)]="day.name" placeholder="Nombre del día">
-          <select class="input-field select" [(ngModel)]="day.day_of_week">
+          <input type="text" class="app-input" [(ngModel)]="day.name" placeholder="Nombre del día">
+          <select class="app-input" [(ngModel)]="day.day_of_week">
             <option [ngValue]="null">Día flexible</option>
             <option *ngFor="let d of daysOfWeek; let i = index" [ngValue]="i">{{ d }}</option>
           </select>
@@ -111,19 +111,19 @@
     <div class="picker" *ngIf="exercisePicker.dayIndex >= 0">
       <h4>Agregar ejercicio al día {{ exercisePicker.dayIndex + 1 }}</h4>
       <div class="picker-row">
-        <select class="input-field" [(ngModel)]="exercisePicker.exercise_id">
+        <select class="app-input" [(ngModel)]="exercisePicker.exercise_id">
           <option [ngValue]="null" disabled>Selecciona un ejercicio...</option>
           <option *ngFor="let ex of exercises" [ngValue]="ex.id">{{ ex.name }}</option>
         </select>
       </div>
       <div class="picker-row">
-        <label>Series <input type="number" min="1" class="input-field" [(ngModel)]="exercisePicker.sets"></label>
-        <label>Reps <input type="text" class="input-field" placeholder="10, 8-12, AMRAP" [(ngModel)]="exercisePicker.reps"></label>
-        <label>Peso <input type="text" class="input-field" placeholder="20 kg" [(ngModel)]="exercisePicker.weight"></label>
-        <label>Descanso (s) <input type="number" min="0" class="input-field" [(ngModel)]="exercisePicker.rest_seconds"></label>
+        <label>Series <input type="number" min="1" class="app-input" [(ngModel)]="exercisePicker.sets"></label>
+        <label>Reps <input type="text" class="app-input" placeholder="10, 8-12, AMRAP" [(ngModel)]="exercisePicker.reps"></label>
+        <label>Peso <input type="text" class="app-input" placeholder="20 kg" [(ngModel)]="exercisePicker.weight"></label>
+        <label>Descanso (s) <input type="number" min="0" class="app-input" [(ngModel)]="exercisePicker.rest_seconds"></label>
       </div>
       <div class="picker-row">
-        <label class="grow">Notas <input type="text" class="input-field" placeholder="Opcional" [(ngModel)]="exercisePicker.notes"></label>
+        <label class="grow">Notas <input type="text" class="app-input" placeholder="Opcional" [(ngModel)]="exercisePicker.notes"></label>
       </div>
       <div class="picker-actions">
         <button class="btn btn-secondary" (click)="exercisePicker.dayIndex = -1">Cancelar</button>

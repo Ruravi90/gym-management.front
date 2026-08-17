@@ -5,8 +5,8 @@
   </header>
 
   <div class="toolbar">
-    <input type="text" class="input-field" placeholder="Buscar ejercicio..." [(ngModel)]="searchTerm" (keyup.enter)="applyFilters()">
-    <select class="input-field select" [(ngModel)]="muscleGroup" (change)="applyFilters()">
+    <input type="text" class="app-input" placeholder="Buscar ejercicio..." [(ngModel)]="searchTerm" (keyup.enter)="applyFilters()">
+    <select class="app-input" [(ngModel)]="muscleGroup" (change)="applyFilters()">
       <option value="">Todos los grupos musculares</option>
       <option *ngFor="let mg of muscleGroups" [value]="mg.value">{{ mg.label }}</option>
     </select>
@@ -53,41 +53,41 @@
     <h2>{{ editing ? 'Editar Ejercicio' : 'Nuevo Ejercicio' }}</h2>
     <div class="modal-grid">
       <label>Nombre *
-        <input type="text" class="input-field" [(ngModel)]="form.name">
+        <input type="text" class="app-input" [(ngModel)]="form.name">
       </label>
       <label>Grupo muscular
-        <select class="input-field select" [(ngModel)]="form.muscle_group">
+        <select class="app-input" [(ngModel)]="form.muscle_group">
           <option value="">—</option>
           <option *ngFor="let mg of muscleGroups" [value]="mg.value">{{ mg.label }}</option>
         </select>
       </label>
       <label>Equipamiento
-        <input type="text" class="input-field" placeholder="barbell, dumbbell, body weight..." [(ngModel)]="form.equipment">
+        <input type="text" class="app-input" placeholder="barbell, dumbbell, body weight..." [(ngModel)]="form.equipment">
       </label>
       <label>Dificultad
-        <select class="input-field select" [(ngModel)]="form.difficulty">
+        <select class="app-input" [(ngModel)]="form.difficulty">
           <option value="beginner">Principiante</option>
           <option value="intermediate">Intermedio</option>
           <option value="expert">Avanzado</option>
         </select>
       </label>
       <label>Músculo objetivo
-        <input type="text" class="input-field" [(ngModel)]="form.target">
+        <input type="text" class="app-input" [(ngModel)]="form.target">
       </label>
       <label>Músculos secundarios
-        <input type="text" class="input-field" [(ngModel)]="form.secondary_muscles">
+        <input type="text" class="app-input" [(ngModel)]="form.secondary_muscles">
       </label>
       <label class="full">Descripción
-        <textarea class="input-field" rows="2" [(ngModel)]="form.description"></textarea>
+        <textarea class="app-input" rows="2" [(ngModel)]="form.description"></textarea>
       </label>
       <label class="full">Instrucciones (español)
-        <textarea class="input-field" rows="4" [(ngModel)]="form.instructions"></textarea>
+        <textarea class="app-input" rows="4" [(ngModel)]="form.instructions"></textarea>
       </label>
       <label class="full">URL del GIF de demostración
-        <input type="text" class="input-field" placeholder="https://..." [(ngModel)]="form.gif_url">
+        <input type="text" class="app-input" placeholder="https://..." [(ngModel)]="form.gif_url">
       </label>
       <label class="full">URL de imagen
-        <input type="text" class="input-field" placeholder="https://..." [(ngModel)]="form.image_url">
+        <input type="text" class="app-input" placeholder="https://..." [(ngModel)]="form.image_url">
       </label>
     </div>
     <div class="modal-preview" *ngIf="form.gif_url">

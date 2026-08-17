@@ -17,4 +17,5 @@ export * from './services/exercise.service';
 export * from './services/routine.service';
 export * from './services/mentor.service';
 export * from './services/measurement.service';
+export * from './components/measurements/measurements.component';
 export * from './environments/environment';

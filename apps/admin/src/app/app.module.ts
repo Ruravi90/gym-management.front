@@ -25,6 +25,8 @@ import { AuditLogComponent } from './components/audit-log/audit-log.component';
 import { EntityAuditTrailComponent } from './components/audit-log/entity-audit-trail.component';
 import { ExercisesComponent } from './components/exercises/exercises.component';
 import { RoutinesComponent } from './components/routines/routines.component';
+import { AdminMeasurementsComponent } from './components/measurements/admin-measurements.component';
+import { MeasurementsComponent } from '@shared';
 
 import { HTTP_INTERCEPTORS } from '@angular/common/http';
 import { AuthInterceptor, environment } from '@shared';
@@ -45,7 +47,8 @@ import { ServiceWorkerModule } from '@angular/service-worker';
     AuditLogComponent,
     EntityAuditTrailComponent,
     ExercisesComponent,
-    RoutinesComponent
+    RoutinesComponent,
+    AdminMeasurementsComponent
   ],
   imports: [
     BrowserModule,
@@ -54,6 +57,7 @@ import { ServiceWorkerModule } from '@angular/service-worker';
     HttpClientModule,
     FormsModule,
     NgxChartsModule,
+    MeasurementsComponent,
     ServiceWorkerModule.register('ngsw-worker.js', {
       enabled: environment.production,
       registrationStrategy: 'registerWhenStable:30000'

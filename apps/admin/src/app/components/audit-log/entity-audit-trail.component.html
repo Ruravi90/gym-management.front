@@ -11,8 +11,8 @@
     {{ error }}
   </div>
 
-  <!-- Audit trail table -->
-  <div *ngIf="!loading && !error" class="audit-trail-table-container card">
+  <!-- Audit trail table (Desktop) -->
+  <div *ngIf="!loading && !error" class="table-responsive-wrapper desktop-view">
     <table class="audit-trail-table">
       <thead>
         <tr>
@@ -30,8 +30,8 @@
           <td>
             <div *ngIf="log.action_type === 'UPDATE'" class="changes-list">
               <div *ngFor="let change of getChangedFields(log)" class="change-item">
-                <strong>{{ change.key }}:</strong> 
-                <span class="old-value">{{ getOldValueDisplay(change.key, change.oldValue) }}</span> → 
+                <strong>{{ change.key }}:</strong>
+                <span class="old-value">{{ getOldValueDisplay(change.key, change.oldValue) }}</span> →
                 <span class="new-value">{{ getNewValueDisplay(change.key, change.newValue) }}</span>
               </div>
             </div>
@@ -49,6 +49,36 @@
         </tr>
       </tbody>
     </table>
+  </div>
+
+  <!-- Audit trail cards (Mobile) -->
+  <div class="mobile-cards mobile-view" *ngIf="!loading && !error && auditLogs.length > 0">
+    <div class="audit-card" *ngFor="let log of auditLogs">
+      <div class="audit-card-header">
+        <span class="audit-date">{{ formatDate(log.timestamp) }}</span>
+        <span class="badge badge-{{ log.action_type.toLowerCase() }}">{{ log.action_type }}</span>
+      </div>
+      <div class="audit-card-user">{{ log.user_id ? 'Usuario ID: ' + log.user_id : 'Sistema' }}</div>
+      <div class="audit-card-details">
+        <div *ngIf="log.action_type === 'UPDATE'" class="changes-list">
+          <div *ngFor="let change of getChangedFields(log)" class="change-item">
+            <strong>{{ change.key }}:</strong>
+            <span class="old-value">{{ getOldValueDisplay(change.key, change.oldValue) }}</span> →
+            <span class="new-value">{{ getNewValueDisplay(change.key, change.newValue) }}</span>
+          </div>
+        </div>
+        <div *ngIf="log.action_type === 'CREATE'" class="creation-details">
+          <div *ngFor="let key of getObjectKeys(log.new_values)" class="creation-item">
+            <strong>{{ key }}:</strong> {{ getNewValueDisplay(key, log.new_values![key]) }}
+          </div>
+        </div>
+        <div *ngIf="log.action_type === 'DELETE'" class="deletion-details">
+          <div *ngFor="let key of getObjectKeys(log.old_values)" class="deletion-item">
+            <strong>{{ key }}:</strong> {{ getOldValueDisplay(key, log.old_values![key]) }}
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
 
   <!-- Empty state -->
