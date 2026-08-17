@@ -383,9 +383,16 @@ import { RoutineService, Routine, WorkoutSession, RoutineDay } from '@shared';
     }
 
     /* ===== Modals ===== */
-    .gif-modal { text-align: center; }
+    .gif-modal {
+      text-align: center;
+      max-width: 95vw;
+      max-height: 90vh;
+      padding: 0.5rem;
+      background: transparent;
+      box-shadow: none;
+    }
     .gif-modal img {
-      max-width: 95vw; max-height: 85vh; border-radius: var(--radius-lg);
+      max-width: 95vw; max-height: 88vh; border-radius: var(--radius-lg);
       background: var(--slate-900); box-shadow: var(--shadow-lg);
     }
     .exit-modal { text-align: center; max-width: 340px; }
