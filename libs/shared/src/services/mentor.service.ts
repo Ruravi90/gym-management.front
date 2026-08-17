@@ -118,6 +118,10 @@ export class MentorService {
     return this.http.post<MentorReply>(`${this.apiUrl}/weekly-checkin`, {});
   }
 
+  monthlyReport(): Observable<MentorReply> {
+    return this.http.post<MentorReply>(`${this.apiUrl}/monthly-report`, {});
+  }
+
   getBodyType(): Observable<BodyTypeResult> {
     return this.http.get<BodyTypeResult>(`${this.apiUrl}/body-type`);
   }

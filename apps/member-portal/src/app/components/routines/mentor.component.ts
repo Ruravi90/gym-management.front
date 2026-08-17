@@ -33,7 +33,10 @@ interface Message {
             🎯 Generar mi rutina con IA
           </button>
           <button class="btn btn-outline" (click)="weeklyCheckin()" [disabled]="loading || generating">
-            📅 Mi reporte semanal
+            📅 Reporte semanal
+          </button>
+          <button class="btn btn-outline" (click)="monthlyReport()" [disabled]="loading || generating">
+            📊 Reporte mensual
           </button>
         </div>
       </header>
@@ -330,6 +333,21 @@ export class MentorComponent implements OnInit {
       error: () => {
         this.loading = false;
         this.addMessage('No pude generar tu reporte semanal ahora. Inténtalo de nuevo en unos segundos. 💪');
+      }
+    });
+  }
+
+  monthlyReport(): void {
+    if (this.loading || this.generating) { return; }
+    this.loading = true;
+    this.mentorService.monthlyReport().subscribe({
+      next: (res) => {
+        this.loading = false;
+        this.addMessage(res.reply);
+      },
+      error: () => {
+        this.loading = false;
+        this.addMessage('No pude generar tu reporte mensual ahora. Inténtalo de nuevo en unos segundos. 💪');
       }
     });
   }
