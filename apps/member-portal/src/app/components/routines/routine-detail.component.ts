@@ -97,13 +97,23 @@ import { RoutineService, Routine, WorkoutSession, RoutineDay } from '@shared';
             <div class="progress-fill" [style.width]="progressPercent + '%'"></div>
           </div>
 
-          <!-- GIF -->
-          <div class="gif-demo" *ngIf="selectedExercise?.exercise?.gif_url"
-               (click)="showGif(selectedExercise.exercise.gif_url)">
-            <img [src]="selectedExercise.exercise.gif_url" [alt]="selectedExercise.exercise?.name">
-            <span class="gif-hint">Toca para ver grande</span>
+          <!-- GIF Carousel -->
+          <div class="gif-carousel" *ngIf="gifUrls.length > 0">
+            <div class="gif-demo" (click)="openGifModal()">
+              <img [src]="gifUrls[currentGifIndex]" [alt]="selectedExercise?.exercise?.name">
+              <span class="gif-hint">Toca para ver grande</span>
+              <button class="gif-nav gif-prev" *ngIf="gifUrls.length > 1"
+                (click)="prevGif($event)">‹</button>
+              <button class="gif-nav gif-next" *ngIf="gifUrls.length > 1"
+                (click)="nextGif($event)">›</button>
+            </div>
+            <div class="gif-dots" *ngIf="gifUrls.length > 1">
+              <span class="gif-dot" *ngFor="let url of gifUrls; let i = index"
+                [class.active]="i === currentGifIndex"
+                (click)="currentGifIndex = i"></span>
+            </div>
           </div>
-          <div class="gif-demo gif-placeholder" *ngIf="!selectedExercise?.exercise?.gif_url">
+          <div class="gif-demo gif-placeholder" *ngIf="gifUrls.length === 0">
             <span>🎥</span>
           </div>
 
@@ -280,7 +290,7 @@ import { RoutineService, Routine, WorkoutSession, RoutineDay } from '@shared';
       width: 100%; height: 280px; border-radius: var(--radius-lg);
       overflow: hidden; background: var(--slate-900);
       display: flex; align-items: center; justify-content: center;
-      margin-bottom: 1rem; cursor: pointer; position: relative;
+      margin-bottom: 0.5rem; cursor: pointer; position: relative;
       border: 1px solid var(--app-border);
     }
     .gif-demo img { width: 100%; height: 100%; object-fit: contain; }
@@ -291,6 +301,25 @@ import { RoutineService, Routine, WorkoutSession, RoutineDay } from '@shared';
       font-size: 0.7rem; color: rgba(255,255,255,0.6);
       background: rgba(0,0,0,0.4); padding: 0.2rem 0.5rem; border-radius: 999px;
     }
+    .gif-nav {
+      position: absolute; top: 50%; transform: translateY(-50%);
+      background: rgba(0,0,0,0.5); color: white; border: none;
+      width: 36px; height: 36px; border-radius: 50%; font-size: 1.4rem;
+      cursor: pointer; display: flex; align-items: center; justify-content: center;
+      transition: background 0.15s;
+    }
+    .gif-nav:hover { background: rgba(0,0,0,0.7); }
+    .gif-prev { left: 0.5rem; }
+    .gif-next { right: 0.5rem; }
+    .gif-dots {
+      display: flex; justify-content: center; gap: 0.4rem;
+      margin-bottom: 0.75rem;
+    }
+    .gif-dot {
+      width: 8px; height: 8px; border-radius: 50%;
+      background: var(--slate-300); cursor: pointer; transition: all 0.15s;
+    }
+    .gif-dot.active { background: var(--app-primary); transform: scale(1.3); }
 
     .exercise-info-card { margin-bottom: 0.75rem; }
     .exercise-name { margin: 0 0 0.3rem; font-size: 1.3rem; }
@@ -356,7 +385,7 @@ import { RoutineService, Routine, WorkoutSession, RoutineDay } from '@shared';
     /* ===== Modals ===== */
     .gif-modal { text-align: center; }
     .gif-modal img {
-      max-width: 92vw; max-height: 72vh; border-radius: var(--radius-lg);
+      max-width: 95vw; max-height: 85vh; border-radius: var(--radius-lg);
       background: var(--slate-900); box-shadow: var(--shadow-lg);
     }
     .exit-modal { text-align: center; max-width: 340px; }
@@ -395,6 +424,9 @@ export class RoutineDetailComponent implements OnInit, OnDestroy {
   restTimer: any = null;
   restRemaining = 0;
   restTotal = 0;
+
+  gifUrls: string[] = [];
+  currentGifIndex = 0;
 
   private routineId = 0;
   private restInterval: any = null;
@@ -559,6 +591,34 @@ export class RoutineDetailComponent implements OnInit, OnDestroy {
     this.saveAllSets();
     this.selectedExerciseIndex = index;
     this.lastSaveMsg = '';
+    this.loadGifUrls();
+  }
+
+  private loadGifUrls(): void {
+    const ex = this.selectedExercise;
+    if (!ex?.exercise) { this.gifUrls = []; return; }
+    const urls: string[] = [];
+    if (ex.exercise.gif_urls && ex.exercise.gif_urls.length > 0) {
+      urls.push(...ex.exercise.gif_urls);
+    } else if (ex.exercise.gif_url) {
+      urls.push(ex.exercise.gif_url);
+    }
+    this.gifUrls = urls;
+    this.currentGifIndex = 0;
+  }
+
+  openGifModal(): void {
+    if (this.gifUrls.length > 0) { this.showGif(this.gifUrls[this.currentGifIndex]); }
+  }
+
+  prevGif(event: Event): void {
+    event.stopPropagation();
+    this.currentGifIndex = (this.currentGifIndex - 1 + this.gifUrls.length) % this.gifUrls.length;
+  }
+
+  nextGif(event: Event): void {
+    event.stopPropagation();
+    this.currentGifIndex = (this.currentGifIndex + 1) % this.gifUrls.length;
   }
 
   closeExercise(): void {

@@ -10,6 +10,7 @@ export interface Exercise {
   secondary_muscles?: string;
   instructions?: string;
   gif_url?: string;
+  gif_urls?: string[];
   image_url?: string;
   is_active: boolean;
   created_at: string;
