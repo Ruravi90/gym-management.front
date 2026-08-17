@@ -141,7 +141,7 @@ interface Message {
           </div>
           <div class="welcome" *ngIf="messages.length === 0 && !loading && !generating">
             <p>¡Hola! Soy tu mentor de entrenamiento 💪</p>
-            <p class="muted">Generá una rutina personalizada o consultá tu reporte semanal de progreso.</p>
+            <p class="muted">Generá una rutina personalizada o consultá tu reporte semanal de progreso. Tu historial se guarda automáticamente.</p>
           </div>
         </div>
 
@@ -294,7 +294,19 @@ export class MentorComponent implements OnInit {
     private sanitizer: DomSanitizer,
   ) { }
 
-  ngOnInit(): void { }
+  ngOnInit(): void {
+    this.mentorService.getMessages().subscribe({
+      next: (msgs) => {
+        this.messages = msgs.reverse().map(m => ({
+          role: 'mentor' as const,
+          text: m.content,
+          html: this.sanitizer.bypassSecurityTrustHtml(marked.parse(m.content) as string),
+        }));
+        this.scrollToBottom();
+      },
+      error: () => {}
+    });
+  }
 
   get bodyTypeLabel(): string {
     const found = this.bodyTypes.find(b => b.value === this.bodyType);

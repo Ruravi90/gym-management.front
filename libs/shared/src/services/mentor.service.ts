@@ -94,6 +94,14 @@ export const ACTIVITY_LEVELS: { value: string; label: string }[] = [
   { value: 'activo', label: 'Activo (trabajo físico o entrenas seguido)' }
 ];
 
+export interface MentorMessage {
+  id: number;
+  role: string;
+  content: string;
+  message_type: string;
+  created_at: string;
+}
+
 @Injectable({
   providedIn: 'root'
 })
@@ -101,6 +109,10 @@ export class MentorService {
   private apiUrl = `${environment.apiUrl}/mentor`;
 
   constructor(private http: HttpClient) { }
+
+  getMessages(): Observable<MentorMessage[]> {
+    return this.http.get<MentorMessage[]>(`${this.apiUrl}/messages`);
+  }
 
   weeklyCheckin(): Observable<MentorReply> {
     return this.http.post<MentorReply>(`${this.apiUrl}/weekly-checkin`, {});
