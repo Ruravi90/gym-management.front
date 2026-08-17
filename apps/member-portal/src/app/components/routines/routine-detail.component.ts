@@ -130,6 +130,26 @@ import { RoutineService, Routine, WorkoutSession, RoutineDay } from '@shared';
             <p *ngIf="selectedExercise?.notes" class="notes">📝 {{ selectedExercise.notes }}</p>
           </div>
 
+          <!-- Detalles del ejercicio (instrucciones, tips, errores) -->
+          <div class="card exercise-details-card" *ngIf="selectedExercise?.exercise?.instructions || selectedExercise?.exercise?.tips || selectedExercise?.exercise?.common_mistakes">
+            <div class="detail-section" *ngIf="selectedExercise?.exercise?.instructions">
+              <h4>📋 Instrucciones</h4>
+              <p>{{ selectedExercise.exercise.instructions }}</p>
+            </div>
+            <div class="detail-section" *ngIf="selectedExercise?.exercise?.tips">
+              <h4>💡 Consejos</h4>
+              <p>{{ selectedExercise.exercise.tips }}</p>
+            </div>
+            <div class="detail-section" *ngIf="selectedExercise?.exercise?.common_mistakes">
+              <h4>⚠️ Errores comunes</h4>
+              <p>{{ selectedExercise.exercise.common_mistakes }}</p>
+            </div>
+            <div class="detail-section" *ngIf="selectedExercise?.exercise?.modifications">
+              <h4>🔄 Modificaciones</h4>
+              <p>{{ selectedExercise.exercise.modifications }}</p>
+            </div>
+          </div>
+
           <!-- Series -->
           <div class="card sets-card">
             <div class="sets-header">
@@ -335,6 +355,12 @@ import { RoutineService, Routine, WorkoutSession, RoutineDay } from '@shared';
     .exercise-name { margin: 0 0 0.3rem; font-size: 1.3rem; }
     .exercise-prescription { margin: 0 0 0.2rem; font-size: 0.95rem; }
     .exercise-rest { margin: 0; font-size: 0.85rem; }
+
+    .exercise-details-card { margin-bottom: 0.75rem; }
+    .detail-section { margin-bottom: 0.75rem; }
+    .detail-section:last-child { margin-bottom: 0; }
+    .detail-section h4 { margin: 0 0 0.3rem; font-size: 0.85rem; font-weight: 700; color: var(--text-main); }
+    .detail-section p { margin: 0; font-size: 0.82rem; color: var(--text-muted); line-height: 1.5; }
 
     .sets-card { margin-bottom: 1rem; }
     .sets-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.75rem; }

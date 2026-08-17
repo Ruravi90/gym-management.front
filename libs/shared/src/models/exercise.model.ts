@@ -9,6 +9,9 @@ export interface Exercise {
   target?: string;
   secondary_muscles?: string;
   instructions?: string;
+  tips?: string;
+  common_mistakes?: string;
+  modifications?: string;
   gif_url?: string;
   gif_urls?: string[];
   image_url?: string;
