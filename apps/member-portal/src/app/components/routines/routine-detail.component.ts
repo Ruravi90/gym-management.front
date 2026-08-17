@@ -29,7 +29,7 @@ import { RoutineService, Routine, WorkoutSession, RoutineDay } from '@shared';
             <h2 class="day-title">{{ currentDay.name }} <span class="muted">{{ dayLabel }}</span></h2>
             <div class="exercise-list">
               <div class="exercise-row" *ngFor="let re of currentDay.exercises">
-                <div class="ex-media" (click)="showGif(re.exercise?.gif_url || '')">
+                <div class="ex-media">
                   <img *ngIf="re.exercise?.gif_url" [src]="re.exercise.gif_url" [alt]="re.exercise?.name" loading="lazy">
                   <span *ngIf="!re.exercise?.gif_url" class="ex-media-placeholder">🎥</span>
                 </div>
@@ -220,7 +220,7 @@ import { RoutineService, Routine, WorkoutSession, RoutineDay } from '@shared';
       width: 84px; height: 84px; border-radius: var(--radius-md);
       overflow: hidden; background: var(--slate-100);
       display: flex; align-items: center; justify-content: center;
-      cursor: pointer; flex-shrink: 0; border: 1px solid var(--app-border);
+      flex-shrink: 0; border: 1px solid var(--app-border);
     }
     .ex-media img { width: 100%; height: 100%; object-fit: cover; }
     .ex-media-placeholder { font-size: 1.6rem; }
