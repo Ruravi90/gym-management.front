@@ -47,6 +47,13 @@ export class RoutineService {
     return this.http.get<WorkoutSession[]>(`${this.apiUrl}/sessions`, { params });
   }
 
+  getActiveSession(routineId: number, dayId: number): Observable<WorkoutSession | null> {
+    const params = new HttpParams()
+      .set('routine_id', String(routineId))
+      .set('day_id', String(dayId));
+    return this.http.get<WorkoutSession | null>(`${this.apiUrl}/sessions/active`, { params });
+  }
+
   getRoutineSessions(routineId: number): Observable<WorkoutSession[]> {
     return this.http.get<WorkoutSession[]>(`${this.apiUrl}/${routineId}/sessions`);
   }
