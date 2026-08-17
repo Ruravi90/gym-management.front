@@ -350,8 +350,7 @@ export class MeasurementsComponent implements OnChanges {
       },
       error: (err) => {
         this.reportLoading = false;
-        const message = err.error && err.error.detail ? err.error.detail : (err.message || 'Error');
-        this.report = 'Lo siento, no se pudo generar el reporte: ' + message;
+        this.report = 'No pude generar tu reporte semanal ahora. Inténtalo de nuevo en unos segundos. 💪';
       }
     });
   }

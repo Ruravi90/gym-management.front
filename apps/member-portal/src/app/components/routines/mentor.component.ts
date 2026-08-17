@@ -345,8 +345,7 @@ export class MentorComponent implements OnInit {
       },
       error: (err) => {
         this.loading = false;
-        const detail = err.error && err.error.detail ? err.error.detail : (err.message || 'Error');
-        this.messages.push({ role: 'mentor', text: 'Lo siento, hubo un problema: ' + detail });
+        this.messages.push({ role: 'mentor', text: 'No pude conectarme en este momento. Verifica tu conexión e inténtalo de nuevo. 💪' });
         this.scrollToBottom();
       }
     });
@@ -364,8 +363,7 @@ export class MentorComponent implements OnInit {
       },
       error: (err) => {
         this.loading = false;
-        const detail = err.error && err.error.detail ? err.error.detail : (err.message || 'Error');
-        this.messages.push({ role: 'mentor', text: 'Lo siento, no pude generar tu reporte: ' + detail });
+        this.messages.push({ role: 'mentor', text: 'No pude generar tu reporte semanal ahora. Inténtalo de nuevo en unos segundos. 💪' });
         this.scrollToBottom();
       }
     });
@@ -447,8 +445,7 @@ export class MentorComponent implements OnInit {
       },
       error: (err) => {
         this.generating = false;
-        const detail = err.error && err.error.detail ? err.error.detail : (err.message || 'Error');
-        this.messages.push({ role: 'mentor', text: 'Lo siento, no pude generar tu rutina: ' + detail });
+        this.messages.push({ role: 'mentor', text: 'No pude generar tu rutina ahora. Verifica tu conexión e inténtalo de nuevo. 💪' });
         this.scrollToBottom();
       }
     });
