@@ -3,7 +3,10 @@
     justify-content: center;
     align-items: center;
     min-height: 100vh;
-    background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%); /* Soft gradient background */
+    background:
+        radial-gradient(60rem 40rem at 110% -10%, var(--lime-100, #ecfccb) 0%, transparent 55%),
+        radial-gradient(50rem 35rem at -20% 110%, var(--lime-50, #f7fee7) 0%, transparent 55%),
+        var(--app-bg);
     padding: 1rem;
 }
 
@@ -26,7 +29,7 @@
     width: 54px;
     height: 54px;
     background: var(--app-primary);
-    color: white;
+    color: var(--app-on-primary, #1a2e05);
     border-radius: 16px; /* More rounded */
     display: flex;
     align-items: center;

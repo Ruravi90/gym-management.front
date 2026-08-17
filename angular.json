@@ -27,7 +27,8 @@
               "apps/admin/src/manifest.webmanifest"
             ],
             "styles": [
-              "apps/admin/src/styles.css"
+              "apps/admin/src/styles.css",
+              "libs/shared/src/styles/design-system.css"
             ],
             "scripts": []
           },
@@ -99,7 +100,10 @@
               "apps/member-portal/src/assets",
               "apps/member-portal/src/manifest.webmanifest"
             ],
-            "styles": ["apps/member-portal/src/styles.css"],
+            "styles": [
+              "apps/member-portal/src/styles.css",
+              "libs/shared/src/styles/design-system.css"
+            ],
             "scripts": []
           },
           "configurations": {

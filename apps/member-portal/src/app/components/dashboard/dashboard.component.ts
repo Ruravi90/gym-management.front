@@ -5,23 +5,31 @@ import { KaizenService } from '../kaizen/kaizen.service';
 @Component({
   selector: 'app-dashboard',
   template: `
-    <div class="dashboard-container" style="background-color: #111; min-height: 100vh;">
-      <header>
-        <h1>Hola, {{ clientName }}</h1>
-        <button class="btn-logout" (click)="logout()">Cerrar Sesión</button>
+    <div class="page-container">
+      <header class="welcome-bar">
+        <div>
+          <h1>Hola, {{ clientName }} 👋</h1>
+          <p class="muted">Este es tu espacio de entrenamiento. ¡Sigue así!</p>
+        </div>
+        <button class="btn btn-outline" (click)="logout()">Cerrar Sesión</button>
       </header>
-      
-      <main>
-        <div class="card membership-card">
-          <h3>Mi Membresía</h3>
-          <p class="status active">Activa</p>
-          <p>Próximo vencimiento: 15 de Marzo</p>
-          <button routerLink="/memberships/purchase" class="btn-purchase">Renovar o Cambiar Plan</button>
+
+      <div class="grid grid-2">
+        <div class="card">
+          <div class="card-head">
+            <h3>Mi Membresía</h3>
+            <span class="badge badge-success">Activa</span>
+          </div>
+          <p class="muted">Próximo vencimiento: 15 de Marzo</p>
+          <button routerLink="/memberships/purchase" class="btn btn-primary btn-block mt-2">Renovar o Cambiar Plan</button>
         </div>
 
-        <div class="card kaizen-card">
-          <h3 style="color: #f9d423; border-bottom: none; padding-bottom: 0;">Mejora Continua</h3>
-          <p style="color: #aaa;">Convierte tus metas en hábitos y obtén medallas.</p>
+        <div class="card">
+          <div class="card-head">
+            <h3>Mejora Continua</h3>
+            <span class="badge badge-primary">Kaizen</span>
+          </div>
+          <p class="muted">Convierte tus metas en hábitos y obtén medallas.</p>
 
           <div *ngIf="kaizenChartData.length > 0" style="height: 200px; margin: 15px 0;">
             <ngx-charts-pie-chart
@@ -32,12 +40,12 @@ import { KaizenService } from '../kaizen/kaizen.service';
               [labels]="false">
             </ngx-charts-pie-chart>
           </div>
-          <div *ngIf="kaizenChartData.length === 0" style="padding: 20px; text-align: center; opacity: 0.7;">
+          <div *ngIf="kaizenChartData.length === 0" class="muted text-center" style="padding: 20px 0;">
             No tienes registros este mes.
           </div>
 
-          <div *ngIf="forgottenHabitsData.length > 0" style="margin-top: 15px; border-top: 1px solid #444; padding-top: 15px;">
-            <h4 style="color: #f87171; margin-top: 0; margin-bottom: 10px;">⚠️ Hábitos Olvidados (% Éxito)</h4>
+          <div *ngIf="forgottenHabitsData.length > 0" class="forgotten">
+            <h4>Hábitos por mejorar (% Éxito)</h4>
             <div style="height: 120px;">
               <ngx-charts-bar-horizontal
                 [results]="forgottenHabitsData"
@@ -49,208 +57,107 @@ import { KaizenService } from '../kaizen/kaizen.service';
             </div>
           </div>
 
-          <button routerLink="/mejora-continua" class="btn-purchase" style="margin-top: 10px;">Ver Mis Hábitos y Logros</button>
+          <button routerLink="/mejora-continua" class="btn btn-outline btn-block mt-2">Ver Mis Hábitos y Logros</button>
         </div>
 
-        <div class="card routines-card">
-          <h3 style="color: #4ade80;">Mis Rutinas 🏋️</h3>
-          <p style="color: #aaa;">Sigue tus días de entrenamiento, registra tus series y consulta a tu mentor con IA.</p>
-          <button routerLink="/rutinas" class="btn-purchase" style="margin-top: 10px;">Ver Mis Rutinas</button>
-          <button routerLink="/rutinas/mentor" class="btn-purchase" style="margin-top: 10px;">🤖 Hablar con FitMentor</button>
-          <button routerLink="/rutinas/medidas" class="btn-purchase" style="margin-top: 10px;">📏 Registrar Mis Medidas</button>
+        <div class="card">
+          <div class="card-head">
+            <h3>Mis Rutinas 🏋️</h3>
+            <span class="badge badge-primary">Entrenamiento</span>
+          </div>
+          <p class="muted">Sigue tus días de entrenamiento, registra tus series y consulta a tu mentor con IA.</p>
+          <div class="stack">
+            <button routerLink="/rutinas" class="btn btn-primary btn-block">Ver Mis Rutinas</button>
+            <button routerLink="/rutinas/mentor" class="btn btn-outline btn-block">🤖 Hablar con FitMentor</button>
+            <button routerLink="/rutinas/medidas" class="btn btn-outline btn-block">📏 Registrar Mis Medidas</button>
+          </div>
         </div>
 
-        <div class="card attendance-card">
+        <div class="card">
           <h3>Mis últimas asistencias</h3>
-          <ul>
+          <ul class="attendance-list">
             <li *ngFor="let entry of attendanceList">
+              <span class="chip chip-primary">📅</span>
               {{ entry.timestamp | date:'short' }}
             </li>
+            <li *ngIf="attendanceList.length === 0" class="muted">Aún no tienes asistencias registradas.</li>
           </ul>
         </div>
-      </main>
+      </div>
     </div>
   `,
   styles: [`
-    .dashboard-container { 
-      padding: 1rem; 
-      font-family: 'Inter', system-ui, -apple-system, sans-serif;
-      color: #eee;
-    }
-    @media (min-width: 768px) {
-      .dashboard-container {
-        padding: 2rem;
-      }
-    }
-    header { 
-      display: flex; 
+    .welcome-bar {
+      display: flex;
       flex-direction: column;
       gap: 1rem;
-      justify-content: space-between; 
-      align-items: flex-start; 
-      margin-bottom: 1.5rem; 
-      background: rgba(18, 18, 18, 0.7);
-      backdrop-filter: blur(25px);
-      -webkit-backdrop-filter: blur(25px);
-      border: 1px solid rgba(255, 255, 255, 0.05);
-      box-shadow: 0 15px 35px rgba(0,0,0,0.5);
-      padding: 1.5rem;
-      border-radius: 24px;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 1.75rem;
+      background: linear-gradient(120deg, var(--lime-50) 0%, var(--app-surface) 60%);
+      border: 1px solid var(--app-border);
+      border-radius: var(--radius-xl);
+      padding: 1.75rem;
     }
     @media (min-width: 768px) {
-      header {
-        flex-direction: row;
-        align-items: center;
-        padding: 2.5rem;
-        border-radius: 32px;
-      }
+      .welcome-bar { flex-direction: row; align-items: center; padding: 2rem 2.25rem; }
     }
-    header h1 {
-      font-size: 2rem;
+    .welcome-bar h1 {
+      margin: 0 0 0.25rem;
+      font-size: 1.9rem;
       font-weight: 800;
-      margin: 0;
-      background: linear-gradient(to right, #f9d423 0%, #ff4e50 100%);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      line-height: 1.1;
+      letter-spacing: -0.02em;
     }
-    @media (min-width: 768px) {
-      header h1 {
-        font-size: 3rem;
-      }
-    }
-    main {
-      display: grid;
-      grid-template-columns: 1fr;
-      gap: 1.5rem;
-    }
-    @media (min-width: 1024px) {
-      main {
-        grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
-        gap: 2rem;
-      }
-    }
-    .card { 
-      background: rgba(18, 18, 18, 0.7); 
-      backdrop-filter: blur(25px);
-      -webkit-backdrop-filter: blur(25px);
-      padding: 1.5rem; 
-      border-radius: 32px; 
-      box-shadow: 0 20px 40px rgba(0,0,0,0.4); 
-      border: 1px solid rgba(255,255,255,0.05);
-      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    }
-    @media (min-width: 768px) {
-      .card {
-        padding: 2.5rem;
-      }
-    }
-    .card:hover {
-      transform: translateY(-5px);
-      background: rgba(255, 255, 255, 0.02);
-      border-color: rgba(255, 255, 255, 0.1);
-    }
-    .card h3 {
-      color: #fff;
-      font-weight: 800;
-      border-bottom: 1px solid rgba(255,255,255,0.05);
+    @media (min-width: 768px) { .welcome-bar h1 { font-size: 2.25rem; } }
+
+    .card-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 0.75rem;
+      border-bottom: 1px solid var(--app-border);
       padding-bottom: 1rem;
-      margin-top: 0;
-      font-size: 1.5rem;
-      letter-spacing: -0.5px;
+      margin-bottom: 1rem;
     }
-    .status.active { 
-      color: #4ade80; 
-      font-weight: 800; 
-      background: rgba(74, 222, 128, 0.05);
-      border: 1px solid rgba(74, 222, 128, 0.1);
-      padding: 0.25rem 0.75rem;
-      border-radius: 10px;
-      display: inline-block;
-      font-size: 0.8rem;
-      text-transform: uppercase;
-      letter-spacing: 1px;
-    }
-    .btn-purchase, .btn-logout { 
-      padding: 0.9rem 1.8rem; 
-      border-radius: 18px; 
-      border: none; 
-      font-weight: 800;
-      cursor: pointer; 
-      transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-    }
-    .btn-purchase {
-      background: linear-gradient(to right, #f9d423 0%, #ff4e50 100%);
-      color: black;
-      width: 100%;
-      margin-top: 1.5rem;
-      box-shadow: 0 8px 20px rgba(249, 212, 35, 0.25);
-      font-size: 1rem;
-    }
-    .btn-purchase:hover {
-      transform: translateY(-3px) scale(1.02);
-      box-shadow: 0 12px 28px rgba(249, 212, 35, 0.4);
-    }
-    .btn-logout {
-      background: rgba(255,255,255,0.05);
-      color: white;
-      border: 1px solid rgba(255,255,255,0.1);
-      font-size: 0.9rem;
-    }
-    .btn-logout:hover {
-      background: rgba(255,255,255,0.15);
-      transform: translateY(-2px);
-    }
-    ul {
-      list-style-type: none;
-      padding: 0;
-    }
-    ul li {
-      padding: 1rem 0;
-      border-bottom: 1px solid rgba(255,255,255,0.05);
-      color: #aaa;
+    .card h3 { margin: 0; font-size: 1.2rem; }
+    .stack { display: flex; flex-direction: column; gap: 0.6rem; margin-top: 1rem; }
+
+    .attendance-list { list-style: none; margin: 0; padding: 0; }
+    .attendance-list li {
       display: flex;
       align-items: center;
-      gap: 10px;
+      gap: 0.6rem;
+      padding: 0.7rem 0;
+      border-bottom: 1px solid var(--app-border);
+      font-size: 0.92rem;
     }
-    ul li::before {
-      content: '📅';
-      font-size: 1.1rem;
-    }
-    ul li:last-child {
-      border-bottom: none;
-    }
+    .attendance-list li:last-child { border-bottom: none; }
 
-    /* Fix for ngx-charts visibility in dark mode */
-    ::ng-deep .ngx-charts text {
-      fill: #fff !important;
+    .forgotten {
+      margin-top: 0.75rem;
+      border-top: 1px solid var(--app-border);
+      padding-top: 0.75rem;
     }
-    ::ng-deep .ngx-charts .legend-title-text {
-      color: #fff !important;
-    }
-    ::ng-deep .ngx-charts .legend-label-text {
-      color: #aaa !important;
-    }
-    ::ng-deep .ngx-charts .legend-label-text:hover {
-      color: #fff !important;
-    }
-    ::ng-deep .ngx-charts .tick text {
-      fill: #bbb !important;
-    }
+    .forgotten h4 { margin: 0 0 0.5rem; font-size: 0.9rem; color: var(--danger); }
+
+    /* Fix para ngx-charts en tema claro */
+    ::ng-deep .ngx-charts text { fill: var(--slate-600) !important; }
+    ::ng-deep .ngx-charts .legend-title-text { color: var(--text-main) !important; }
+    ::ng-deep .ngx-charts .legend-label-text { color: var(--text-muted) !important; }
   `]
 })
 export class DashboardComponent implements OnInit {
   clientName = 'Socio';
   attendanceList: any[] = [];
-  
+
   kaizenChartData: any[] = [];
   colorScheme: any = {
-    domain: ['#4ade80', '#f87171']
+    domain: ['#16a34a', '#ef4444']
   };
 
   forgottenHabitsData: any[] = [];
   forgottenColorScheme: any = {
-    domain: ['#f87171', '#fb923c', '#facc15']
+    domain: ['#ef4444', '#f97316', '#eab308']
   };
 
   constructor(
@@ -286,7 +193,7 @@ export class DashboardComponent implements OnInit {
           ders += hDers;
           hTotal = hVics + hDers;
         }
-        
+
         let rate = hTotal > 0 ? (hVics / hTotal) * 100 : 0;
         if (hTotal > 0 || rate === 0) {
           forgotten.push({ name: h.name, value: Math.round(rate) });

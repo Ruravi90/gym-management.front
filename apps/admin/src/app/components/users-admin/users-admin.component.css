@@ -8,13 +8,10 @@
 }
 .page-title {
     margin: 0;
-    font-size: 2rem;
-    font-weight: 700;
-    color: #1e293b; /* Dark slate color */
-    background: linear-gradient(135deg, #3b82f6, #8b5cf6);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
+    font-size: 1.75rem;
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    color: var(--text-main);
 }
 
 /* --- Search & Actions --- */

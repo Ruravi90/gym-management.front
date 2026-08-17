@@ -3,11 +3,11 @@
 :host {
     display: block;
     padding: 1rem;
-    --card-bg: rgba(255, 255, 255, 0.85);
+    --card-bg: rgba(255, 255, 255, 0.9);
     --card-blur: 10px;
     --card-border: rgba(255, 255, 255, 0.4);
-    --primary-gradient: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
-    --success-gradient: linear-gradient(135deg, #10b981 0%, #059669 100%);
+    --primary-gradient: linear-gradient(135deg, #84cc16 0%, #4d7c0f 100%);
+    --success-gradient: linear-gradient(135deg, #84cc16 0%, #65a30d 100%);
     --danger-gradient: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
 }
 
@@ -235,7 +235,7 @@
 
 .white-btn {
     background: white;
-    color: #6366f1;
+    color: #4d7c0f;
     border: none;
     padding: 0.75rem 1.5rem;
     border-radius: 12px;

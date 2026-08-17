@@ -39,12 +39,13 @@
 }
 
 .logo-circle {
-    width: 32px; height: 32px;
+    width: 36px; height: 36px;
     background: var(--app-primary);
-    border-radius: 12px; /* More rounded */
+    border-radius: 10px; /* More rounded */
     display: flex; align-items: center; justify-content: center;
-    font-weight: 800; color: white; font-size: 0.75rem;
+    font-weight: 800; color: var(--app-on-primary, #1a2e05); font-size: 0.8rem;
     flex-shrink: 0;
+    box-shadow: var(--shadow-sm, 0 1px 3px rgb(0 0 0 / 0.1));
 }
 
 .brand-text {
@@ -65,14 +66,31 @@
 }
 
 .nav-item:hover {
-    background: #f1f5f9; /* Soft hover */
+    background: var(--slate-100, #f1f5f9); /* Soft hover */
     color: var(--text-main);
 }
 
 .nav-item.active {
-    background: #eff6ff;
-    color: var(--app-primary);
+    background: var(--app-primary-soft, #f7fee7);
+    color: var(--lime-700, #4d7c0f);
     font-weight: 600;
+}
+
+.nav-icon {
+    width: 20px;
+    height: 20px;
+    flex-shrink: 0;
+    opacity: 0.9;
+}
+
+.nav-item.active .nav-icon {
+    color: var(--lime-600, #65a30d);
+}
+
+.logout-icon {
+    width: 18px;
+    height: 18px;
+    flex-shrink: 0;
 }
 
 .nav-divider {
@@ -98,9 +116,9 @@
 .btn-logout-premium {
     margin-top: 1rem;
     width: 100%;
-    background: #fef2f2; /* Softer danger color */
+    background: var(--danger-bg, #fef2f2); /* Softer danger color */
     color: var(--app-danger);
-    border: 1px solid #fecdd3;
+    border: 1px solid var(--danger-border, #fecdd3);
     padding: 12px;
     border-radius: 12px; /* More rounded */
     font-weight: 600;

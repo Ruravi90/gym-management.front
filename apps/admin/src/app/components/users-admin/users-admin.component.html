@@ -12,14 +12,14 @@
 
 <div class="dashboard-actions">
     <div class="search-bar">
-        <span class="search-icon">🔍</span>
+        <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
         <input type="text" class="app-input" placeholder="Buscar usuarios por nombre o email..." (input)="onSearch($event)">
     </div>
 </div>
 
 <div *ngIf="loading">Cargando...</div>
 <div *ngIf="error" class="error-container">
-    <div class="error-icon">⚠️</div>
+    <div class="error-icon">!</div>
     <div class="error-content">
         <h3>No se pudieron cargar los usuarios</h3>
         <p>
@@ -63,8 +63,8 @@
                 </td>
                 <td class="actions-cell text-right">
                     <div class="action-buttons" *ngIf="canManageUser(user)">
-                        <button class="btn-action-icon edit" (click)="openEditModal(user)" title="Editar">✏️</button>
-                        <button class="btn-action-icon delete" (click)="confirmDelete(user)" title="Eliminar">🗑️</button>
+                        <button class="btn-action-icon edit" (click)="openEditModal(user)" title="Editar"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"></path></svg></button>
+                        <button class="btn-action-icon delete" (click)="confirmDelete(user)" title="Eliminar"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg></button>
                     </div>
                 </td>
             </tr>
@@ -202,7 +202,7 @@
 <div class="modal-backdrop" *ngIf="showDeleteConfirm">
     <div class="app-card modal-card alert-modal">
         <div class="modal-body centered">
-            <span class="alert-icon">⚠️</span>
+            <span class="alert-icon">!</span>
             <h3>¿Eliminar Usuario?</h3>
             <p>¿Estás seguro de que deseas eliminar permanentemente a <strong class="highlight">{{deletingUser?.name}}</strong>?</p>
             <div class="modal-actions centered">

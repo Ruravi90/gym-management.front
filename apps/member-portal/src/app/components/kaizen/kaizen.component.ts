@@ -4,37 +4,39 @@ import { KaizenService, KaizenHabit, KaizenMedal } from './kaizen.service';
 @Component({
   selector: 'app-kaizen',
   template: `
-    <div class="kaizen-container">
-      <header class="kaizen-header">
-        <div style="text-align: left; margin-bottom: 1rem;">
-          <button routerLink="/dashboard" class="btn-back">⬅️ Volver al Dashboard</button>
+    <div class="page-container kaizen-container">
+      <header class="page-header">
+        <div class="back-row">
+          <button routerLink="/dashboard" class="btn btn-ghost btn-sm">← Volver al Dashboard</button>
         </div>
-        <h1>Mejora Continua <span>Kaizen</span></h1>
+        <h1>Mejora Continua <span class="accent">Kaizen</span></h1>
         <p>Conviértete en un mejor guerrero cada día. Registra tus hábitos, reflexiona sobre tus metas y consigue medallas por tu esfuerzo.</p>
-        <button (click)="showTutorial = !showTutorial" class="btn-tutorial">
-          {{ showTutorial ? 'Ocultar Tutorial' : '📖 ¿Cómo funciona esto?' }}
-        </button>
+        <div class="header-actions">
+          <button (click)="showTutorial = !showTutorial" class="btn btn-outline">
+            {{ showTutorial ? 'Ocultar Tutorial' : '📖 ¿Cómo funciona esto?' }}
+          </button>
+        </div>
       </header>
 
-      <div class="tutorial-card" *ngIf="showTutorial">
+      <div class="card tutorial-card" *ngIf="showTutorial">
         <h3>Bienvenido a tu panel de Mejora Continua (Kaizen)</h3>
         <p>Este módulo está diseñado para ayudarte a construir disciplina mediante el registro diario de tus hábitos. Así es como funciona:</p>
         <ul>
-          <li><span class="icon">+ Nuevo Hábito:</span> Crea un hábito que deseas desarrollar (ej. "Beber agua", "Entrenar", "Leer 20 mins").</li>
-          <li><span class="icon">✏️ Editar / 🗑️ Eliminar:</span> Haz clic en el lápiz junto al nombre de tu hábito para modificarlo (presiona Enter para guardar), o en la papelera para borrarlo por completo.</li>
-          <li><span class="icon">Círculos de los Días:</span> Representan los días del mes actual. 
-            <br>• Haz un clic: Marca el día como <b>Victoria (Verde)</b>. ¡Lo lograste!
-            <br>• Haz otro clic: Marca el día como <b>Derrota (Rojo)</b>. No pasa nada, mañana lo harás mejor.
+          <li><strong>+ Nuevo Hábito:</strong> Crea un hábito que deseas desarrollar (ej. "Beber agua", "Entrenar", "Leer 20 mins").</li>
+          <li><strong>Editar / Eliminar:</strong> Haz clic en el lápiz junto al nombre de tu hábito para modificarlo (presiona Enter para guardar), o en la papelera para borrarlo por completo.</li>
+          <li><strong>Círculos de los Días:</strong> Representan los días del mes actual.
+            <br>• Haz un clic: Marca el día como <b class="text-success">Victoria (Verde)</b>. ¡Lo lograste!
+            <br>• Haz otro clic: Marca el día como <b class="text-danger">Derrota (Rojo)</b>. No pasa nada, mañana lo harás mejor.
             <br>• Haz otro clic: Vuelve a dejarlo pendiente.</li>
-          <li><span class="icon">Reflexión y Meta:</span> Escribe tus metas para el hábito y reflexiona sobre lo aprendido cada día. Se guarda automáticamente al hacer clic fuera de la caja.</li>
-          <li><span class="icon">🏆 Medallas:</span> Al acumular días consecutivos de victoria, irás desbloqueando insignias (Diaria, Semanal, Mensual, Anual) que se mostrarán en la sección derecha.</li>
+          <li><strong>Reflexión y Meta:</strong> Escribe tus metas para el hábito y reflexiona sobre lo aprendido cada día. Se guarda automáticamente al hacer clic fuera de la caja.</li>
+          <li><strong>🏆 Medallas:</strong> Al acumular días consecutivos de victoria, irás desbloqueando insignias (Diaria, Semanal, Mensual, Anual) que se mostrarán en la sección derecha.</li>
         </ul>
-        
-        <h4 style="color: #ff4e50; margin-top: 1.5rem; margin-bottom: 0.5rem;">⚠️ Sistema Estricto de Penalizaciones</h4>
+
+        <h4 class="tutorial-warn">⚠️ Sistema Estricto de Penalizaciones</h4>
         <p style="margin-top: 0; margin-bottom: 0.5rem; font-size: 0.95rem;">Kaizen no perdona la falta de constancia. Como verdadero guerrero, enfrentarás consecuencias si abandonas tus deberes:</p>
         <ul style="margin-top: 0; font-size: 0.95rem;">
-          <li><span class="icon" style="color:#ff4e50;">Pérdida de Medallas:</span> Las medallas no son permanentes. Si registras 3 "Derrotas" consecutivas en un hábito, perderás tu medalla de Bronce. Si registras tan solo 1 "Derrota" hoy, perderás tu racha y tu medalla de Plata. Si tu éxito mensual baja del 50%, dirás adiós a tu medalla de Oro.</li>
-          <li><span class="icon" style="color:#f9d423;">Cuello de Botella (Emparejamiento):</span> El sistema no te permitirá avanzar únicamente en tus hábitos fáciles. Si la diferencia de victorias entre tu mejor hábito y tu hábito más olvidado es mayor a 3 días, <b>se bloqueará tu progreso</b>. Tendrás que retomar los hábitos olvidados antes de seguir sumando victorias en los demás.</li>
+          <li><strong class="text-danger">Pérdida de Medallas:</strong> Las medallas no son permanentes. Si registras 3 "Derrotas" consecutivas en un hábito, perderás tu medalla de Bronce. Si registras tan solo 1 "Derrota" hoy, perderás tu racha y tu medalla de Plata. Si tu éxito mensual baja del 50%, dirás adiós a tu medalla de Oro.</li>
+          <li><strong class="text-warning">Cuello de Botella (Emparejamiento):</strong> El sistema no te permitirá avanzar únicamente en tus hábitos fáciles. Si la diferencia de victorias entre tu mejor hábito y tu hábito más olvidado es mayor a 3 días, <b>se bloqueará tu progreso</b>. Tendrás que retomar los hábitos olvidados antes de seguir sumando victorias en los demás.</li>
         </ul>
       </div>
 
@@ -45,147 +47,26 @@ import { KaizenService, KaizenHabit, KaizenMedal } from './kaizen.service';
     </div>
   `,
   styles: [`
-    .kaizen-container {
-      padding: 1rem;
-      max-width: 1400px;
-      margin: 0 auto;
-      font-family: 'Inter', system-ui, -apple-system, sans-serif;
-      background-color: #111;
-      min-height: 100vh;
-      color: #eee;
-    }
-    .kaizen-header {
-      margin-bottom: 1.5rem;
-      text-align: center;
-      background: rgba(18, 18, 18, 0.7);
-      backdrop-filter: blur(25px);
-      -webkit-backdrop-filter: blur(25px);
-      border: 1px solid rgba(255, 255, 255, 0.05);
-      box-shadow: 0 15px 35px rgba(0,0,0,0.5);
-      padding: 2rem 1.5rem;
-      border-radius: 24px;
-      color: #fff;
-    }
-    .kaizen-header h1 {
-      font-size: 2.2rem;
-      font-weight: 800;
-      margin: 0 0 0.5rem 0;
-      background: linear-gradient(to right, #f9d423 0%, #ff4e50 100%);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      line-height: 1.2;
-    }
-    .kaizen-header h1 span {
-      display: block;
-      font-size: 1.2rem;
-      font-weight: 300;
-      opacity: 0.8;
-      background: none;
-      -webkit-text-fill-color: #fff;
-      margin-top: 0.2rem;
-    }
-    .kaizen-header p {
-      font-size: 1rem;
-      color: #aaa;
-      max-width: 600px;
-      margin: 0 auto;
-      line-height: 1.5;
-    }
-    .btn-back {
-      background: rgba(255,255,255,0.05);
-      color: white;
-      border: 1px solid rgba(255,255,255,0.1);
-      padding: 0.6rem 1.2rem;
-      border-radius: 20px;
-      cursor: pointer;
-      font-weight: 500;
-      transition: all 0.2s;
-      font-size: 0.9rem;
-    }
-    .btn-back:hover {
-      background: rgba(255,255,255,0.1);
-      transform: translateX(-5px);
-    }
-    .btn-tutorial {
-      background: linear-gradient(to right, #f9d423 0%, #ff4e50 100%);
-      color: black;
-      border: none;
-      padding: 0.8rem 1.8rem;
-      border-radius: 30px;
-      font-weight: 700;
-      cursor: pointer;
-      font-size: 0.95rem;
-      margin-top: 1.5rem;
-      transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-      box-shadow: 0 4px 15px rgba(249, 212, 35, 0.2);
-    }
-    .btn-tutorial:hover {
-      transform: translateY(-2px) scale(1.02);
-      box-shadow: 0 8px 20px rgba(249, 212, 35, 0.4);
-    }
+    .kaizen-container { max-width: 1400px; }
+    .page-header h1 { font-size: 2rem; }
+    .accent { color: var(--lime-600); }
+    .header-actions { margin-top: 1.25rem; }
+
     .tutorial-card {
-      background: rgba(18, 18, 18, 0.85);
-      backdrop-filter: blur(15px);
-      -webkit-backdrop-filter: blur(15px);
-      border: 1px solid rgba(249, 212, 35, 0.3);
-      border-radius: 24px;
-      padding: 1.5rem;
       margin-bottom: 2rem;
-      color: #ddd;
-      box-shadow: 0 15px 40px rgba(0, 0, 0, 0.5);
-      animation: slideDown 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+      border-color: var(--app-primary-soft-border);
+      background: linear-gradient(135deg, var(--app-surface) 0%, var(--lime-50) 100%);
     }
-    @keyframes slideDown {
-      from { opacity: 0; transform: translateY(-20px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-    .tutorial-card h3 {
-      color: #f9d423;
-      margin-top: 0;
-      font-size: 1.3rem;
-    }
-    .tutorial-card ul {
-      line-height: 1.6;
-      padding-left: 1.2rem;
-      font-size: 0.95rem;
-    }
-    .tutorial-card li {
-      margin-bottom: 0.8rem;
-    }
-    .tutorial-card .icon {
-      font-weight: bold;
-      color: #fff;
-    }
-    .kaizen-content {
-      display: grid;
-      grid-template-columns: 2fr 1fr;
-      gap: 1.5rem;
-    }
-    @media (min-width: 768px) {
-      .kaizen-container {
-        padding: 2rem;
-      }
-      .kaizen-header {
-        padding: 3rem;
-        border-radius: 32px;
-      }
-      .kaizen-header h1 {
-        font-size: 3.5rem;
-      }
-      .kaizen-header h1 span {
-        display: inline;
-        font-size: 3.5rem;
-        margin-left: 0.5rem;
-      }
-      .kaizen-header p {
-        font-size: 1.2rem;
-      }
-    }
-    @media (max-width: 1024px) {
-      .kaizen-content {
-        grid-template-columns: 1fr;
-      }
-    }
+    .tutorial-card h3 { color: var(--lime-700); margin-top: 0; font-size: 1.2rem; }
+    .tutorial-card ul { line-height: 1.7; padding-left: 1.2rem; font-size: 0.95rem; }
+    .tutorial-card li { margin-bottom: 0.7rem; }
+    .tutorial-warn { color: var(--danger); margin: 1.5rem 0 0.5rem; }
+    .text-success { color: var(--success); }
+    .text-danger { color: var(--danger); }
+    .text-warning { color: var(--warning); }
+
+    .kaizen-content { display: grid; grid-template-columns: 1fr; gap: 1.5rem; align-items: start; }
+    @media (min-width: 1024px) { .kaizen-content { grid-template-columns: 2fr 1fr; } }
   `]
 })
 export class KaizenComponent implements OnInit {

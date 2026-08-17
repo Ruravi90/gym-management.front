@@ -26,7 +26,7 @@
             <div class="visual-indicator" title="Porcentaje de retención activo">
                 <svg class="progress-ring" width="80" height="80">
                     <circle class="progress-ring-circle-bg" stroke="#f1f5f9" stroke-width="6" fill="transparent" r="34" cx="40" cy="40"/>
-                    <circle class="progress-ring-circle" stroke="#6366f1" stroke-width="6" stroke-linecap="round" fill="transparent" 
+                    <circle class="progress-ring-circle" stroke="#84cc16" stroke-width="6" stroke-linecap="round" fill="transparent" 
                         r="34" cx="40" cy="40" 
                         [style.stroke-dasharray]="'213.6'"
                         [style.stroke-dashoffset]="213.6 - (213.6 * activeMembersPercentage / 100)"/>
@@ -41,7 +41,7 @@
                 <h4>Ingresos del Mes</h4>
                 <span class="metric-value">{{analytics.total_revenue_month | currency}}</span>
                 <div class="metric-trend up">
-                    <span>📈</span> Meta: {{monthlyRevenueGoal | currency}}
+                    <span>↑</span> Meta: {{monthlyRevenueGoal | currency}}
                 </div>
             </div>
             <div class="visual-indicator">
@@ -62,11 +62,11 @@
                 <h4>Asistencia Hoy</h4>
                 <span class="metric-value">{{analytics.check_ins_today}}</span>
                 <div class="metric-trend" [class.up]="analytics.check_ins_today > 0">
-                    <span>⚡</span> Pulso en vivo
+                    <span>●</span> Pulso en vivo
                 </div>
             </div>
             <div class="visual-indicator">
-                <div class="stat-icon-wrapper" style="font-size: 2rem; color: #f59e0b;">📷</div>
+                <svg class="stat-icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path><circle cx="12" cy="13" r="4"></circle></svg>
             </div>
         </div>
     </div>
@@ -153,7 +153,8 @@
             <!-- Urgent Actions / Expirations -->
             <div class="glass-card section-card">
                 <div class="widget-title">
-                    <span>⌛</span> Alertas Expiración
+                    <svg class="widget-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+                    Alertas Expiración
                 </div>
                 <div class="expirations-list" *ngIf="stats?.upcoming_expirations_list?.length">
                     <div *ngFor="let m of stats?.upcoming_expirations_list" class="expiration-item">

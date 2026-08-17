@@ -4,44 +4,44 @@ import { MeasurementService, MentorService, BodyMeasurement, MEASUREMENT_FIELDS 
 @Component({
   selector: 'app-measurements',
   template: `
-    <div class="container">
-      <header class="header">
+    <div class="page-container">
+      <header class="page-header">
         <div class="back-row">
-          <button routerLink="/rutinas" class="btn-back">⬅️ Volver a Mis Rutinas</button>
+          <button routerLink="/rutinas" class="btn btn-ghost btn-sm">← Volver a Mis Rutinas</button>
         </div>
         <h1>📏 Mis Medidas</h1>
         <p>Registra tus medidas cada semana para ver tu progreso real. FitMentor las usará para darte mejores recomendaciones.</p>
       </header>
 
-      <div class="grid">
+      <div class="grid grid-measurements">
         <!-- Formulario semanal -->
         <section class="card form-card">
-          <h2>Tu altura (una sola vez)</h2>
+          <h2 class="card-title">Tu altura (una sola vez)</h2>
           <div class="altura-box">
-            <label>Altura
-              <input type="number" step="0.1" min="80" max="250" class="input" [(ngModel)]="heightCm" placeholder="Ej. 175">
-              <span class="unit">cm</span>
+            <label class="field" style="flex:1; margin-bottom: 0;">
+              Altura
+              <input type="number" step="0.1" min="80" max="250" class="app-input" [(ngModel)]="heightCm" placeholder="Ej. 175">
             </label>
-            <button class="btn-altura" (click)="saveHeight()" [disabled]="savingHeight">
-              {{ savingHeight ? 'Guardando...' : '💾 Guardar altura' }}
+            <button class="btn btn-outline" (click)="saveHeight()" [disabled]="savingHeight">
+              {{ savingHeight ? 'Guardando...' : '💾 Guardar' }}
             </button>
           </div>
           <p class="hint" *ngIf="bmi">📊 Tu IMC actual: <strong>{{ bmi }}</strong> (altura + último peso)</p>
 
-          <h2 class="sec">Registrar medidas de esta semana</h2>
-          <label>Fecha
-            <input type="date" class="input" [(ngModel)]="form.date" [max]="today">
+          <h2 class="card-title sec">Registrar medidas de esta semana</h2>
+          <label class="field">Fecha
+            <input type="date" class="app-input" [(ngModel)]="form.date" [max]="today">
           </label>
           <div class="fields">
-            <label *ngFor="let f of fields">
+            <label class="field" *ngFor="let f of fields">
               {{ f.label }} ({{ f.unit }})
-              <input type="number" step="0.1" min="0" class="input" [(ngModel)]="form[f.field]" placeholder="—">
+              <input type="number" step="0.1" min="0" class="app-input" [(ngModel)]="form[f.field]" placeholder="—">
             </label>
           </div>
-          <label>Notas (opcional)
-            <input type="text" class="input" [(ngModel)]="form.notes" placeholder="Ej. tomadas en ayunas">
+          <label class="field">Notas (opcional)
+            <input type="text" class="app-input" [(ngModel)]="form.notes" placeholder="Ej. tomadas en ayunas">
           </label>
-          <button class="btn-save" (click)="save()" [disabled]="saving">
+          <button class="btn btn-primary btn-lg btn-block" (click)="save()" [disabled]="saving">
             {{ saving ? 'Guardando...' : '💾 Guardar medidas' }}
           </button>
           <p class="hint">💡 Si ya registraste medidas esta fecha, se actualizarán.</p>
@@ -49,13 +49,16 @@ import { MeasurementService, MentorService, BodyMeasurement, MEASUREMENT_FIELDS 
 
         <!-- Historial -->
         <section class="card history-card">
-          <h2>Historial <span class="bmi-badge" *ngIf="bmi">IMC: {{ bmi }}</span></h2>
-          <div *ngIf="measurements.length === 0" class="empty">
+          <div class="flex-between">
+            <h2 class="card-title" style="margin:0;">Historial</h2>
+            <span class="badge badge-primary" *ngIf="bmi">IMC: {{ bmi }}</span>
+          </div>
+          <div *ngIf="measurements.length === 0" class="empty-state">
             <p>Aún no tienes medidas registradas.</p>
             <p class="muted">¡Registra tu primera semana para empezar a ver tu progreso!</p>
           </div>
-          <div class="table-wrap" *ngIf="measurements.length > 0">
-            <table>
+          <div class="table-responsive-wrapper mt-2" *ngIf="measurements.length > 0">
+            <table class="app-table">
               <thead>
                 <tr>
                   <th>Fecha</th>
@@ -66,7 +69,7 @@ import { MeasurementService, MentorService, BodyMeasurement, MEASUREMENT_FIELDS 
                 <tr *ngFor="let m of measurements; let i = index">
                   <td class="date-cell">
                     {{ m.date | date:'dd MMM' }}
-                    <button class="del" (click)="remove(m)" title="Eliminar">✕</button>
+                    <button class="btn btn-danger btn-sm del" (click)="remove(m)" title="Eliminar">✕</button>
                   </td>
                   <td *ngFor="let f of fields" [class.is-latest]="i === 0">
                     <ng-container *ngIf="cellValue(m, f) !== null">
@@ -89,67 +92,59 @@ import { MeasurementService, MentorService, BodyMeasurement, MEASUREMENT_FIELDS 
       <section class="card report-card">
         <div class="report-header">
           <div>
-            <h2>🤖 Reporte semanal con FitMentor</h2>
-            <p class="muted">FitMentor analiza tus medidas, tu rutina y tus sesiones de la semana para darte recomendaciones.</p>
+            <h2 class="card-title" style="margin:0 0 0.25rem;">🤖 Reporte semanal con FitMentor</h2>
+            <p class="muted" style="margin:0;">FitMentor analiza tus medidas, tu rutina y tus sesiones de la semana para darte recomendaciones.</p>
           </div>
-          <button class="btn-report" (click)="generateReport()" [disabled]="reportLoading">
+          <button class="btn btn-primary" (click)="generateReport()" [disabled]="reportLoading">
             {{ reportLoading ? 'Analizando...' : '📅 Generar mi reporte semanal' }}
           </button>
         </div>
         <div class="report" *ngIf="report">
           <pre>{{ report }}</pre>
         </div>
-        <div class="report hint-report" *ngIf="!report && !reportLoading">
+        <div class="hint mt-2" *ngIf="!report && !reportLoading">
           Necesitas al menos una medición para generar el reporte. El reporte compara semana a semana.
         </div>
       </section>
     </div>
   `,
   styles: [`
-    .container { padding: 1rem; max-width: 1100px; margin: 0 auto; font-family: 'Inter', system-ui, sans-serif; color: #eee; min-height: 100vh; }
-    .header { text-align: center; background: rgba(18,18,18,0.7); backdrop-filter: blur(25px); border: 1px solid rgba(255,255,255,0.05); border-radius: 24px; padding: 2rem 1.5rem; margin-bottom: 1.5rem; }
-    .header h1 { font-size: 2rem; margin: 0 0 0.5rem; background: linear-gradient(to right, #f9d423 0%, #ff4e50 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
-    .header p { color: #aaa; max-width: 620px; margin: 0 auto; }
-    .back-row { text-align: left; margin-bottom: 1rem; }
-    .btn-back { background: rgba(255,255,255,0.05); color: white; border: 1px solid rgba(255,255,255,0.1); padding: 0.6rem 1.2rem; border-radius: 20px; cursor: pointer; font-weight: 500; font-size: 0.9rem; }
-    .grid { display: grid; grid-template-columns: 1fr; gap: 1.25rem; }
-    @media (min-width: 900px) { .grid { grid-template-columns: 340px 1fr; } }
-    .card { background: rgba(18,18,18,0.7); border: 1px solid rgba(255,255,255,0.05); border-radius: 20px; padding: 1.25rem; }
-    .card h2 { color: #fff; margin-top: 0; font-size: 1.15rem; }
-    .card h2.sec { margin-top: 1.25rem; padding-top: 1rem; border-top: 1px solid rgba(255,255,255,0.07); }
-    .card label { display: flex; flex-direction: column; gap: 0.3rem; font-size: 0.85rem; color: #bbb; margin-bottom: 0.75rem; }
+    .grid-measurements { grid-template-columns: 1fr; align-items: start; }
+    @media (min-width: 900px) { .grid-measurements { grid-template-columns: 360px 1fr; } }
+    .card-title { font-size: 1.15rem; font-weight: 800; }
+    .card-title.sec {
+      margin-top: 1.5rem;
+      padding-top: 1.25rem;
+      border-top: 1px solid var(--app-border);
+    }
     .altura-box { display: flex; align-items: flex-end; gap: 0.6rem; }
-    .altura-box label { flex: 1; }
-    .unit { color: #888; font-size: 0.75rem; }
-    .btn-altura { background: rgba(249,212,35,0.12); color: #f9d423; border: 1px solid rgba(249,212,35,0.3); padding: 0.65rem 1rem; border-radius: 12px; font-weight: 700; cursor: pointer; font-size: 0.85rem; white-space: nowrap; }
-    .btn-altura:disabled { opacity: 0.5; }
-    .bmi-badge { background: rgba(249,212,35,0.12); color: #f9d423; border: 1px solid rgba(249,212,35,0.3); border-radius: 20px; padding: 0.2rem 0.7rem; font-size: 0.75rem; font-weight: 700; margin-left: 0.5rem; }
-    .input { background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 10px; color: #eee; padding: 0.6rem 0.9rem; font-size: 0.9rem; outline: none; width: 100%; box-sizing: border-box; }
-    .input:focus { border-color: #f9d423; }
-    .fields { display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem; }
-    .btn-save { width: 100%; background: linear-gradient(to right, #f9d423, #ff4e50); color: #000; border: none; padding: 0.8rem; border-radius: 14px; font-weight: 800; cursor: pointer; font-size: 0.95rem; margin-top: 0.5rem; }
-    .btn-save:disabled { opacity: 0.5; }
-    .hint { color: #888; font-size: 0.8rem; margin: 0.6rem 0 0; }
-    .empty { text-align: center; color: #aaa; padding: 2rem; }
-    .muted { color: #888; font-size: 0.9rem; }
-    .table-wrap { overflow-x: auto; }
-    table { width: 100%; border-collapse: collapse; font-size: 0.85rem; }
-    th { color: #aaa; text-align: left; padding: 0.5rem 0.6rem; border-bottom: 1px solid rgba(255,255,255,0.1); font-weight: 600; white-space: nowrap; }
-    td { padding: 0.6rem; border-bottom: 1px solid rgba(255,255,255,0.05); white-space: nowrap; }
-    .date-cell { color: #f9d423; font-weight: 600; }
-    .is-latest { color: #fff; font-weight: 600; }
-    .delta { font-size: 0.75rem; margin-left: 0.3rem; }
-    .delta.good { color: #4ade80; }
-    .delta.bad { color: #f87171; }
-    .del { background: rgba(255,78,80,0.15); color: #ff6b6b; border: none; border-radius: 6px; cursor: pointer; margin-left: 0.5rem; padding: 0.1rem 0.35rem; font-size: 0.7rem; }
-    .report-card { margin-top: 1.25rem; }
-    .report-header { display: flex; justify-content: space-between; align-items: center; gap: 1rem; flex-wrap: wrap; }
-    .report-header h2 { margin-bottom: 0.25rem; }
-    .btn-report { background: #ff4e50; color: #fff; border: none; padding: 0.75rem 1.4rem; border-radius: 14px; font-weight: 700; cursor: pointer; font-size: 0.9rem; }
-    .btn-report:disabled { opacity: 0.5; }
-    .report { background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08); border-radius: 14px; padding: 1rem; margin-top: 1rem; }
-    .report pre { white-space: pre-wrap; font-family: inherit; margin: 0; color: #ddd; line-height: 1.6; }
-    .hint-report { color: #888; font-size: 0.85rem; margin-top: 1rem; }
+    .hint { color: var(--text-muted); font-size: 0.82rem; margin: 0.7rem 0 0; }
+    .fields { display: grid; grid-template-columns: 1fr; gap: 0; }
+    @media (min-width: 520px) { .fields { grid-template-columns: 1fr 1fr; gap: 0 0.9rem; } }
+    .date-cell { font-weight: 700; color: var(--lime-700); white-space: nowrap; }
+    .is-latest { font-weight: 700; }
+    .delta { font-size: 0.75rem; margin-left: 0.3rem; font-weight: 700; }
+    .delta.good { color: var(--success); }
+    .delta.bad { color: var(--danger); }
+    .del { margin-left: 0.5rem; padding: 0.15rem 0.45rem; font-size: 0.72rem; }
+
+    .report-card { margin-top: 1.5rem; }
+    .report-header { display: flex; justify-content: space-between; align-items: flex-start; gap: 1rem; flex-wrap: wrap; }
+    .report {
+      background: var(--slate-50);
+      border: 1px solid var(--app-border);
+      border-radius: var(--radius-md);
+      padding: 1.25rem;
+      margin-top: 1.25rem;
+    }
+    .report pre {
+      white-space: pre-wrap;
+      font-family: var(--font-sans);
+      margin: 0;
+      color: var(--text-main);
+      line-height: 1.6;
+      font-size: 0.92rem;
+    }
   `]
 })
 export class MeasurementsComponent implements OnInit {

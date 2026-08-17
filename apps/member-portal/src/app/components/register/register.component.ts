@@ -5,23 +5,39 @@ import { AuthService, RegisterRequest } from '@shared';
 @Component({
   selector: 'app-register',
   template: `
-    <div class="register-container">
-      <div class="register-card">
-        <h1>GymControl</h1>
-        <p>Registro de Socio</p>
+    <div class="auth-page">
+      <div class="auth-card">
+        <div class="auth-brand">
+          <div class="auth-logo">PW</div>
+          <h1>GymControl</h1>
+          <p>Registro de Socio</p>
+        </div>
         <form (ngSubmit)="onRegister()">
-          <input type="text" [(ngModel)]="userData.name" name="name" placeholder="Nombre completo" required>
-          <input type="email" [(ngModel)]="userData.email" name="email" placeholder="Email" required>
-          <input type="tel" [(ngModel)]="userData.phone" name="phone" placeholder="Teléfono (opcional)">
-          <input type="password" [(ngModel)]="userData.password" name="password" placeholder="Contraseña" required>
-          <input type="password" [(ngModel)]="confirmPassword" name="confirmPassword" placeholder="Confirmar contraseña" required>
-          
-          <button type="submit" [disabled]="loading">
+          <label class="field">
+            Nombre completo
+            <input type="text" class="app-input" [(ngModel)]="userData.name" name="name" placeholder="Tu nombre" required>
+          </label>
+          <label class="field">
+            Email
+            <input type="email" class="app-input" [(ngModel)]="userData.email" name="email" placeholder="tu@email.com" required>
+          </label>
+          <label class="field">
+            Teléfono (opcional)
+            <input type="tel" class="app-input" [(ngModel)]="userData.phone" name="phone" placeholder="+56 9 ...">
+          </label>
+          <label class="field">
+            Contraseña
+            <input type="password" class="app-input" [(ngModel)]="userData.password" name="password" placeholder="••••••••" required>
+          </label>
+          <label class="field">
+            Confirmar contraseña
+            <input type="password" class="app-input" [(ngModel)]="confirmPassword" name="confirmPassword" placeholder="••••••••" required>
+          </label>
+          <button type="submit" class="btn btn-primary btn-lg btn-block" [disabled]="loading">
             {{ loading ? 'Registrando...' : 'Crear Cuenta' }}
           </button>
-          
-          <p class="error" *ngIf="error">{{ error }}</p>
-          <p class="login-link">
+          <p class="alert alert-danger" *ngIf="error">{{ error }}</p>
+          <p class="auth-alt">
             ¿Ya tienes cuenta? <a routerLink="/login">Inicia sesión</a>
           </p>
         </form>
@@ -29,14 +45,44 @@ import { AuthService, RegisterRequest } from '@shared';
     </div>
   `,
   styles: [`
-    .register-container { display: flex; justify-content: center; align-items: center; min-height: 100vh; background: #f8fafc; padding: 1rem; }
-    .register-card { background: white; padding: 2rem; border-radius: 1rem; box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1); width: 100%; max-width: 400px; text-align: center; }
-    input { width: 100%; padding: 0.75rem; margin-bottom: 1rem; border: 1px solid #e2e8f0; border-radius: 0.5rem; }
-    button { width: 100%; padding: 0.75rem; background: #6366f1; color: white; border: none; border-radius: 0.5rem; cursor: pointer; font-weight: 600; }
-    button:disabled { background: #94a3b8; }
-    .error { color: #ef4444; margin-top: 1rem; }
-    .login-link { margin-top: 1.5rem; color: #64748b; font-size: 0.875rem; }
-    a { color: #6366f1; text-decoration: none; font-weight: 600; }
+    .auth-page {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 1rem;
+      background:
+        radial-gradient(60rem 40rem at 110% -10%, var(--lime-100) 0%, transparent 55%),
+        radial-gradient(50rem 35rem at -20% 110%, var(--lime-50) 0%, transparent 55%),
+        var(--app-bg);
+    }
+    .auth-card {
+      background: var(--app-surface);
+      border: 1px solid var(--app-border);
+      border-radius: var(--radius-xl);
+      box-shadow: var(--shadow-lg);
+      width: 100%;
+      max-width: 420px;
+      padding: 2.5rem 2rem;
+    }
+    .auth-brand { text-align: center; margin-bottom: 1.75rem; }
+    .auth-logo {
+      width: 52px;
+      height: 52px;
+      margin: 0 auto 1rem;
+      background: var(--app-primary);
+      color: var(--app-on-primary);
+      border-radius: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 800;
+      font-size: 1.05rem;
+      box-shadow: var(--shadow-md);
+    }
+    .auth-brand h1 { margin: 0; font-size: 1.6rem; font-weight: 800; letter-spacing: -0.02em; }
+    .auth-brand p { margin: 0.25rem 0 0; color: var(--text-muted); font-size: 0.95rem; }
+    .auth-alt { margin-top: 1.25rem; text-align: center; color: var(--text-muted); font-size: 0.88rem; }
   `]
 })
 export class RegisterComponent {

@@ -1,11 +1,11 @@
 <div class="page-container">
   <header class="page-header">
-    <h1>💪 Catálogo de Ejercicios</h1>
+    <h1>Catálogo de Ejercicios</h1>
     <p>Gestiona los ejercicios disponibles para las rutinas, con GIFs de demostración.</p>
   </header>
 
   <div class="toolbar">
-    <input type="text" class="input-field" placeholder="🔍 Buscar ejercicio..." [(ngModel)]="searchTerm" (keyup.enter)="applyFilters()">
+    <input type="text" class="input-field" placeholder="Buscar ejercicio..." [(ngModel)]="searchTerm" (keyup.enter)="applyFilters()">
     <select class="input-field select" [(ngModel)]="muscleGroup" (change)="applyFilters()">
       <option value="">Todos los grupos musculares</option>
       <option *ngFor="let mg of muscleGroups" [value]="mg.value">{{ mg.label }}</option>
@@ -33,11 +33,11 @@
         <p class="target" *ngIf="exercise.target">Objetivo: {{ exercise.target }}</p>
         <p class="instructions" *ngIf="exercise.instructions">{{ exercise.instructions | slice:0:120 }}{{ exercise.instructions.length > 120 ? '...' : '' }}</p>
         <div class="actions">
-          <button class="btn btn-small" (click)="openEditModal(exercise)">✏️ Editar</button>
+          <button class="btn btn-small" (click)="openEditModal(exercise)">Editar</button>
           <button class="btn btn-small btn-toggle" (click)="toggleActive(exercise)">
             {{ exercise.is_active ? 'Desactivar' : 'Activar' }}
           </button>
-          <button class="btn btn-small btn-danger" (click)="deleteExercise(exercise)">🗑️</button>
+          <button class="btn btn-small btn-danger" (click)="deleteExercise(exercise)">Eliminar</button>
         </div>
       </div>
     </div>

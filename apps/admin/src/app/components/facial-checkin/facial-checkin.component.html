@@ -12,10 +12,11 @@
         <!-- INITIAL STATE: Only buttons -->
         <div class="initial-actions" *ngIf="state === 'idle' && !streaming">
             <button (click)="startCamera()" class="app-btn app-btn-primary app-btn-kiosk">
-                📷 INICIAR CÁMARA
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:18px;height:18px;"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path><circle cx="12" cy="13" r="4"></circle></svg>
+                INICIAR CÁMARA
             </button>
             <button class="app-btn app-btn-secondary app-btn-kiosk" (click)="toggleManualMode()">
-                ⌨️ ACCESO MANUAL
+                ACCESO MANUAL
             </button>
         </div>
 
@@ -41,10 +42,10 @@
 
                 <div class="checkin-actions-compact">
                     <button (click)="toggleCamera()" class="app-btn app-btn-tertiary" title="Cambiar cámara">
-                        🔄 CÁMARA
+                        CÁMARA
                     </button>
                     <button (click)="stopCamera()" class="app-btn app-btn-secondary">
-                        🛑 CANCELAR
+                        CANCELAR
                     </button>
                 </div>
             </div>
@@ -52,7 +53,7 @@
             <!-- Right Side: Status/Information -->
             <div class="info-section" [class.full-width]="!streaming">
                 <div class="section-badge" *ngIf="state !== 'verifying' && state !== 'scanning'">
-                    <span class="icon-user">👤</span>
+                    <svg class="icon-user" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
                     <h3>{{ state === 'granted' ? 'Acceso Autorizado' : state === 'denied' ? 'Acceso Restringido' : 'Verificación Biométrica' }}</h3>
                 </div>
 

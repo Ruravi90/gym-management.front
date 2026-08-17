@@ -12,7 +12,7 @@
 
 <div class="dashboard-actions">
     <div class="search-bar">
-        <span class="search-icon">🔍</span>
+        <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
         <input type="text" class="app-input" placeholder="Buscar guerreros por nombre o email..."
             (input)="onSearch($event)">
     </div>
@@ -51,14 +51,14 @@
                 </td>
                 <td class="actions-cell text-right">
                     <div class="action-buttons">
-                        <button class="btn-action-icon edit" (click)="openEditModal(client)" title="Editar">✏️
+                        <button class="btn-action-icon edit" (click)="openEditModal(client)" title="Editar"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"></path></svg>
                         </button>
                         <button class="btn-action-icon" (click)="navigateToMembershipHistory(client.id)"
-                            title="Historial de Membresías">📋
+                            title="Historial de Membresías"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line></svg>
                         </button>
-                        <button class="btn-action-icon" (click)="openFaceScanModal(client)" title="Registrar Rostro">📷
+                        <button class="btn-action-icon" (click)="openFaceScanModal(client)" title="Registrar Rostro"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path><circle cx="12" cy="13" r="4"></circle></svg>
                         </button>
-                        <button class="btn-action-icon delete" (click)="confirmDelete(client)" title="Eliminar">🗑️
+                        <button class="btn-action-icon delete" (click)="confirmDelete(client)" title="Eliminar"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
                         </button>
                     </div>
                 </td>
@@ -99,11 +99,11 @@
         </div>
 
         <div class="card-actions">
-            <button class="app-btn app-btn-secondary btn-sm" (click)="openEditModal(client)">✏️ Editar</button>
-            <button class="app-btn app-btn-warning btn-sm" (click)="navigateToMembershipHistory(client.id)">📋
+            <button class="app-btn app-btn-secondary btn-sm" (click)="openEditModal(client)">Editar</button>
+            <button class="app-btn app-btn-warning btn-sm" (click)="navigateToMembershipHistory(client.id)">
                 Membresía</button>
-            <button class="app-btn app-btn-danger btn-sm" (click)="confirmDelete(client)">🗑️ Eliminar</button>
-            <button class="app-btn app-btn-primary btn-sm" (click)="openFaceScanModal(client)">📷 Rostro</button>
+            <button class="app-btn app-btn-danger btn-sm" (click)="confirmDelete(client)">Eliminar</button>
+            <button class="app-btn app-btn-primary btn-sm" (click)="openFaceScanModal(client)">Rostro</button>
         </div>
     </div>
 </div>
@@ -122,7 +122,7 @@
 <div class="empty-state-container" *ngIf="filteredClients.length === 0">
     <div class="empty-state-card">
         <div class="empty-icon-wrapper">
-            <span class="empty-icon">👥</span>
+            <svg class="empty-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
         </div>
         <h3>Aún no hay socios</h3>
         <p>Comienza a construir tu comunidad registrando a tu primer socio.</p>
@@ -217,7 +217,7 @@
                 <!-- Camera toggle button -->
                 <div class="camera-toggle-button" *ngIf="streaming">
                     <button (click)="toggleCamera()" class="app-btn app-btn-tertiary" title="Cambiar cámara">
-                        🔄 CÁMARA
+                        CÁMARA
                     </button>
                 </div>
             </div>

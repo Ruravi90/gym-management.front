@@ -31,17 +31,17 @@ export class DashboardComponent implements OnInit {
   curve: any = shape.curveCardinal;
 
   colorScheme: Color = {
-    name: 'vibrant',
+    name: 'brand',
     selectable: true,
     group: ScaleType.Ordinal,
-    domain: ['#6366f1', '#8b5cf6', '#ec4899', '#f43f5e', '#f59e0b', '#10b981']
+    domain: ['#84cc16', '#65a30d', '#a3e635', '#16a34a', '#f59e0b', '#3f6212']
   };
 
   revenueColorScheme: Color = {
     name: 'revenue',
     selectable: true,
     group: ScaleType.Ordinal,
-    domain: ['#10b981']
+    domain: ['#84cc16']
   };
 
   constructor(

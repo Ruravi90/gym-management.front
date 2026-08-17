@@ -13,41 +13,41 @@
     <nav class="nav-menu">
       <a routerLink="/dashboard" routerLinkActive="active" class="nav-item"
         [title]="sidebarCollapsed ? 'Estadísticas' : ''" (click)="onNavItemClick()">
-        <span class="nav-icon">📊</span>
+        <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="9"></rect><rect x="14" y="3" width="7" height="5"></rect><rect x="14" y="12" width="7" height="9"></rect><rect x="3" y="16" width="7" height="5"></rect></svg>
         <span class="nav-label" *ngIf="!sidebarCollapsed">Estadísticas</span>
       </a>
       <a routerLink="/clients" routerLinkActive="active" class="nav-item" [title]="sidebarCollapsed ? 'Clientes' : ''"
         (click)="onNavItemClick()">
-        <span class="nav-icon">👥</span>
+        <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
         <span class="nav-label" *ngIf="!sidebarCollapsed">Guerreros</span>
       </a>
       <a routerLink="/routines" routerLinkActive="active" class="nav-item" [title]="sidebarCollapsed ? 'Rutinas' : ''"
         (click)="onNavItemClick()">
-        <span class="nav-icon">🏋️</span>
+        <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6.5 6.5 17.5 17.5"></path><path d="M21 21 12 12"></path><path d="M15 4.5 19.5 9"></path><path d="M12 21v-9"></path><path d="M3 12h9"></path><path d="M6.5 6.5 3 3"></path><path d="M21 3l-3.5 3.5"></path><path d="M12 12l-4.5 4.5"></path></svg>
         <span class="nav-label" *ngIf="!sidebarCollapsed">Rutinas</span>
       </a>
       <a routerLink="/exercises" routerLinkActive="active" class="nav-item" [title]="sidebarCollapsed ? 'Ejercicios' : ''"
         (click)="onNavItemClick()">
-        <span class="nav-icon">💪</span>
+        <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6.5 6.5 17.5 17.5"></path><path d="M21 21 12 12"></path><path d="M15 4.5 19.5 9"></path><path d="M12 21v-9"></path><path d="M3 12h9"></path><path d="M6.5 6.5 3 3"></path><path d="M21 3l-3.5 3.5"></path><path d="M12 12l-4.5 4.5"></path></svg>
         <span class="nav-label" *ngIf="!sidebarCollapsed">Ejercicios</span>
       </a>
       <a routerLink="/admin/users" routerLinkActive="active" class="nav-item"
         *ngIf="getCurrentUser() && (getCurrentUser()?.role === 'admin' || getCurrentUser()?.role === 'super_admin' || getCurrentUser()?.role === 'receptionist')"
         [title]="sidebarCollapsed ? 'Usuarios' : ''" (click)="onNavItemClick()">
-        <span class="nav-icon">👤</span>
+        <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
         <span class="nav-label" *ngIf="!sidebarCollapsed">Usuarios</span>
       </a>
 
       <a routerLink="/membership-types" routerLinkActive="active" class="nav-item"
         *ngIf="getCurrentUser() && (getCurrentUser()?.role === 'admin' || getCurrentUser()?.role === 'super_admin' || getCurrentUser()?.role === 'manager')"
         [title]="sidebarCollapsed ? 'Tipos de Membresía' : ''" (click)="onNavItemClick()">
-        <span class="nav-icon">📋</span>
+        <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="5" width="20" height="14" rx="2"></rect><line x1="2" y1="10" x2="22" y2="10"></line></svg>
         <span class="nav-label" *ngIf="!sidebarCollapsed">Tipos de Membresía</span>
       </a>
       <a routerLink="/audit-logs" routerLinkActive="active" class="nav-item"
         *ngIf="getCurrentUser() && (getCurrentUser()?.role === 'admin' || getCurrentUser()?.role === 'super_admin' || getCurrentUser()?.role === 'manager')"
         [title]="sidebarCollapsed ? 'Auditoría' : ''" (click)="onNavItemClick()">
-        <span class="nav-icon">🔍</span>
+        <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7-10-7-10-7Z"></path><circle cx="12" cy="12" r="3"></circle></svg>
         <span class="nav-label" *ngIf="!sidebarCollapsed">Auditoría</span>
       </a>
 
@@ -55,7 +55,7 @@
 
       <a routerLink="/checkin" class="nav-item" [title]="sidebarCollapsed ? 'Check-in Facial' : ''"
         (click)="onNavItemClick()">
-        <span class="nav-icon">📷</span>
+        <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path><circle cx="12" cy="13" r="4"></circle></svg>
         <span class="nav-label" *ngIf="!sidebarCollapsed">Check-in Facial</span>
       </a>
     </nav>
@@ -66,7 +66,7 @@
         <small class="version-text" *ngIf="versionService.currentVersion">v{{ versionService.currentVersion }}</small>
       </div>
       <button class="btn-logout-premium" (click)="logout()" [title]="sidebarCollapsed ? 'Cerrar Sesión' : ''">
-        <span class="logout-icon">🚪</span>
+        <svg class="logout-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg>
         <span class="logout-label" *ngIf="!sidebarCollapsed">Cerrar Sesión</span>
       </button>
     </div>

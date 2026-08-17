@@ -1,6 +1,6 @@
 <div class="page-container">
   <header class="page-header">
-    <h1>🏋️ Rutinas de Entrenamiento</h1>
+    <h1>Rutinas de Entrenamiento</h1>
     <p>Crea rutinas con días y ejercicios, y asígnalas a los clientes.</p>
   </header>
 
@@ -9,7 +9,7 @@
       <option value="">Todos los clientes</option>
       <option *ngFor="let client of clients" [value]="client.id">{{ client.name }}</option>
     </select>
-    <input type="text" class="input-field" placeholder="🔍 Buscar por nombre..." [(ngModel)]="searchTerm" (keyup.enter)="applyFilters()">
+    <input type="text" class="input-field" placeholder="Buscar por nombre..." [(ngModel)]="searchTerm" (keyup.enter)="applyFilters()">
     <button class="btn btn-primary" (click)="applyFilters()">Filtrar</button>
     <button class="btn btn-secondary" (click)="clearFilters()">Limpiar</button>
     <button class="btn btn-accent" (click)="openNewModal()">+ Nueva Rutina</button>
@@ -22,12 +22,12 @@
       <div class="routine-header">
         <div>
           <h3>{{ routine.name }} <span class="badge" [class.badge-inactive]="!routine.is_active">{{ routine.is_active ? 'Activa' : 'Inactiva' }}</span></h3>
-          <p class="client-line">👤 {{ clientName(routine.client_id) }}</p>
+          <p class="client-line">{{ clientName(routine.client_id) }}</p>
         </div>
         <div class="routine-actions">
-          <button class="btn btn-small" (click)="openEditModal(routine)">✏️ Editar</button>
+          <button class="btn btn-small" (click)="openEditModal(routine)">Editar</button>
           <button class="btn btn-small btn-toggle" (click)="toggleActive(routine)">{{ routine.is_active ? 'Desactivar' : 'Activar' }}</button>
-          <button class="btn btn-small btn-danger" (click)="deleteRoutine(routine)">🗑️</button>
+          <button class="btn btn-small btn-danger" (click)="deleteRoutine(routine)">Eliminar</button>
         </div>
       </div>
       <p class="routine-desc" *ngIf="routine.description">{{ routine.description }}</p>
@@ -93,7 +93,7 @@
             <option [ngValue]="null">Día flexible</option>
             <option *ngFor="let d of daysOfWeek; let i = index" [ngValue]="i">{{ d }}</option>
           </select>
-          <button class="btn btn-small btn-danger" (click)="removeDay(di)">🗑️</button>
+          <button class="btn btn-small btn-danger" (click)="removeDay(di)">✕</button>
         </div>
 
         <div class="day-exercises">

@@ -5,10 +5,10 @@ import { RoutineService, Routine, WorkoutSession, RoutineDay } from '@shared';
 @Component({
   selector: 'app-routine-detail',
   template: `
-    <div class="container">
-      <header class="header">
+    <div class="page-container">
+      <header class="page-header">
         <div class="back-row">
-          <button (click)="goBack()" class="btn-back">⬅️ Volver a Mis Rutinas</button>
+          <button (click)="goBack()" class="btn btn-ghost btn-sm">← Volver a Mis Rutinas</button>
         </div>
         <h1>{{ routine?.name }}</h1>
         <p *ngIf="routine?.description">{{ routine.description }}</p>
@@ -25,13 +25,13 @@ import { RoutineService, Routine, WorkoutSession, RoutineDay } from '@shared';
       <ng-container *ngIf="routine && !loading">
         <!-- Vista normal: ejercicios del día -->
         <div *ngIf="!sessionMode">
-          <div class="day-card" *ngIf="currentDay">
-            <h2>{{ currentDay.name }} <span class="muted">{{ dayLabel }}</span></h2>
+          <div class="card" *ngIf="currentDay">
+            <h2 class="day-title">{{ currentDay.name }} <span class="muted">{{ dayLabel }}</span></h2>
             <div class="exercise-list">
               <div class="exercise-row" *ngFor="let re of currentDay.exercises; let i = index">
                 <div class="ex-media" (click)="showGif(re.exercise?.gif_url || '')">
                   <img *ngIf="re.exercise?.gif_url" [src]="re.exercise.gif_url" [alt]="re.exercise?.name" loading="lazy">
-                  <span *ngIf="!re.exercise?.gif_url">🎥</span>
+                  <span *ngIf="!re.exercise?.gif_url" class="ex-media-placeholder">🎥</span>
                 </div>
                 <div class="ex-info">
                   <h3>{{ re.exercise?.name || ('#' + re.exercise_id) }}</h3>
@@ -42,14 +42,14 @@ import { RoutineService, Routine, WorkoutSession, RoutineDay } from '@shared';
                   </p>
                   <p *ngIf="re.notes" class="notes">📝 {{ re.notes }}</p>
                 </div>
-                <button class="btn-gif" (click)="showGif(re.exercise?.gif_url || '')" *ngIf="re.exercise?.gif_url">Ver GIF</button>
+                <button class="btn btn-outline btn-sm" (click)="showGif(re.exercise?.gif_url || '')" *ngIf="re.exercise?.gif_url">Ver GIF</button>
               </div>
             </div>
-            <button class="btn-start" (click)="startWorkout()" *ngIf="currentDay.exercises.length > 0">
+            <button class="btn btn-primary btn-lg btn-block mt-3" (click)="startWorkout()" *ngIf="currentDay.exercises.length > 0">
               ▶️ Empezar entrenamiento
             </button>
           </div>
-          <div class="empty" *ngIf="!currentDay">
+          <div class="empty-state" *ngIf="!currentDay">
             <p>Esta rutina aún no tiene días con ejercicios.</p>
           </div>
         </div>
@@ -61,7 +61,7 @@ import { RoutineService, Routine, WorkoutSession, RoutineDay } from '@shared';
             <p class="muted">{{ session.date | date:'fullDate' }}</p>
           </div>
 
-          <div class="exercise-block" *ngFor="let ex of sessionExercises; let ei = index">
+          <div class="card exercise-block" *ngFor="let ex of sessionExercises; let ei = index">
             <h3>{{ ex.exercise?.name || ('#' + ex.exercise_id) }}
               <span class="muted">({{ ex.sets }} × {{ ex.reps }})</span>
             </h3>
@@ -70,17 +70,17 @@ import { RoutineService, Routine, WorkoutSession, RoutineDay } from '@shared';
                 <span>Serie</span><span>Reps</span><span>Peso</span><span>Hecha</span><span></span>
               </div>
               <div class="set-row" *ngFor="let set of getSetsFor(ex); let si = index">
-                <span>{{ si + 1 }}</span>
-                <input type="number" min="0" class="input" [(ngModel)]="set.reps" placeholder="Reps">
-                <input type="text" class="input" [(ngModel)]="set.weight" placeholder="Peso">
-                <input type="checkbox" [(ngModel)]="set.completed">
-                <button class="btn-save" (click)="saveSet(ex, si)" [disabled]="set.saving">💾</button>
+                <span class="set-num">{{ si + 1 }}</span>
+                <input type="number" min="0" class="app-input" [(ngModel)]="set.reps" placeholder="Reps">
+                <input type="text" class="app-input" [(ngModel)]="set.weight" placeholder="Peso">
+                <input type="checkbox" class="set-check" [(ngModel)]="set.completed">
+                <button class="btn btn-outline btn-sm" (click)="saveSet(ex, si)" [disabled]="set.saving">💾</button>
               </div>
             </div>
             <div class="saved" *ngIf="savedSets[ei]">✅ {{ savedSets[ei] }} series guardadas</div>
           </div>
 
-          <button class="btn-finish" (click)="completeWorkout()" [disabled]="finishing">
+          <button class="btn btn-success btn-lg btn-block" (click)="completeWorkout()" [disabled]="finishing">
             {{ finishing ? 'Guardando...' : '✔️ Terminar entrenamiento' }}
           </button>
         </div>
@@ -91,51 +91,91 @@ import { RoutineService, Routine, WorkoutSession, RoutineDay } from '@shared';
     <div class="modal-overlay" *ngIf="gifUrl" (click.self)="gifUrl = ''">
       <div class="gif-modal">
         <img [src]="gifUrl" alt="Demostración del ejercicio">
-        <button class="btn-back" (click)="gifUrl = ''">Cerrar</button>
+        <button class="btn btn-outline mt-2" (click)="gifUrl = ''">Cerrar</button>
       </div>
     </div>
   `,
   styles: [`
-    .container { padding: 1rem; max-width: 900px; margin: 0 auto; font-family: 'Inter', system-ui, sans-serif; color: #eee; min-height: 100vh; }
-    .header { background: rgba(18,18,18,0.7); backdrop-filter: blur(25px); border: 1px solid rgba(255,255,255,0.05); border-radius: 24px; padding: 1.5rem; margin-bottom: 1.5rem; }
-    .header h1 { margin: 0; font-size: 1.8rem; background: linear-gradient(to right, #f9d423 0%, #ff4e50 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
-    .header p { color: #aaa; margin: 0.5rem 0 0; }
-    .back-row { margin-bottom: 1rem; }
-    .btn-back { background: rgba(255,255,255,0.05); color: white; border: 1px solid rgba(255,255,255,0.1); padding: 0.6rem 1.2rem; border-radius: 20px; cursor: pointer; font-weight: 500; font-size: 0.9rem; }
-    .day-tabs { display: flex; gap: 0.5rem; margin-top: 1rem; flex-wrap: wrap; }
-    .day-tab { background: rgba(255,255,255,0.05); color: #aaa; border: 1px solid rgba(255,255,255,0.1); padding: 0.5rem 1rem; border-radius: 14px; cursor: pointer; font-size: 0.85rem; }
-    .day-tab.active { background: linear-gradient(to right, #f9d423, #ff4e50); color: #000; font-weight: 700; border: none; }
-    .loading { text-align: center; color: #aaa; padding: 3rem; }
-    .day-card { background: rgba(18,18,18,0.7); border-radius: 20px; padding: 1.25rem; border: 1px solid rgba(255,255,255,0.05); }
-    .muted { color: #888; font-size: 0.85rem; }
-    .exercise-list { display: flex; flex-direction: column; gap: 0.75rem; margin-top: 1rem; }
-    .exercise-row { display: flex; align-items: center; gap: 1rem; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.07); border-radius: 14px; padding: 0.75rem; }
-    .ex-media { width: 90px; height: 90px; border-radius: 12px; overflow: hidden; background: #000; display: flex; align-items: center; justify-content: center; cursor: pointer; flex-shrink: 0; }
+    .day-tabs { display: flex; gap: 0.5rem; margin-top: 1.25rem; flex-wrap: wrap; }
+    .day-tab {
+      background: var(--app-surface);
+      color: var(--text-muted);
+      border: 1px solid var(--app-border-strong);
+      padding: 0.5rem 1.1rem;
+      border-radius: 999px;
+      cursor: pointer;
+      font-size: 0.85rem;
+      font-weight: 600;
+      transition: all 0.15s;
+    }
+    .day-tab:hover { border-color: var(--app-primary); color: var(--lime-700); }
+    .day-tab.active {
+      background: var(--app-primary);
+      color: var(--app-on-primary);
+      font-weight: 700;
+      border-color: var(--app-primary);
+    }
+
+    .day-title { margin-top: 0; font-size: 1.4rem; }
+    .exercise-list { display: flex; flex-direction: column; gap: 0.75rem; }
+    .exercise-row {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      background: var(--slate-50);
+      border: 1px solid var(--app-border);
+      border-radius: var(--radius-md);
+      padding: 0.85rem;
+    }
+    .ex-media {
+      width: 84px;
+      height: 84px;
+      border-radius: var(--radius-md);
+      overflow: hidden;
+      background: var(--slate-100);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      flex-shrink: 0;
+      border: 1px solid var(--app-border);
+    }
     .ex-media img { width: 100%; height: 100%; object-fit: cover; }
-    .ex-info { flex: 1; }
-    .ex-info h3 { margin: 0 0 0.25rem; color: #fff; font-size: 1rem; }
-    .notes { color: #f9d423; font-size: 0.85rem; margin: 0.3rem 0 0; }
-    .btn-gif { background: rgba(249,212,35,0.12); color: #f9d423; border: none; padding: 0.5rem 1rem; border-radius: 12px; cursor: pointer; font-weight: 600; font-size: 0.8rem; white-space: nowrap; }
-    .btn-start { width: 100%; margin-top: 1.25rem; background: linear-gradient(to right, #f9d423, #ff4e50); color: #000; border: none; padding: 0.9rem; border-radius: 16px; font-weight: 800; cursor: pointer; font-size: 1rem; }
-    .empty { text-align: center; color: #888; padding: 3rem; }
-    .session-header { margin-bottom: 1rem; }
-    .session-header h2 { color: #fff; margin: 0 0 0.25rem; }
-    .exercise-block { background: rgba(18,18,18,0.7); border-radius: 16px; padding: 1rem; margin-bottom: 1rem; border: 1px solid rgba(255,255,255,0.05); }
-    .exercise-block h3 { color: #fff; margin: 0 0 0.75rem; font-size: 1rem; }
-    .set-table { display: flex; flex-direction: column; gap: 0.4rem; }
-    .set-row { display: grid; grid-template-columns: 60px 1fr 1fr 60px 44px; gap: 0.5rem; align-items: center; }
-    .set-head { font-size: 0.75rem; color: #888; text-transform: uppercase; }
-    .input { background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; color: #eee; padding: 0.45rem 0.6rem; font-size: 0.9rem; outline: none; width: 100%; }
-    .btn-save { background: rgba(249,212,35,0.15); color: #f9d423; border: none; border-radius: 8px; cursor: pointer; padding: 0.4rem; }
-    .btn-save:disabled { opacity: 0.5; }
-    .saved { color: #4ade80; font-size: 0.8rem; margin-top: 0.5rem; }
-    .btn-finish { width: 100%; background: #4ade80; color: #000; border: none; padding: 0.9rem; border-radius: 16px; font-weight: 800; cursor: pointer; font-size: 1rem; margin-top: 0.5rem; }
-    .btn-finish:disabled { opacity: 0.5; }
-    .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.85); display: flex; align-items: center; justify-content: center; z-index: 100; padding: 1rem; }
+    .ex-media-placeholder { font-size: 1.6rem; }
+    .ex-info { flex: 1; min-width: 0; }
+    .ex-info h3 { margin: 0 0 0.25rem; font-size: 1rem; }
+    .notes { color: var(--lime-700); font-size: 0.85rem; margin: 0.3rem 0 0; }
+
+    .session-header { margin-bottom: 1.25rem; }
+    .session-header h2 { margin: 0 0 0.25rem; font-size: 1.4rem; }
+    .exercise-block { margin-bottom: 1rem; }
+    .exercise-block h3 { margin: 0 0 0.9rem; font-size: 1.05rem; }
+    .set-table { display: flex; flex-direction: column; gap: 0.5rem; }
+    .set-row {
+      display: grid;
+      grid-template-columns: 48px 1fr 1fr 56px 44px;
+      gap: 0.5rem;
+      align-items: center;
+    }
+    .set-head { font-size: 0.72rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.04em; font-weight: 700; }
+    .set-num { font-weight: 700; color: var(--text-muted); text-align: center; }
+    .set-check { width: 18px; height: 18px; accent-color: var(--app-primary); cursor: pointer; justify-self: center; }
+    .saved { color: var(--success); font-size: 0.82rem; margin-top: 0.75rem; font-weight: 600; }
+
     .gif-modal { text-align: center; }
-    .gif-modal img { max-width: 90vw; max-height: 75vh; border-radius: 16px; }
-    .gif-modal .btn-back { margin-top: 1rem; }
-    @media (min-width: 768px) { .container { padding: 2rem; } }
+    .gif-modal img {
+      max-width: 92vw;
+      max-height: 72vh;
+      border-radius: var(--radius-lg);
+      background: var(--slate-900);
+      box-shadow: var(--shadow-lg);
+    }
+
+    @media (max-width: 560px) {
+      .exercise-row { flex-wrap: wrap; }
+      .ex-media { width: 64px; height: 64px; }
+      .set-row { grid-template-columns: 36px 1fr 1fr 44px 40px; gap: 0.35rem; }
+    }
   `]
 })
 export class RoutineDetailComponent implements OnInit {
