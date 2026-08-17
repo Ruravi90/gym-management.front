@@ -30,8 +30,9 @@ import { RoutineService, Routine, WorkoutSession, RoutineDay } from '@shared';
             <div class="exercise-list">
               <div class="exercise-row" *ngFor="let re of currentDay.exercises">
                 <div class="ex-media">
-                  <img *ngIf="re.exercise?.gif_url" [src]="re.exercise.gif_url" [alt]="re.exercise?.name" loading="lazy">
-                  <span *ngIf="!re.exercise?.gif_url" class="ex-media-placeholder">🎥</span>
+                  <img *ngIf="re.exercise?.gif_urls?.length" [src]="re.exercise.gif_urls[0]" [alt]="re.exercise?.name" loading="lazy">
+                  <img *ngIf="!re.exercise?.gif_urls?.length && re.exercise?.gif_url" [src]="re.exercise.gif_url" [alt]="re.exercise?.name" loading="lazy">
+                  <span *ngIf="!re.exercise?.gif_urls?.length && !re.exercise?.gif_url" class="ex-media-placeholder">🎥</span>
                 </div>
                 <div class="ex-info">
                   <h3>{{ re.exercise?.name || ('#' + re.exercise_id) }}</h3>
@@ -70,8 +71,9 @@ import { RoutineService, Routine, WorkoutSession, RoutineDay } from '@shared';
               (click)="openExercise(i)"
               [class.completed]="isExerciseCompleted(ex)">
               <div class="wex-media">
-                <img *ngIf="ex.exercise?.gif_url" [src]="ex.exercise.gif_url" [alt]="ex.exercise?.name">
-                <span *ngIf="!ex.exercise?.gif_url" class="ex-media-placeholder">🎥</span>
+                <img *ngIf="ex.exercise?.gif_urls?.length" [src]="ex.exercise.gif_urls[0]" [alt]="ex.exercise?.name">
+                <img *ngIf="!ex.exercise?.gif_urls?.length && ex.exercise?.gif_url" [src]="ex.exercise.gif_url" [alt]="ex.exercise?.name">
+                <span *ngIf="!ex.exercise?.gif_urls?.length && !ex.exercise?.gif_url" class="ex-media-placeholder">🎥</span>
               </div>
               <div class="wex-info">
                 <h3>{{ ex.exercise?.name || ('#' + ex.exercise_id) }}</h3>
