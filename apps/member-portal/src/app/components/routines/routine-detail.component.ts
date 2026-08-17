@@ -132,23 +132,43 @@ import { RoutineService, Routine, WorkoutSession, RoutineDay } from '@shared';
             <p *ngIf="selectedExercise?.notes" class="notes">📝 {{ selectedExercise.notes }}</p>
           </div>
 
-          <!-- Detalles del ejercicio (instrucciones, tips, errores) -->
-          <div class="card exercise-details-card" *ngIf="selectedExercise?.exercise?.instructions || selectedExercise?.exercise?.tips || selectedExercise?.exercise?.common_mistakes">
-            <div class="detail-section" *ngIf="selectedExercise?.exercise?.instructions">
-              <h4>📋 Instrucciones</h4>
-              <p>{{ selectedExercise.exercise.instructions }}</p>
+          <!-- Detalles del ejercicio (instrucciones, tips, errores) - Colapsables -->
+          <div class="detail-collapsible" *ngIf="selectedExercise?.exercise?.instructions || selectedExercise?.exercise?.tips || selectedExercise?.exercise?.common_mistakes || selectedExercise?.exercise?.modifications">
+            <div class="detail-collapse-item" *ngIf="selectedExercise?.exercise?.instructions">
+              <button class="detail-collapse-header" (click)="toggleDetail('instructions')">
+                <span>📋 Instrucciones</span>
+                <span class="detail-arrow" [class.open]="openDetails['instructions']">▸</span>
+              </button>
+              <div class="detail-collapse-body" [class.open]="openDetails['instructions']">
+                <p>{{ selectedExercise.exercise.instructions }}</p>
+              </div>
             </div>
-            <div class="detail-section" *ngIf="selectedExercise?.exercise?.tips">
-              <h4>💡 Consejos</h4>
-              <p>{{ selectedExercise.exercise.tips }}</p>
+            <div class="detail-collapse-item" *ngIf="selectedExercise?.exercise?.tips">
+              <button class="detail-collapse-header" (click)="toggleDetail('tips')">
+                <span>💡 Consejos</span>
+                <span class="detail-arrow" [class.open]="openDetails['tips']">▸</span>
+              </button>
+              <div class="detail-collapse-body" [class.open]="openDetails['tips']">
+                <p>{{ selectedExercise.exercise.tips }}</p>
+              </div>
             </div>
-            <div class="detail-section" *ngIf="selectedExercise?.exercise?.common_mistakes">
-              <h4>⚠️ Errores comunes</h4>
-              <p>{{ selectedExercise.exercise.common_mistakes }}</p>
+            <div class="detail-collapse-item" *ngIf="selectedExercise?.exercise?.common_mistakes">
+              <button class="detail-collapse-header" (click)="toggleDetail('mistakes')">
+                <span>⚠️ Errores comunes</span>
+                <span class="detail-arrow" [class.open]="openDetails['mistakes']">▸</span>
+              </button>
+              <div class="detail-collapse-body" [class.open]="openDetails['mistakes']">
+                <p>{{ selectedExercise.exercise.common_mistakes }}</p>
+              </div>
             </div>
-            <div class="detail-section" *ngIf="selectedExercise?.exercise?.modifications">
-              <h4>🔄 Modificaciones</h4>
-              <p>{{ selectedExercise.exercise.modifications }}</p>
+            <div class="detail-collapse-item" *ngIf="selectedExercise?.exercise?.modifications">
+              <button class="detail-collapse-header" (click)="toggleDetail('modifications')">
+                <span>🔄 Modificaciones</span>
+                <span class="detail-arrow" [class.open]="openDetails['modifications']">▸</span>
+              </button>
+              <div class="detail-collapse-body" [class.open]="openDetails['modifications']">
+                <p>{{ selectedExercise.exercise.modifications }}</p>
+              </div>
             </div>
           </div>
 
@@ -358,11 +378,23 @@ import { RoutineService, Routine, WorkoutSession, RoutineDay } from '@shared';
     .exercise-prescription { margin: 0 0 0.2rem; font-size: 0.95rem; }
     .exercise-rest { margin: 0; font-size: 0.85rem; }
 
-    .exercise-details-card { margin-bottom: 0.75rem; }
-    .detail-section { margin-bottom: 0.75rem; }
-    .detail-section:last-child { margin-bottom: 0; }
-    .detail-section h4 { margin: 0 0 0.3rem; font-size: 0.85rem; font-weight: 700; color: var(--text-main); }
-    .detail-section p { margin: 0; font-size: 0.82rem; color: var(--text-muted); line-height: 1.5; }
+    .detail-collapsible { margin-bottom: 0.75rem; display: flex; flex-direction: column; gap: 0.5rem; }
+    .detail-collapse-item { background: var(--app-surface); border: 1px solid var(--app-border); border-radius: var(--radius-lg); overflow: hidden; }
+    .detail-collapse-header {
+      display: flex; justify-content: space-between; align-items: center;
+      width: 100%; padding: 0.7rem 0.85rem; border: none; background: none;
+      font-size: 0.85rem; font-weight: 700; color: var(--text-main);
+      cursor: pointer; text-align: left;
+    }
+    .detail-collapse-header:active { background: var(--slate-50); }
+    .detail-arrow { font-size: 0.7rem; color: var(--text-muted); transition: transform 0.2s; }
+    .detail-arrow.open { transform: rotate(90deg); }
+    .detail-collapse-body {
+      max-height: 0; overflow: hidden; transition: max-height 0.25s ease;
+      padding: 0 0.85rem;
+    }
+    .detail-collapse-body.open { max-height: 500px; padding: 0 0.85rem 0.75rem; }
+    .detail-collapse-body p { margin: 0; font-size: 0.82rem; color: var(--text-muted); line-height: 1.5; }
 
     .sets-card { margin-bottom: 1rem; }
     .sets-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.75rem; }
@@ -484,6 +516,7 @@ export class RoutineDetailComponent implements OnInit, OnDestroy {
   selectedDayIndex = 0;
   gifUrl = '';
   showExitConfirm = false;
+  openDetails: Record<string, boolean> = {};
 
   sessionMode = false;
   session: WorkoutSession | null = null;
@@ -664,7 +697,12 @@ export class RoutineDetailComponent implements OnInit, OnDestroy {
     this.saveAllSets();
     this.selectedExerciseIndex = index;
     this.lastSaveMsg = '';
+    this.openDetails = {};
     this.loadGifUrls();
+  }
+
+  toggleDetail(key: string): void {
+    this.openDetails[key] = !this.openDetails[key];
   }
 
   private loadGifUrls(): void {
