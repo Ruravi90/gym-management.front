@@ -303,7 +303,7 @@ import { RoutineService, Routine, WorkoutSession, RoutineDay } from '@shared';
     .sets-completed { font-size: 0.82rem; color: var(--success); font-weight: 600; }
     .set-list { display: flex; flex-direction: column; gap: 0.5rem; }
     .set-item {
-      display: grid; grid-template-columns: 40px 1fr 100px 32px;
+      display: grid; grid-template-columns: 40px 1fr 140px 32px;
       gap: 0.6rem; align-items: center; padding: 0.6rem 0.75rem;
       border-radius: var(--radius-md); border: 1px solid var(--app-border);
       background: var(--app-surface); transition: all 0.15s;
@@ -370,7 +370,7 @@ import { RoutineService, Routine, WorkoutSession, RoutineDay } from '@shared';
       .exercise-row { flex-wrap: wrap; }
       .ex-media { width: 64px; height: 64px; }
       .gif-demo { height: 220px; }
-      .set-item { grid-template-columns: 32px 1fr 85px 28px; gap: 0.4rem; padding: 0.5rem; }
+      .set-item { grid-template-columns: 32px 1fr 120px 28px; gap: 0.4rem; padding: 0.5rem; }
       .rest-card { padding: 2rem; min-width: 220px; }
       .rest-time { font-size: 2.8rem; }
     }
