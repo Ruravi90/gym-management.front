@@ -17,13 +17,13 @@ RUN npm run generate-version && \
 # ---- Serve stage: nginx sirve la app elegida por env var APP_NAME ----
 FROM nginx:alpine
 
-# Config de nginx (SPA: redirige rutas a index.html)
-COPY nginx.conf /etc/nginx/conf.d/default.conf
+# Template de nginx (SPA + proxy /api al backend interno de Dokploy)
+COPY nginx.conf.template /etc/nginx/conf.d/default.conf.template
 
 # Dist de ambas apps
 COPY --from=build /app/dist /dist
 
-# Entrypoint que copia la app seleccionada al html de nginx
+# Entrypoint que renderiza la config y copia la app seleccionada al html de nginx
 COPY entrypoint.sh /entrypoint.sh
 RUN chmod +x /entrypoint.sh
 

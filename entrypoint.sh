@@ -5,6 +5,13 @@ set -e
 # (valores: admin | member-portal). Por defecto: admin.
 APP_NAME="${APP_NAME:-admin}"
 
+# API interno de Dokploy (sin dominio público): el navegador llama a /api
+# y nginx lo proxya al contenedor del backend por su nombre de red.
+API_UPSTREAM="${API_UPSTREAM:-http://mygym-api-jk2wub:8000}"
+
+# Renderizar la config de nginx con el upstream real del API
+envsubst '${API_UPSTREAM}' < /etc/nginx/conf.d/default.conf.template > /etc/nginx/conf.d/default.conf
+
 if [ -d "/dist/${APP_NAME}" ]; then
     echo "Serving app: ${APP_NAME}"
     cp -r "/dist/${APP_NAME}/." /usr/share/nginx/html/

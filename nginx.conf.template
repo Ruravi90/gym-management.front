@@ -5,6 +5,23 @@ server {
     root /usr/share/nginx/html;
     index index.html;
 
+    # Subidas de imágenes (rostro, fotos de medidas, etc.)
+    client_max_body_size 50m;
+
+    # API interno de Dokploy: el navegador llama a /api/* y nginx lo proxya
+    # al contenedor del backend por su nombre de red (sin dominio público).
+    # ${API_UPSTREAM} se inyecta en el entrypoint (ej: http://mygym-api-jk2wub:8000)
+    location /api/ {
+        proxy_pass ${API_UPSTREAM}/;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+        proxy_connect_timeout 10s;
+        proxy_read_timeout 300s;
+        proxy_send_timeout 300s;
+    }
+
     # SPA: cualquier ruta no encontrada cae en index.html (rutas de Angular)
     location / {
         try_files $uri $uri/ /index.html;
