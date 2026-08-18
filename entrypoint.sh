@@ -2,8 +2,16 @@
 set -e
 
 # App a servir: definida con la variable de entorno APP_NAME en Dokploy
-# (valores: admin | member-portal). Por defecto: admin.
-APP_NAME="${APP_NAME:-admin}"
+# (valores: admin | member-portal). Si no se define, auto-detecta la única disponible.
+if [ -z "${APP_NAME}" ]; then
+    AVAILABLE=$(ls /dist 2>/dev/null)
+    COUNT=$(echo "$AVAILABLE" | grep -c .)
+    if [ "$COUNT" -eq 1 ]; then
+        APP_NAME="$AVAILABLE"
+    else
+        APP_NAME="admin"
+    fi
+fi
 
 # API interno de Dokploy (sin dominio público): el navegador llama a /api
 # y nginx lo proxya al contenedor del backend por su nombre de red.
