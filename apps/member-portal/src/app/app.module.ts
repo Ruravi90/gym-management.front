@@ -11,7 +11,7 @@ import { RegisterComponent } from './components/register/register.component';
 import { DashboardComponent } from './components/dashboard/dashboard.component';
 import { MembershipPurchaseComponent } from './components/membership-purchase/membership-purchase.component';
 import { PaymentResultComponent } from './components/payment-result/payment-result.component';
-import { AuthInterceptor, environment } from '@shared';
+import { AuthInterceptor, environment, SharedLandingComponent } from '@shared';
 import { ServiceWorkerModule } from '@angular/service-worker';
 
 @NgModule({
@@ -30,6 +30,7 @@ import { ServiceWorkerModule } from '@angular/service-worker';
     HttpClientModule,
     FormsModule,
     NgxChartsModule,
+    SharedLandingComponent,
     ServiceWorkerModule.register('ngsw-worker.js', {
       enabled: environment.production,
       registrationStrategy: 'registerWhenStable:30000'

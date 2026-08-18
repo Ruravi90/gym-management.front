@@ -6,8 +6,7 @@ import { FacialCheckinComponent } from './components/facial-checkin/facial-check
 import { MembershipTypesComponent } from './components/membership-types/membership-types.component';
 import { ClientMembershipHistoryComponent } from './components/client-membership-history/client-membership-history.component';
 import { MainLayoutComponent } from './components/main-layout/main-layout.component';
-import { AuthGuard } from '@shared';
-import { AdminGuard } from '@shared';
+import { AuthGuard, AdminGuard, SharedLandingComponent } from '@shared';
 import { UsersAdminComponent } from './components/users-admin/users-admin.component';
 import { ClientsComponent } from './components/clients/clients.component';
 import { AuditLogComponent } from './components/audit-log/audit-log.component';
@@ -16,26 +15,19 @@ import { RoutinesComponent } from './components/routines/routines.component';
 import { AdminMeasurementsComponent } from './components/measurements/admin-measurements.component';
 
 const routes: Routes = [
+  { path: '', component: SharedLandingComponent, data: { appType: 'admin' } },
   { path: 'login', component: LoginComponent },
   { path: 'checkin', component: FacialCheckinComponent, canActivate: [AuthGuard] },
-  {
-    path: '',
-    component: MainLayoutComponent,
-    canActivate: [AuthGuard],
-    children: [
-      { path: 'dashboard', component: DashboardComponent },
-      { path: 'membership-types', component: MembershipTypesComponent, canActivate: [AuthGuard, AdminGuard] },
-      { path: 'admin/users', component: UsersAdminComponent, canActivate: [AuthGuard, AdminGuard] },
-      { path: 'clients', component: ClientsComponent },
-      { path: 'exercises', component: ExercisesComponent },
-      { path: 'routines', component: RoutinesComponent },
-      { path: 'measurements', component: AdminMeasurementsComponent },
-      { path: 'client-membership-history/:id', component: ClientMembershipHistoryComponent },
-      { path: 'audit-logs', component: AuditLogComponent, canActivate: [AuthGuard, AdminGuard] },
-      { path: '', redirectTo: 'dashboard', pathMatch: 'full' }
-    ]
-  },
-  { path: '**', redirectTo: '/dashboard', pathMatch: 'full' }
+  { path: 'dashboard', component: DashboardComponent, canActivate: [AuthGuard] },
+  { path: 'membership-types', component: MembershipTypesComponent, canActivate: [AuthGuard, AdminGuard] },
+  { path: 'admin/users', component: UsersAdminComponent, canActivate: [AuthGuard, AdminGuard] },
+  { path: 'clients', component: ClientsComponent, canActivate: [AuthGuard] },
+  { path: 'exercises', component: ExercisesComponent, canActivate: [AuthGuard] },
+  { path: 'routines', component: RoutinesComponent, canActivate: [AuthGuard] },
+  { path: 'measurements', component: AdminMeasurementsComponent, canActivate: [AuthGuard] },
+  { path: 'client-membership-history/:id', component: ClientMembershipHistoryComponent, canActivate: [AuthGuard] },
+  { path: 'audit-logs', component: AuditLogComponent, canActivate: [AuthGuard, AdminGuard] },
+  { path: '**', redirectTo: '/login', pathMatch: 'full' }
 ];
 
 @NgModule({
