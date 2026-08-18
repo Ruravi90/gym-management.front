@@ -24,8 +24,9 @@ case "$API_UPSTREAM" in
 esac
 API_UPSTREAM="${API_UPSTREAM%/}"
 
-# Renderizar la config de nginx con el upstream real del API
-envsubst '$API_UPSTREAM' < /etc/nginx/conf.d/default.conf.template > /etc/nginx/conf.d/default.conf
+# Renderizar la config de nginx con el upstream real del API (sed en vez de envsubst)
+ESCAPED=$(printf '%s' "$API_UPSTREAM" | sed 's/[&/\]/\\&/g')
+sed "s|\${API_UPSTREAM}|${ESCAPED}|g" /etc/nginx/conf.d/default.conf.template > /etc/nginx/conf.d/default.conf
 
 if [ -d "/dist/${APP_NAME}" ]; then
     echo "Serving app: ${APP_NAME}"
