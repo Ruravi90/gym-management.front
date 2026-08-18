@@ -17,6 +17,9 @@ RUN npm run generate-version && \
 # ---- Serve stage: nginx sirve la app elegida por env var APP_NAME ----
 FROM nginx:alpine
 
+# envsubst (de gettext) para renderizar la config de nginx con variables de entorno
+RUN apk add --no-cache gettext
+
 # Template de nginx (SPA + proxy /api al backend interno de Dokploy)
 COPY nginx.conf.template /etc/nginx/conf.d/default.conf.template
 

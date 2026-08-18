@@ -25,7 +25,7 @@ esac
 API_UPSTREAM="${API_UPSTREAM%/}"
 
 # Renderizar la config de nginx con el upstream real del API
-envsubst '${API_UPSTREAM}' < /etc/nginx/conf.d/default.conf.template > /etc/nginx/conf.d/default.conf
+envsubst '$API_UPSTREAM' < /etc/nginx/conf.d/default.conf.template > /etc/nginx/conf.d/default.conf
 
 if [ -d "/dist/${APP_NAME}" ]; then
     echo "Serving app: ${APP_NAME}"
