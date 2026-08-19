@@ -17,16 +17,24 @@ import { AdminMeasurementsComponent } from './components/measurements/admin-meas
 const routes: Routes = [
   { path: '', component: SharedLandingComponent, data: { appType: 'admin' } },
   { path: 'login', component: LoginComponent },
-  { path: 'checkin', component: FacialCheckinComponent, canActivate: [AuthGuard] },
-  { path: 'dashboard', component: DashboardComponent, canActivate: [AuthGuard] },
-  { path: 'membership-types', component: MembershipTypesComponent, canActivate: [AuthGuard, AdminGuard] },
-  { path: 'admin/users', component: UsersAdminComponent, canActivate: [AuthGuard, AdminGuard] },
-  { path: 'clients', component: ClientsComponent, canActivate: [AuthGuard] },
-  { path: 'exercises', component: ExercisesComponent, canActivate: [AuthGuard] },
-  { path: 'routines', component: RoutinesComponent, canActivate: [AuthGuard] },
-  { path: 'measurements', component: AdminMeasurementsComponent, canActivate: [AuthGuard] },
-  { path: 'client-membership-history/:id', component: ClientMembershipHistoryComponent, canActivate: [AuthGuard] },
-  { path: 'audit-logs', component: AuditLogComponent, canActivate: [AuthGuard, AdminGuard] },
+  {
+    path: '',
+    component: MainLayoutComponent,
+    canActivate: [AuthGuard],
+    children: [
+      { path: 'dashboard', component: DashboardComponent },
+      { path: 'checkin', component: FacialCheckinComponent },
+      { path: 'membership-types', component: MembershipTypesComponent, canActivate: [AdminGuard] },
+      { path: 'admin/users', component: UsersAdminComponent, canActivate: [AdminGuard] },
+      { path: 'clients', component: ClientsComponent },
+      { path: 'exercises', component: ExercisesComponent },
+      { path: 'routines', component: RoutinesComponent },
+      { path: 'measurements', component: AdminMeasurementsComponent },
+      { path: 'client-membership-history/:id', component: ClientMembershipHistoryComponent },
+      { path: 'audit-logs', component: AuditLogComponent, canActivate: [AdminGuard] },
+      { path: '', redirectTo: 'dashboard', pathMatch: 'full' }
+    ]
+  },
   { path: '**', redirectTo: '/login', pathMatch: 'full' }
 ];
 

@@ -156,6 +156,12 @@
     gap: 8px;
 }
 
+.widget-icon {
+    width: 20px;
+    height: 20px;
+    flex-shrink: 0;
+}
+
 .expirations-list {
     display: flex;
     flex-direction: column;
