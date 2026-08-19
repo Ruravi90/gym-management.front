@@ -3,7 +3,7 @@ import { ClientService } from '@shared';
 import { MembershipService, MembershipStatistics } from '@shared';
 import { AuthService } from '@shared';
 import { AnalyticsService, DashboardAnalytics } from '@shared';
-import { Color, ScaleType, LegendPosition } from '@swimlane/ngx-charts';
+import { Color, ScaleType } from '@swimlane/ngx-charts';
 import * as shape from 'd3-shape';
 
 @Component({
@@ -17,17 +17,19 @@ export class DashboardComponent implements OnInit {
   totalClients: number = 0;
   loading = true;
 
-  // Chart Properties
   attendanceData: any[] = [];
   revenueData: any[] = [];
   membershipTypeData: any[] = [];
-  
-  // New Derived Stats
+
   activeMembersPercentage: number = 0;
   revenueGoalProgress: number = 0;
-  monthlyRevenueGoal: number = 5000; // Default goal
-  
-  legendPosition = LegendPosition.Right;
+  monthlyRevenueGoal: number = 5000;
+
+  greeting: string = '';
+  currentDateTime: string = '';
+
+  expiredCount: number = 0;
+
   curve: any = shape.curveCardinal;
 
   colorScheme: Color = {
@@ -41,7 +43,7 @@ export class DashboardComponent implements OnInit {
     name: 'revenue',
     selectable: true,
     group: ScaleType.Ordinal,
-    domain: ['#84cc16']
+    domain: ['#10b981']
   };
 
   constructor(
@@ -49,16 +51,27 @@ export class DashboardComponent implements OnInit {
     private membershipService: MembershipService,
     private authService: AuthService,
     private analyticsService: AnalyticsService
-  ) { }
+  ) {}
 
   ngOnInit(): void {
+    this.setGreeting();
     this.loadDashboardData();
   }
 
-  loadDashboardData() {
+  setGreeting(): void {
+    const now = new Date();
+    const hour = now.getHours();
+    if (hour < 12) this.greeting = 'Buenos días';
+    else if (hour < 18) this.greeting = 'Buenas tardes';
+    else this.greeting = 'Buenas noches';
+
+    this.currentDateTime = now.toLocaleDateString('es-MX', {
+      weekday: 'long', year: 'numeric', month: 'long', day: 'numeric'
+    });
+  }
+
+  loadDashboardData(): void {
     this.loading = true;
-    
-    // Load all data in parallel
     Promise.all([
       this.loadClientsCount(),
       this.loadMembershipStats(),
@@ -87,8 +100,7 @@ export class DashboardComponent implements OnInit {
     });
   }
 
-  processChartData(data: DashboardAnalytics) {
-    // Process Attendance History
+  processChartData(data: DashboardAnalytics): void {
     this.attendanceData = [{
       name: 'Asistencia',
       series: data.attendance_history.map(item => ({
@@ -97,7 +109,6 @@ export class DashboardComponent implements OnInit {
       }))
     }];
 
-    // Process Revenue History
     this.revenueData = [{
       name: 'Ingresos',
       series: data.revenue_history.map(item => ({
@@ -106,14 +117,12 @@ export class DashboardComponent implements OnInit {
       }))
     }];
 
-    // Process Membership Distribution
     this.membershipTypeData = data.membership_distribution;
 
-    // Calculate Percentages
     if (this.stats && this.stats.total_memberships > 0) {
       this.activeMembersPercentage = Math.round((this.stats.active_memberships / this.stats.total_memberships) * 100);
     }
-    
+
     if (this.analytics) {
       this.revenueGoalProgress = Math.min(100, Math.round((this.analytics.total_revenue_month / this.monthlyRevenueGoal) * 100));
     }
@@ -136,6 +145,7 @@ export class DashboardComponent implements OnInit {
       this.membershipService.getMembershipStatistics().subscribe({
         next: (stats) => {
           this.stats = stats;
+          this.expiredCount = stats.expired_memberships;
           resolve();
         },
         error: reject
@@ -143,7 +153,28 @@ export class DashboardComponent implements OnInit {
     });
   }
 
-  logout() {
+  getExpirationDays(endDate: string): number {
+    const end = new Date(endDate);
+    const now = new Date();
+    const diff = Math.ceil((end.getTime() - now.getTime()) / (1000 * 60 * 60 * 24));
+    return diff;
+  }
+
+  getExpirationLabel(endDate: string): string {
+    const days = this.getExpirationDays(endDate);
+    if (days <= 0) return 'Vencida';
+    if (days === 1) return 'Mañana';
+    return `En ${days} días`;
+  }
+
+  getExpirationBadgeClass(endDate: string): string {
+    const days = this.getExpirationDays(endDate);
+    if (days <= 0) return 'badge-danger';
+    if (days <= 3) return 'badge-warning';
+    return 'badge-primary';
+  }
+
+  logout(): void {
     this.authService.logout();
   }
 }
