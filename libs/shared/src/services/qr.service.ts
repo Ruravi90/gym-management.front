@@ -2,8 +2,6 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable, Subject } from 'rxjs';
 import { environment } from '../environments/environment';
-import { AuthService } from './auth.service';
-import { HttpHeaders } from '@angular/common/http';
 
 export interface QRTokenResponse {
   token: string;
@@ -26,25 +24,14 @@ export interface CheckinEvent {
 export class QrService {
   private apiUrl = `${environment.apiUrl}/auth`;
 
-  constructor(
-    private http: HttpClient,
-    private authService: AuthService
-  ) {}
+  constructor(private http: HttpClient) {}
 
   getMyQrToken(): Observable<QRTokenResponse> {
-    const token = this.authService.getAccessToken();
-    const headers = new HttpHeaders({
-      'Authorization': `Bearer ${token}`
-    });
-    return this.http.get<QRTokenResponse>(`${this.apiUrl}/my-qr-token`, { headers });
+    return this.http.get<QRTokenResponse>(`${this.apiUrl}/my-qr-token`, { withCredentials: true });
   }
 
   getMyPin(): Observable<PinResponse> {
-    const token = this.authService.getAccessToken();
-    const headers = new HttpHeaders({
-      'Authorization': `Bearer ${token}`
-    });
-    return this.http.get<PinResponse>(`${this.apiUrl}/my-pin`, { headers });
+    return this.http.get<PinResponse>(`${this.apiUrl}/my-pin`, { withCredentials: true });
   }
 
   connectCheckinWs(clientId: number): Observable<CheckinEvent> {

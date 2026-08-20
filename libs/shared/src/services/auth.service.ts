@@ -2,16 +2,14 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
 import { BehaviorSubject, Observable, of } from 'rxjs';
-import { map, switchMap, tap } from 'rxjs/operators';
+import { map, tap } from 'rxjs/operators';
 import { environment } from '../environments/environment';
 import { StorageService } from './storage.service';
 
 import { User } from '../models/user.model';
 
 export interface LoginResponse {
-  access_token: string;
-  token_type: string;
-  expires_at: string;
+  message: string;
 }
 
 export interface RegisterRequest {
@@ -35,7 +33,6 @@ export class AuthService {
     private router: Router,
     private storage: StorageService
   ) {
-    // Check if user is already logged in from storage
     const savedUser = this.storage.getItem('currentUser');
     if (savedUser) {
       try {
@@ -53,16 +50,9 @@ export class AuthService {
     body.set('password', password);
 
     return this.http.post<LoginResponse>(`${this.apiUrl}/login`, body.toString(), {
-      headers: {
-        'Content-Type': 'application/x-www-form-urlencoded'
-      }
-    }).pipe(
-      tap(response => {
-        console.log('Login response received, storing token...');
-        // Store token in storage
-        this.storage.setItem('accessToken', response.access_token);
-      })
-    );
+      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+      withCredentials: true
+    });
   }
 
   register(userData: RegisterRequest): Observable<User> {
@@ -70,16 +60,19 @@ export class AuthService {
   }
 
   logout(): void {
-    console.log('Executing logout - clearing storage');
-    this.storage.removeItem('accessToken');
+    this.http.post(`${this.apiUrl}/logout`, {}, { withCredentials: true }).subscribe({
+      complete: () => this.clearSession()
+    });
+  }
+
+  private clearSession(): void {
     this.storage.removeItem('currentUser');
     this.currentUserSubject.next(null);
     this.router.navigate(['/login']);
   }
 
   isLoggedIn(): boolean {
-    const token = this.storage.getItem('accessToken');
-    return !!token;
+    return this.currentUserSubject.value !== null;
   }
 
   getCurrentUser(): User | null {
@@ -87,24 +80,11 @@ export class AuthService {
   }
 
   setCurrentUser(user: User): void {
-    console.log('Setting current user', user);
     this.currentUserSubject.next(user);
     this.storage.setItem('currentUser', JSON.stringify(user));
   }
 
-  getAccessToken(): string | null {
-    return this.storage.getItem('accessToken');
-  }
-
-  // Method to get user info after login
   fetchCurrentUser(): Observable<User> {
-    const token = this.getAccessToken();
-    if (!token) {
-      console.warn('FetchCurrentUser called without token');
-      return of(null as any);
-    }
-
-    // If we already have a stored user, return it
     const storedUser = this.storage.getItem('currentUser');
     if (storedUser) {
       try {
@@ -116,10 +96,8 @@ export class AuthService {
       }
     }
 
-    // Otherwise fetch from API (/users/me)
-    console.log('Fetching user info from API...');
     return this.http.get<User>(`${environment.apiUrl}/users/me`, {
-      headers: { 'Authorization': `Bearer ${token}` }
+      withCredentials: true
     }).pipe(
       map(user => {
         if (user) {
@@ -130,13 +108,7 @@ export class AuthService {
     );
   }
 
-  // Method to fetch user info from API
   fetchUserInfo(): Observable<User> {
-    const token = this.getAccessToken();
-    if (!token) {
-      return of(null as any);
-    }
-
     const storedUser = this.storage.getItem('currentUser');
     if (storedUser) {
       try {
@@ -145,7 +117,10 @@ export class AuthService {
         console.error('Error parsing stored user in fetchUserInfo', e);
       }
     }
-
     return of(null as any);
+  }
+
+  refreshSession(): Observable<unknown> {
+    return this.http.post(`${this.apiUrl}/refresh`, {}, { withCredentials: true });
   }
 }

@@ -156,6 +156,8 @@ import { GamificationDashboard, XpLog, WeeklyChallenge } from '@shared/models/ga
       display: flex;
       align-items: center;
       gap: 1rem;
+      min-width: 0;
+      overflow: hidden;
       transition: transform 0.15s, box-shadow 0.15s;
     }
     .stat-card:hover {

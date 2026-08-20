@@ -96,7 +96,12 @@ export class LoginComponent {
   onLogin() {
     this.loading = true;
     this.authService.login(this.email, this.password).subscribe({
-      next: () => this.router.navigate(['/dashboard']),
+      next: () => {
+        this.authService.fetchCurrentUser().subscribe({
+          next: () => this.router.navigate(['/dashboard']),
+          error: () => this.router.navigate(['/dashboard'])
+        });
+      },
       error: (err) => {
         this.error = 'Credenciales no válidas';
         this.loading = false;

@@ -1,7 +1,6 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { AuthService } from './auth.service';
 import { environment } from '../environments/environment';
 
 @Injectable({
@@ -10,44 +9,27 @@ import { environment } from '../environments/environment';
 export class AttendanceService {
   private apiUrl = `${environment.apiUrl}/attendance`;
 
-  constructor(
-    private http: HttpClient,
-    private authService: AuthService
-  ) { }
-
-  private getAuthHeaders(): HttpHeaders {
-    const token = this.authService.getAccessToken();
-    return new HttpHeaders({
-      'Authorization': `Bearer ${token}`,
-      'Content-Type': 'application/json'
-    });
-  }
+  constructor(private http: HttpClient) { }
 
   checkIn(image: Blob): Observable<any> {
-    const token = this.authService.getAccessToken();
     const formData = new FormData();
     formData.append('file', image, 'checkin.jpg');
-
-    return this.http.post(`${this.apiUrl}/check-in`, formData, {
-      headers: new HttpHeaders({
-        'Authorization': `Bearer ${token}`
-      })
-    });
+    return this.http.post(`${this.apiUrl}/check-in`, formData, { withCredentials: true });
   }
 
   getAttendanceHistory(clientId: number): Observable<any[]> {
-    return this.http.get<any[]>(`${this.apiUrl}/client/${clientId}`, { headers: this.getAuthHeaders() });
+    return this.http.get<any[]>(`${this.apiUrl}/client/${clientId}`, { withCredentials: true });
   }
 
   checkInManual(clientId: number): Observable<any> {
-    return this.http.post(`${this.apiUrl}/manual/${clientId}`, {}, { headers: this.getAuthHeaders() });
+    return this.http.post(`${this.apiUrl}/manual/${clientId}`, {}, { withCredentials: true });
   }
 
   qrCheckIn(token: string): Observable<any> {
-    return this.http.post(`${this.apiUrl}/qr-check-in`, { token }, { headers: this.getAuthHeaders() });
+    return this.http.post(`${this.apiUrl}/qr-check-in`, { token }, { withCredentials: true });
   }
 
   pinCheckIn(pin: string): Observable<any> {
-    return this.http.post(`${this.apiUrl}/pin-check-in`, { pin });
+    return this.http.post(`${this.apiUrl}/pin-check-in`, { pin }, { withCredentials: true });
   }
 }

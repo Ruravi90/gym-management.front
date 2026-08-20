@@ -1,14 +1,13 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { AuthService } from './auth.service';
 import { environment } from '../environments/environment';
 
 export interface MembershipType {
   id: number;
   name: string;
   duration_days: number | null;
-  accesses_allowed: number | null; // null means unlimited
+  accesses_allowed: number | null;
   price: number;
   description?: string;
   is_active: boolean;
@@ -17,42 +16,41 @@ export interface MembershipType {
 }
 
 export interface PunchUsage {
-  total_accesses_allowed: number | null; // null means unlimited
+  total_accesses_allowed: number | null;
   accesses_used: number;
-  accesses_remaining: number | null; // null means unlimited
+  accesses_remaining: number | null;
 }
 
 export interface Membership {
   id: number;
   client_id: number;
-  membership_type_id?: number; // New field
+  membership_type_id?: number;
   type: string;
   start_date: string;
   end_date: string;
   price: number;
-  price_paid?: number; // New field
+  price_paid?: number;
   status: string;
   payment_status: string;
   payment_method?: string;
-  accesses_used: number; // New field for punch tracking
+  accesses_used: number;
   notes?: string;
   created_at: string;
   updated_at?: string;
 }
 
-// Extended interface for UI purposes to include client data
 export interface MembershipWithClient extends Membership {
-  client?: any; // Client object for UI display
+  client?: any;
 }
 
 export interface CreateMembershipRequest {
   client_id: number;
-  membership_type_id?: number; // New field
-  type?: string; // Kept for backward compatibility
+  membership_type_id?: number;
+  type?: string;
   start_date: string;
   end_date: string;
   price: number;
-  price_paid?: number; // New field
+  price_paid?: number;
   status: string;
   payment_status: string;
   payment_method?: string;
@@ -65,7 +63,6 @@ export interface UpdateMembershipRequest {
   payment_method?: string;
   notes?: string;
 }
-
 
 export interface CreateMembershipTypeRequest {
   name: string;
@@ -107,108 +104,90 @@ export interface MembershipStatistics {
 })
 export class MembershipService {
   private apiUrl = `${environment.apiUrl}/memberships`;
+  private membershipTypesApiUrl = `${environment.apiUrl}/membership-types`;
+  private paymentsApiUrl = `${environment.apiUrl}/payments/create-preference`;
 
-  constructor(
-    private http: HttpClient,
-    private authService: AuthService
-  ) { }
-
-  private getAuthHeaders(): HttpHeaders {
-    const token = this.authService.getAccessToken();
-    return new HttpHeaders({
-      'Authorization': `Bearer ${token}`,
-      'Content-Type': 'application/json'
-    });
-  }
+  constructor(private http: HttpClient) { }
 
   getMemberships(): Observable<Membership[]> {
-    return this.http.get<Membership[]>(this.apiUrl, { headers: this.getAuthHeaders() });
+    return this.http.get<Membership[]>(this.apiUrl, { withCredentials: true });
   }
 
   getMembership(id: number): Observable<Membership> {
-    return this.http.get<Membership>(`${this.apiUrl}/${id}`, { headers: this.getAuthHeaders() });
+    return this.http.get<Membership>(`${this.apiUrl}/${id}`, { withCredentials: true });
   }
 
   createMembership(membership: CreateMembershipRequest): Observable<Membership> {
-    return this.http.post<Membership>(this.apiUrl, membership, { headers: this.getAuthHeaders() });
+    return this.http.post<Membership>(this.apiUrl, membership, { withCredentials: true });
   }
 
   updateMembership(id: number, membership: Partial<CreateMembershipRequest>): Observable<Membership> {
-    return this.http.put<Membership>(`${this.apiUrl}/${id}`, membership, { headers: this.getAuthHeaders() });
+    return this.http.put<Membership>(`${this.apiUrl}/${id}`, membership, { withCredentials: true });
   }
 
   deleteMembership(id: number): Observable<Membership> {
-    return this.http.delete<Membership>(`${this.apiUrl}/${id}`, { headers: this.getAuthHeaders() });
+    return this.http.delete<Membership>(`${this.apiUrl}/${id}`, { withCredentials: true });
   }
 
   getMembershipsByClient(clientId: number): Observable<Membership[]> {
-    return this.http.get<Membership[]>(`${this.apiUrl}/client/${clientId}`, { headers: this.getAuthHeaders() });
+    return this.http.get<Membership[]>(`${this.apiUrl}/client/${clientId}`, { withCredentials: true });
   }
 
   getActiveMembershipByClient(clientId: number): Observable<Membership> {
-    return this.http.get<Membership>(`${this.apiUrl}/client/${clientId}/active`, { headers: this.getAuthHeaders() });
+    return this.http.get<Membership>(`${this.apiUrl}/client/${clientId}/active`, { withCredentials: true });
   }
 
   getMembershipsByStatus(status: string): Observable<Membership[]> {
-    return this.http.get<Membership[]>(`${this.apiUrl}/status/${status}`, { headers: this.getAuthHeaders() });
+    return this.http.get<Membership[]>(`${this.apiUrl}/status/${status}`, { withCredentials: true });
   }
 
   getMembershipsByPaymentStatus(paymentStatus: string): Observable<Membership[]> {
-    return this.http.get<Membership[]>(`${this.apiUrl}/payment-status/${paymentStatus}`, { headers: this.getAuthHeaders() });
+    return this.http.get<Membership[]>(`${this.apiUrl}/payment-status/${paymentStatus}`, { withCredentials: true });
   }
 
   getMembershipHistory(clientId: number): Observable<Membership[]> {
-    return this.http.get<Membership[]>(`${this.apiUrl}/client/${clientId}/history`, { headers: this.getAuthHeaders() });
+    return this.http.get<Membership[]>(`${this.apiUrl}/client/${clientId}/history`, { withCredentials: true });
   }
 
   getMembershipStatistics(): Observable<MembershipStatistics> {
-    return this.http.get<MembershipStatistics>(`${this.apiUrl}/statistics`, { headers: this.getAuthHeaders() });
+    return this.http.get<MembershipStatistics>(`${this.apiUrl}/statistics`, { withCredentials: true });
   }
 
-  // New methods for membership types
   getMembershipTypes(skip: number = 0, limit: number = 100, activeOnly: boolean = false): Observable<MembershipType[]> {
-    // Use the new dedicated endpoint for membership types
-    const membershipTypesApiUrl = `${environment.apiUrl}/membership-types`;
     const activeOnlyStr = activeOnly ? 'true' : 'false';
     const params = new URLSearchParams({ skip: skip.toString(), limit: limit.toString(), active_only: activeOnlyStr });
-    return this.http.get<MembershipType[]>(`${membershipTypesApiUrl}?${params.toString()}`, { headers: this.getAuthHeaders() });
+    return this.http.get<MembershipType[]>(`${this.membershipTypesApiUrl}?${params.toString()}`, { withCredentials: true });
   }
 
   getMembershipType(id: number): Observable<MembershipType> {
-    const membershipTypesApiUrl = `${environment.apiUrl}/membership-types`;
-    return this.http.get<MembershipType>(`${membershipTypesApiUrl}/${id}`, { headers: this.getAuthHeaders() });
+    return this.http.get<MembershipType>(`${this.membershipTypesApiUrl}/${id}`, { withCredentials: true });
   }
 
   createMembershipType(membershipType: CreateMembershipTypeRequest): Observable<MembershipType> {
-    const membershipTypesApiUrl = `${environment.apiUrl}/membership-types`;
-    return this.http.post<MembershipType>(`${membershipTypesApiUrl}`, membershipType, { headers: this.getAuthHeaders() });
+    return this.http.post<MembershipType>(this.membershipTypesApiUrl, membershipType, { withCredentials: true });
   }
 
   updateMembershipType(id: number, membershipType: UpdateMembershipTypeRequest): Observable<MembershipType> {
-    const membershipTypesApiUrl = `${environment.apiUrl}/membership-types`;
-    return this.http.put<MembershipType>(`${membershipTypesApiUrl}/${id}`, membershipType, { headers: this.getAuthHeaders() });
+    return this.http.put<MembershipType>(`${this.membershipTypesApiUrl}/${id}`, membershipType, { withCredentials: true });
   }
 
   deleteMembershipType(id: number): Observable<MembershipType> {
-    const membershipTypesApiUrl = `${environment.apiUrl}/membership-types`;
-    return this.http.delete<MembershipType>(`${membershipTypesApiUrl}/${id}`, { headers: this.getAuthHeaders() });
+    return this.http.delete<MembershipType>(`${this.membershipTypesApiUrl}/${id}`, { withCredentials: true });
   }
 
-  // Enhanced membership methods
   useMembershipAccess(membershipId: number): Observable<Membership> {
-    return this.http.post<Membership>(`${this.apiUrl}/${membershipId}/use-access`, {}, { headers: this.getAuthHeaders() });
+    return this.http.post<Membership>(`${this.apiUrl}/${membershipId}/use-access`, {}, { withCredentials: true });
   }
 
   getMembershipAccessUsage(membershipId: number): Observable<PunchUsage> {
-    return this.http.get<PunchUsage>(`${this.apiUrl}/${membershipId}/access-usage`, { headers: this.getAuthHeaders() });
+    return this.http.get<PunchUsage>(`${this.apiUrl}/${membershipId}/access-usage`, { withCredentials: true });
   }
 
   validateClientAccess(clientId: number): Observable<ValidateAccessResponse> {
-    return this.http.get<ValidateAccessResponse>(`${this.apiUrl}/validate-access/${clientId}`, { headers: this.getAuthHeaders() });
+    return this.http.get<ValidateAccessResponse>(`${this.apiUrl}/validate-access/${clientId}`, { withCredentials: true });
   }
 
   createPaymentPreference(membershipTypeId: number): Observable<any> {
-    const paymentsApiUrl = `${environment.apiUrl}/payments/create-preference`;
-    return this.http.post<any>(paymentsApiUrl, { membership_type_id: membershipTypeId }, { headers: this.getAuthHeaders() });
+    return this.http.post<any>(this.paymentsApiUrl, { membership_type_id: membershipTypeId }, { withCredentials: true });
   }
 }
