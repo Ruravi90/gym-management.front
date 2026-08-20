@@ -11,8 +11,12 @@ import { RouterModule } from '@angular/router';
     <nav class="navbar">
       <div class="nav-container">
         <div class="nav-brand">
-          <div class="nav-logo">MG</div>
-          <span class="nav-title">Mi GYM</span>
+          <div class="nav-logo">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" class="nav-logo-svg">
+              <path d="M2 13h3l2-4 3 8 2-6 2 2h5"/>
+            </svg>
+          </div>
+          <span class="nav-title">PULSE</span>
         </div>
         <div class="nav-actions">
           <a [routerLink]="loginUrl" class="btn btn-ghost">Iniciar Sesión</a>
@@ -211,7 +215,7 @@ import { RouterModule } from '@angular/router';
       <div class="benefits-container">
         <div class="benefits-content">
           <div class="section-header left">
-            <h2 class="section-title">¿Por qué elegir Mi GYM?</h2>
+            <h2 class="section-title">¿Por qué elegir PULSE?</h2>
             <p class="section-subtitle">
               Herramientas diseñadas por expertos del sector fitness para hacer crecer tu negocio
             </p>
@@ -271,7 +275,7 @@ import { RouterModule } from '@angular/router';
       <div class="cta-container">
         <h2 class="cta-title">¿Listo para transformar tu gimnasio?</h2>
         <p class="cta-subtitle">
-          Comenzá a gestionar tu gimnasio de forma inteligente con Mi GYM.
+          Comenzá a gestionar tu gimnasio de forma inteligente con PULSE.
         </p>
         <a [routerLink]="registerUrl" class="btn btn-primary btn-lg cta-button">
           Empezar Gratis Ahora
@@ -286,8 +290,12 @@ import { RouterModule } from '@angular/router';
     <footer class="footer">
       <div class="footer-container">
         <div class="footer-brand">
-          <div class="footer-logo">MG</div>
-          <span class="footer-title">Mi GYM</span>
+          <div class="footer-logo">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" class="footer-logo-svg">
+              <path d="M2 13h3l2-4 3 8 2-6 2 2h5"/>
+            </svg>
+          </div>
+          <span class="footer-title">PULSE</span>
           <p class="footer-desc">
             La plataforma de gestión integral para gimnasios modernos.
           </p>
@@ -312,7 +320,7 @@ import { RouterModule } from '@angular/router';
           </div>
         </div>
         <div class="footer-bottom">
-          <p>&copy; 2026 Mi GYM. Todos los derechos reservados.</p>
+          <p>&copy; 2026 PULSE. Todos los derechos reservados.</p>
         </div>
       </div>
     </footer>
@@ -351,9 +359,12 @@ import { RouterModule } from '@angular/router';
       display: flex;
       align-items: center;
       justify-content: center;
-      font-weight: 800;
-      font-size: 0.85rem;
       box-shadow: var(--shadow-sm);
+    }
+    .nav-logo-svg {
+      width: 22px;
+      height: 22px;
+      color: #1a2e05;
     }
     .nav-title {
       font-size: 1.25rem;
@@ -825,9 +836,12 @@ import { RouterModule } from '@angular/router';
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      font-weight: 800;
-      font-size: 0.85rem;
       margin-bottom: 0.75rem;
+    }
+    .footer-logo-svg {
+      width: 22px;
+      height: 22px;
+      color: #1a2e05;
     }
     .footer-title {
       display: block;

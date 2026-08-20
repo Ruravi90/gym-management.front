@@ -30,14 +30,18 @@
     height: 54px;
     background: var(--app-primary);
     color: var(--app-on-primary, #1a2e05);
-    border-radius: 16px; /* More rounded */
+    border-radius: 16px;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-weight: 800;
-    font-size: 1.1rem;
     margin: 0 auto 1.25rem;
     box-shadow: var(--shadow-md);
+}
+
+.logo-svg {
+    width: 30px;
+    height: 30px;
+    color: #1a2e05;
 }
 
 .login-title {

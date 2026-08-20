@@ -8,8 +8,12 @@ import { AuthService, RegisterRequest } from '@shared';
     <div class="auth-page">
       <div class="auth-card">
         <div class="auth-brand">
-          <div class="auth-logo">PW</div>
-          <h1>GymControl</h1>
+          <div class="auth-logo">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="auth-logo-svg">
+              <path d="M2 13h3l2-4 3 8 2-6 2 2h5"/>
+            </svg>
+          </div>
+          <h1>PULSE</h1>
           <p>Registro de Socio</p>
         </div>
         <form (ngSubmit)="onRegister()">
@@ -76,9 +80,12 @@ import { AuthService, RegisterRequest } from '@shared';
       display: flex;
       align-items: center;
       justify-content: center;
-      font-weight: 800;
-      font-size: 1.05rem;
       box-shadow: var(--shadow-md);
+    }
+    .auth-logo-svg {
+      width: 28px;
+      height: 28px;
+      color: #1a2e05;
     }
     .auth-brand h1 { margin: 0; font-size: 1.6rem; font-weight: 800; letter-spacing: -0.02em; }
     .auth-brand p { margin: 0.25rem 0 0; color: var(--text-muted); font-size: 0.95rem; }

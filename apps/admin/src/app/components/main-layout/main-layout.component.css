@@ -41,11 +41,16 @@
 .logo-circle {
     width: 36px; height: 36px;
     background: var(--app-primary);
-    border-radius: 10px; /* More rounded */
+    border-radius: 10px;
     display: flex; align-items: center; justify-content: center;
-    font-weight: 800; color: var(--app-on-primary, #1a2e05); font-size: 0.8rem;
     flex-shrink: 0;
     box-shadow: var(--shadow-sm, 0 1px 3px rgb(0 0 0 / 0.1));
+}
+
+.logo-svg {
+    width: 22px;
+    height: 22px;
+    color: #1a2e05;
 }
 
 .brand-text {
