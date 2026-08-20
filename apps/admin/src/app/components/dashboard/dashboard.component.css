@@ -496,6 +496,46 @@
   }
 }
 
+/* Tablet */
+@media (min-width: 769px) and (max-width: 1024px) {
+  .dashboard {
+    gap: 1.25rem;
+  }
+
+  .stat-cards {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.75rem;
+  }
+
+  .stat-card {
+    padding: 1rem;
+  }
+
+  .stat-value {
+    font-size: 1.35rem;
+  }
+
+  .charts-row,
+  .detail-row {
+    grid-template-columns: 1fr;
+    gap: 0.75rem;
+  }
+
+  .quick-actions {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.6rem;
+  }
+
+  .action-btn {
+    padding: 0.7rem 0.85rem;
+    font-size: 0.82rem;
+  }
+
+  .dash-header h1 {
+    font-size: 1.5rem;
+  }
+}
+
 @media (max-width: 900px) {
   .charts-row,
   .detail-row {

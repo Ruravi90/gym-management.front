@@ -7,9 +7,6 @@ import { RoutineService, Routine, WorkoutSession, RoutineDay } from '@shared';
   template: `
     <div class="page-container">
       <header class="page-header">
-        <div class="back-row">
-          <button (click)="goBack()" class="btn btn-ghost btn-sm">← Volver</button>
-        </div>
         <h1>{{ routine?.name }}</h1>
         <p *ngIf="routine?.description">{{ routine.description }}</p>
         <div class="day-tabs" *ngIf="routine && routine.days.length > 1 && !sessionMode">

@@ -1,25 +1,26 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { AuthService } from '@shared';
-import { VersionService } from '@shared';
 
 @Component({
-  selector: 'app-main-layout',
-  templateUrl: './main-layout.component.html',
-  styleUrls: ['./main-layout.component.css']
+  selector: 'app-member-layout',
+  templateUrl: './member-layout.component.html',
+  styleUrls: ['./member-layout.component.css']
 })
-export class MainLayoutComponent implements OnInit, OnDestroy {
+export class MemberLayoutComponent implements OnInit, OnDestroy {
   sidebarCollapsed = false;
   isMobileView = false;
+  userName = 'Socio';
 
   private readonly MOBILE_BREAKPOINT = 769;
   private resizeHandler: (() => void) | null = null;
 
-  constructor(
-    private authService: AuthService,
-    public versionService: VersionService
-  ) { }
+  constructor(private authService: AuthService) {}
 
   ngOnInit(): void {
+    const user = this.authService.getCurrentUser();
+    if (user?.name) {
+      this.userName = user.name;
+    }
     this.checkScreenSize();
     this.resizeHandler = () => this.checkScreenSize();
     window.addEventListener('resize', this.resizeHandler);
@@ -55,9 +56,5 @@ export class MainLayoutComponent implements OnInit, OnDestroy {
 
   logout() {
     this.authService.logout();
-  }
-
-  getCurrentUser() {
-    return this.authService.getCurrentUser();
   }
 }

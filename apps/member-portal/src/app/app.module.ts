@@ -3,7 +3,6 @@ import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { FormsModule } from '@angular/forms';
-import { NgxChartsModule } from '@swimlane/ngx-charts';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { LoginComponent } from './components/login/login.component';
@@ -14,6 +13,9 @@ import { PaymentResultComponent } from './components/payment-result/payment-resu
 import { QrComponent } from './components/qr/qr.component';
 import { AuthInterceptor, environment, SharedLandingComponent } from '@shared';
 import { ServiceWorkerModule } from '@angular/service-worker';
+import { ProgressModule } from './components/progress/progress.module';
+import { ProgressComponent } from './components/progress/progress.component';
+import { MemberLayoutComponent } from './components/member-layout/member-layout.component';
 
 @NgModule({
   declarations: [
@@ -23,7 +25,9 @@ import { ServiceWorkerModule } from '@angular/service-worker';
     DashboardComponent,
     MembershipPurchaseComponent,
     PaymentResultComponent,
-    QrComponent
+    QrComponent,
+    ProgressComponent,
+    MemberLayoutComponent
   ],
   imports: [
     BrowserModule,
@@ -31,8 +35,8 @@ import { ServiceWorkerModule } from '@angular/service-worker';
     AppRoutingModule,
     HttpClientModule,
     FormsModule,
-    NgxChartsModule,
     SharedLandingComponent,
+    ProgressModule,
     ServiceWorkerModule.register('ngsw-worker.js', {
       enabled: environment.production,
       registrationStrategy: 'registerWhenStable:30000'

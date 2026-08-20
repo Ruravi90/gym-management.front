@@ -7,9 +7,6 @@ import { RoutineService, ExerciseService, Routine, WorkoutSession, Exercise, DAY
   template: `
     <div class="page-container">
       <header class="page-header">
-        <div class="back-row">
-          <button routerLink="/dashboard" class="btn btn-ghost btn-sm">← Volver al Dashboard</button>
-        </div>
         <h1>Mis Rutinas</h1>
         <p>Tu plan de entrenamiento personalizado. Sigue tus días, registra tus series y consulta a tu mentor.</p>
         <div class="header-actions">

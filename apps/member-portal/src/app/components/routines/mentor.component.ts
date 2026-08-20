@@ -23,9 +23,6 @@ interface Message {
   template: `
     <div class="page-container mentor-container">
       <header class="page-header">
-        <div class="back-row">
-          <button routerLink="/rutinas" class="btn btn-ghost btn-sm">← Volver a Mis Rutinas</button>
-        </div>
         <h1>FitMentor</h1>
         <p>Tu coach personal con IA. Generá tu rutina personalizada o consultá tu reporte semanal de progreso.</p>
         <div class="header-actions">

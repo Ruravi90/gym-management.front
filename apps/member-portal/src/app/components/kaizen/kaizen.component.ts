@@ -6,9 +6,6 @@ import { KaizenService, KaizenHabit, KaizenMedal } from './kaizen.service';
   template: `
     <div class="page-container kaizen-container">
       <header class="page-header">
-        <div class="back-row">
-          <button routerLink="/dashboard" class="btn btn-ghost btn-sm">← Volver al Dashboard</button>
-        </div>
         <h1>Mejora Continua <span class="accent">Kaizen</span></h1>
         <p>Conviértete en un mejor guerrero cada día. Registra tus hábitos, reflexiona sobre tus metas y consigue medallas por tu esfuerzo.</p>
         <div class="header-actions">

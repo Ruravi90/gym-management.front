@@ -1,12 +1,23 @@
 <div class="dashboard-layout" [class.sidebar-collapsed]="sidebarCollapsed">
-  <!-- Mobile toggle button outside sidebar to remain accessible -->
-  <button class="mobile-toggle" (click)="toggleSidebar()" *ngIf="isMobileView">
+
+  <!-- Mobile hamburger — fixed outside sidebar -->
+  <button class="menu-toggle mobile-only" (click)="toggleSidebar()"
+    [attr.aria-label]="sidebarCollapsed ? 'Abrir menú' : 'Cerrar menú'">
     {{ sidebarCollapsed ? '☰' : '✕' }}
   </button>
 
+  <!-- Mobile backdrop -->
+  <div class="sidebar-backdrop" *ngIf="isMobileView && !sidebarCollapsed" (click)="toggleSidebar()"></div>
+
   <aside class="sidebar-premium" [class.collapsed]="sidebarCollapsed" [class.mobile-view]="isMobileView">
+    <!-- Desktop/Tablet toggle — inside sidebar, above brand -->
+    <button class="menu-toggle desktop-only" (click)="toggleSidebar()"
+      [attr.aria-label]="sidebarCollapsed ? 'Abrir menú' : 'Cerrar menú'">
+      {{ sidebarCollapsed ? '☰' : '✕' }}
+    </button>
+
     <div class="brand-container">
-      <div class="logo-circle" (click)="toggleSidebar()">
+      <div class="logo-circle">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" class="logo-svg">
           <path d="M2 13h3l2-4 3 8 2-6 2 2h5"/>
         </svg>
@@ -27,12 +38,12 @@
       </a>
       <a routerLink="/routines" routerLinkActive="active" class="nav-item" [title]="sidebarCollapsed ? 'Rutinas' : ''"
         (click)="onNavItemClick()">
-        <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6.5 6.5 17.5 17.5"></path><path d="M21 21 12 12"></path><path d="M15 4.5 19.5 9"></path><path d="M12 21v-9"></path><path d="M3 12h9"></path><path d="M6.5 6.5 3 3"></path><path d="M21 3l-3.5 3.5"></path><path d="M12 12l-4.5 4.5"></path></svg>
+        <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><rect x="8" y="2" width="8" height="4" rx="1"/><path d="M9 14l2 2 4-4"/></svg>
         <span class="nav-label" *ngIf="!sidebarCollapsed">Rutinas</span>
       </a>
       <a routerLink="/exercises" routerLinkActive="active" class="nav-item" [title]="sidebarCollapsed ? 'Ejercicios' : ''"
         (click)="onNavItemClick()">
-        <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6.5 6.5 17.5 17.5"></path><path d="M21 21 12 12"></path><path d="M15 4.5 19.5 9"></path><path d="M12 21v-9"></path><path d="M3 12h9"></path><path d="M6.5 6.5 3 3"></path><path d="M21 3l-3.5 3.5"></path><path d="M12 12l-4.5 4.5"></path></svg>
+        <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6.5 6.5h11"/><path d="M6.5 17.5h11"/><rect x="2" y="8" width="4" height="8" rx="1"/><rect x="18" y="8" width="4" height="8" rx="1"/><rect x="5" y="10" width="2" height="4" rx="0.5"/><rect x="17" y="10" width="2" height="4" rx="0.5"/><line x1="12" y1="6" x2="12" y2="18"/></svg>
         <span class="nav-label" *ngIf="!sidebarCollapsed">Ejercicios</span>
       </a>
       <a routerLink="/measurements" routerLinkActive="active" class="nav-item" [title]="sidebarCollapsed ? 'Medidas' : ''"
@@ -81,7 +92,7 @@
     </div>
   </aside>
 
-  <main class="content-area" [class.full-width]="sidebarCollapsed">
+  <main class="content-area">
     <router-outlet></router-outlet>
   </main>
 </div>

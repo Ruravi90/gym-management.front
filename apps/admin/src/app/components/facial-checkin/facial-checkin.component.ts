@@ -54,10 +54,13 @@ export class FacialCheckinComponent implements OnInit, OnDestroy {
 
     this.html5QrCode = new Html5Qrcode('qr-reader');
 
+    const vw = window.innerWidth;
+    const qrboxSize = vw >= 1024 ? 350 : vw >= 768 ? 300 : 250;
+
     try {
       await this.html5QrCode.start(
         { facingMode: 'environment' },
-        { fps: 10, qrbox: { width: 250, height: 250 }, aspectRatio: 1.0 },
+        { fps: 10, qrbox: { width: qrboxSize, height: qrboxSize }, aspectRatio: 1.0 },
         (decodedText) => this.onQrScanned(decodedText),
         () => {}
       );

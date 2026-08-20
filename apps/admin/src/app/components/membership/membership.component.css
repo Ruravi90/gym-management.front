@@ -186,6 +186,42 @@
 /* --- Responsive Adjustments --- */
 @media (max-width: 900px) { .form-grid { grid-template-columns: 1fr; } }
 
+/* Tablet */
+@media (min-width: 769px) and (max-width: 1024px) {
+    .stats-row {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 1rem;
+    }
+
+    .stat-card {
+        padding: 1rem;
+    }
+
+    .stat-details .value {
+        font-size: 1.25rem;
+    }
+
+    .filters-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 1rem;
+        padding: 1rem 1.25rem;
+    }
+
+    .main-header {
+        margin-bottom: 1.25rem;
+    }
+
+    .page-title {
+        font-size: 1.5rem;
+    }
+
+    .app-table th,
+    .app-table td {
+        padding: 0.65rem 0.85rem;
+        font-size: 0.88rem;
+    }
+}
+
 /* --- Mobile Card Layout --- */
 .desktop-view {
     display: table;
