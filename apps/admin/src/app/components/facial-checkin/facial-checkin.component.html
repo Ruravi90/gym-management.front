@@ -1,149 +1,101 @@
-<div class="checkin-page">
-    <div class="checkin-header">
-        <h1 class="page-title">PANTHER WARRIORS</h1>
-        <p class="page-subtitle">Sistema de acceso con reconocimiento facial</p>
+<div class="kiosk">
+
+  <!-- IDLE State -->
+  <div class="kiosk-idle" *ngIf="state === 'idle'">
+    <div class="idle-icon">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+        <rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/>
+        <rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/>
+      </svg>
     </div>
-
-    <!-- Main Card with state-based background -->
-    <div class="app-card checkin-main-card" 
-         [class.state-granted]="state === 'granted'" 
-         [class.state-denied]="state === 'denied'">
-        
-        <!-- INITIAL STATE: Only buttons -->
-        <div class="initial-actions" *ngIf="state === 'idle' && !streaming">
-            <button (click)="startCamera()" class="app-btn app-btn-primary app-btn-kiosk">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:18px;height:18px;"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path><circle cx="12" cy="13" r="4"></circle></svg>
-                INICIAR CÁMARA
-            </button>
-            <button class="app-btn app-btn-secondary app-btn-kiosk" (click)="toggleManualMode()">
-                ACCESO MANUAL
-            </button>
-        </div>
-
-        <div class="checkin-grid" *ngIf="state !== 'idle' || streaming">
-            <!-- Left Side: Camera Panel (Visible during scan/verify) -->
-            <div class="camera-section" *ngIf="streaming">
-                <div class="camera-container">
-                    <video #videoElement autoplay playsinline></video>
-                    
-                    <!-- Visual Guidance Overlay -->
-                    <div class="face-guide-overlay">
-                        <div class="face-guide-oval"></div>
-                        <div class="face-guide-label">Centra tu rostro aquí</div>
-                    </div>
-                    
-                    <div class="scan-bar"></div>
-                    <canvas #canvas style="display:none;"></canvas>
-                    <!-- Top indicator light -->
-                    <div class="status-indicator">
-                        <div class="status-dot" [class]="state"></div>
-                    </div>
-                </div>
-
-                <div class="checkin-actions-compact">
-                    <button (click)="toggleCamera()" class="app-btn app-btn-tertiary" title="Cambiar cámara">
-                        CÁMARA
-                    </button>
-                    <button (click)="stopCamera()" class="app-btn app-btn-secondary">
-                        CANCELAR
-                    </button>
-                </div>
-            </div>
-
-            <!-- Right Side: Status/Information -->
-            <div class="info-section" [class.full-width]="!streaming">
-                <div class="section-badge" *ngIf="state !== 'verifying' && state !== 'scanning'">
-                    <svg class="icon-user" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
-                    <h3>{{ state === 'granted' ? 'Acceso Autorizado' : state === 'denied' ? 'Acceso Restringido' : 'Verificación Biométrica' }}</h3>
-                </div>
-
-                <!-- Status badge and progress (Visible during process) -->
-                <div class="status-display" *ngIf="state === 'scanning' || state === 'verifying'">
-                    <div class="status-row">
-                        <span class="label">Estado:</span>
-                        <span class="status-badge" [class]="state">
-                            {{ state === 'scanning' ? 'Escaneando...' : 'Verificando...' }}
-                        </span>
-                    </div>
-                    <div class="progress-track">
-                        <div class="progress-bar" 
-                             [style.width.%]="state === 'scanning' ? 40 : 80"
-                             [class]="state">
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Result Message (Visible after result) -->
-                <div class="result-message" *ngIf="state === 'granted' || state === 'denied'">
-                    <div class="result-icon-big" [class]="state">
-                        {{ state === 'granted' ? '✅' : '❌' }}
-                    </div>
-                    <p class="main-msg">{{ message }}</p>
-                </div>
-
-                <!-- Client Info Panel (Visible after success) -->
-                <div class="client-info-panel-modern" *ngIf="clientInfo && !streaming">
-                    <div class="info-group">
-                        <span class="info-label">GUERRERO</span>
-                        <span class="info-value name">{{ clientInfo.name }}</span>
-                    </div>
-                    
-                    <div class="info-row-grid">
-                        <div class="info-group">
-                            <span class="info-label">MEMBRESÍA</span>
-                            <span class="info-value" [class.active-text]="isMembershipActive(membershipInfo?.end_date)" [class.expired-text]="!isMembershipActive(membershipInfo?.end_date)">
-                                {{ membershipInfo ? (membershipInfo.type | uppercase) : 'VACANTE' }}
-                            </span>
-                        </div>
-                        <div class="info-group" *ngIf="membershipInfo">
-                            <span class="info-label">VENCIMIENTO</span>
-                            <span class="info-value">{{ membershipInfo.end_date | date:'dd MMM yyyy':'':'es' }}</span>
-                        </div>
-                    </div>
-
-                    <div class="info-footer" *ngIf="lastVisit">
-                        <span>Último acceso: {{ lastVisit.check_in_time | date:'dd/MM HH:mm' }}</span>
-                    </div>
-                </div>
-
-                <!-- Empty/Scanning Message -->
-                <div class="scanning-placeholder" *ngIf="streaming && state === 'scanning'">
-                    <p>Por favor, mire a la cámara...</p>
-                </div>
-            </div>
-        </div>
+    <h1>Check-in por QR</h1>
+    <p>Solicita al socio que muestre su código QR para registrar asistencia</p>
+    <div class="idle-actions">
+      <button class="kiosk-btn primary" (click)="startScanner()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
+        Escanear QR
+      </button>
+      <button class="kiosk-btn secondary" (click)="toggleManualMode()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+        Acceso Manual
+      </button>
     </div>
+  </div>
 
-
-    <!-- Manual Access Modal -->
-    <div class="modal-backdrop" *ngIf="manualMode">
-        <div class="app-card modal-card">
-            <div class="modal-header">
-                <h3>Ingreso Manual de Socio</h3>
-                <button class="btn-close" (click)="toggleManualMode()">&times;</button>
-            </div>
-            <div class="modal-body">
-                <div class="modal-search-group">
-                    <input type="text" [(ngModel)]="searchTerm" placeholder="Nombre o email..." (keyup.enter)="searchClients()" class="app-input">
-                    <button class="app-btn app-btn-primary" (click)="searchClients()">Buscar</button>
-                </div>
-                
-                <div class="form-group" style="margin-top: 1rem;">
-                    <label>Seleccionar Guerrero</label>
-                    <select [(ngModel)]="manualClientId" class="app-input" [disabled]="clients.length === 0">
-                        <option [ngValue]="null">-- Seleccione un socio --</option>
-                        <option *ngFor="let client of clients" [ngValue]="client.id">{{ client.name }}</option>
-                    </select>
-                    <div class="no-results-message" *ngIf="searchTerm && clients.length === 0">
-                        No se encontraron socios para "{{ searchTerm }}"
-                    </div>
-                </div>
-
-                <div class="modal-actions-manual">
-                    <button class="app-btn app-btn-secondary" (click)="toggleManualMode()">Cancelar</button>
-                    <button class="app-btn app-btn-primary" (click)="checkInManual()" [disabled]="!manualClientId">Confirmar Acceso</button>
-                </div>
-            </div>
-        </div>
+  <!-- SCANNING State -->
+  <div class="kiosk-scanning" *ngIf="state === 'scanning'">
+    <div class="scan-header">
+      <h2>Escaneando código QR...</h2>
+      <p>{{ message }}</p>
     </div>
+    <div class="qr-reader-wrapper">
+      <div id="qr-reader"></div>
+    </div>
+    <button class="kiosk-btn danger" (click)="stopCamera()">Cancelar</button>
+  </div>
+
+  <!-- VERIFYING State -->
+  <div class="kiosk-verifying" *ngIf="state === 'verifying'">
+    <div class="verifying-spinner"></div>
+    <h2>{{ message }}</h2>
+  </div>
+
+  <!-- GRANTED State -->
+  <div class="kiosk-result granted" *ngIf="state === 'granted'">
+    <div class="result-icon">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+    </div>
+    <h1>{{ message }}</h1>
+    <div class="result-details" *ngIf="clientInfo">
+      <div class="detail-row">
+        <span class="label">Socio:</span>
+        <span class="value">{{ clientInfo.name }}</span>
+      </div>
+      <div class="detail-row" *ngIf="membershipInfo">
+        <span class="label">Membresía:</span>
+        <span class="value">{{ membershipInfo.type }}</span>
+      </div>
+      <div class="detail-row" *ngIf="membershipInfo?.end_date">
+        <span class="label">Vence:</span>
+        <span class="value">{{ membershipInfo.end_date | date:'dd MMM yyyy' }}</span>
+      </div>
+      <div class="detail-row" *ngIf="lastVisit">
+        <span class="label">Última visita:</span>
+        <span class="value">{{ lastVisit.check_in_time | date:'dd MMM HH:mm' }}</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- DENIED State -->
+  <div class="kiosk-result denied" *ngIf="state === 'denied'">
+    <div class="result-icon">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>
+    </div>
+    <h1>{{ message }}</h1>
+  </div>
+
+  <!-- MANUAL MODE Modal -->
+  <div class="modal-overlay" *ngIf="manualMode" (click)="manualMode = false">
+    <div class="modal" (click)="$event.stopPropagation()">
+      <div class="modal-header">
+        <h3>Check-in Manual</h3>
+        <button class="btn-close" (click)="manualMode = false">&times;</button>
+      </div>
+      <div class="modal-body">
+        <input class="app-input" placeholder="Buscar por nombre o email..." [(ngModel)]="searchTerm" (input)="searchClients()">
+        <div class="client-list">
+          <div *ngFor="let c of clients" class="client-item" [class.selected]="manualClientId === c.id" (click)="manualClientId = c.id">
+            <strong>{{ c.name }}</strong>
+            <small>{{ c.email }}</small>
+          </div>
+          <div *ngIf="clients.length === 0" class="muted text-center">Sin resultados</div>
+        </div>
+      </div>
+      <div class="modal-actions">
+        <button class="btn btn-outline" (click)="manualMode = false">Cancelar</button>
+        <button class="btn btn-primary" (click)="checkInManual()" [disabled]="!manualClientId">Registrar</button>
+      </div>
+    </div>
+  </div>
+
 </div>

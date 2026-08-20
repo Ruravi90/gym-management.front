@@ -6,12 +6,14 @@ import { RegisterComponent } from './components/register/register.component';
 import { DashboardComponent } from './components/dashboard/dashboard.component';
 import { MembershipPurchaseComponent } from './components/membership-purchase/membership-purchase.component';
 import { PaymentResultComponent } from './components/payment-result/payment-result.component';
+import { QrComponent } from './components/qr/qr.component';
 
 const routes: Routes = [
   { path: '', component: SharedLandingComponent, data: { appType: 'member' } },
   { path: 'login', component: LoginComponent },
   { path: 'register', component: RegisterComponent },
   { path: 'dashboard', component: DashboardComponent },
+  { path: 'my-qr', component: QrComponent },
   { path: 'memberships/purchase', component: MembershipPurchaseComponent },
   { path: 'payment/success', component: PaymentResultComponent },
   { path: 'payment/failure', component: PaymentResultComponent },

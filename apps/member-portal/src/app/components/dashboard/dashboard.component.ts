@@ -15,6 +15,12 @@ import { KaizenService } from '../kaizen/kaizen.service';
       </header>
 
       <div class="grid grid-2">
+        <div class="card qr-card-quick">
+          <h3>Mi Código QR</h3>
+          <p class="muted">Muestra este código en recepción para registrar tu entrada.</p>
+          <button routerLink="/my-qr" class="btn btn-primary btn-block mt-2">Abrir Mi QR</button>
+        </div>
+
         <div class="card">
           <div class="card-head">
             <h3>Mi Membresía</h3>

@@ -11,6 +11,7 @@ import { RegisterComponent } from './components/register/register.component';
 import { DashboardComponent } from './components/dashboard/dashboard.component';
 import { MembershipPurchaseComponent } from './components/membership-purchase/membership-purchase.component';
 import { PaymentResultComponent } from './components/payment-result/payment-result.component';
+import { QrComponent } from './components/qr/qr.component';
 import { AuthInterceptor, environment, SharedLandingComponent } from '@shared';
 import { ServiceWorkerModule } from '@angular/service-worker';
 
@@ -21,7 +22,8 @@ import { ServiceWorkerModule } from '@angular/service-worker';
     RegisterComponent,
     DashboardComponent,
     MembershipPurchaseComponent,
-    PaymentResultComponent
+    PaymentResultComponent,
+    QrComponent
   ],
   imports: [
     BrowserModule,

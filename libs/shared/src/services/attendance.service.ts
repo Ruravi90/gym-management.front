@@ -42,4 +42,8 @@ export class AttendanceService {
   checkInManual(clientId: number): Observable<any> {
     return this.http.post(`${this.apiUrl}/manual/${clientId}`, {}, { headers: this.getAuthHeaders() });
   }
+
+  qrCheckIn(token: string): Observable<any> {
+    return this.http.post(`${this.apiUrl}/qr-check-in`, { token }, { headers: this.getAuthHeaders() });
+  }
 }
