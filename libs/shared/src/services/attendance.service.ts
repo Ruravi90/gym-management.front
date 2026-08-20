@@ -46,4 +46,8 @@ export class AttendanceService {
   qrCheckIn(token: string): Observable<any> {
     return this.http.post(`${this.apiUrl}/qr-check-in`, { token }, { headers: this.getAuthHeaders() });
   }
+
+  pinCheckIn(pin: string): Observable<any> {
+    return this.http.post(`${this.apiUrl}/pin-check-in`, { pin });
+  }
 }

@@ -4,7 +4,7 @@ import { forkJoin, of } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 import { Html5Qrcode } from 'html5-qrcode';
 
-type CheckinState = 'idle' | 'scanning' | 'verifying' | 'granted' | 'denied';
+type CheckinState = 'scanning' | 'verifying' | 'granted' | 'denied';
 
 @Component({
   selector: 'app-facial-checkin',
@@ -12,7 +12,7 @@ type CheckinState = 'idle' | 'scanning' | 'verifying' | 'granted' | 'denied';
   styleUrls: ['./facial-checkin.component.css']
 })
 export class FacialCheckinComponent implements OnInit, OnDestroy {
-  state: CheckinState = 'idle';
+  state: CheckinState = 'scanning';
   message = '';
   scanning = false;
 
@@ -20,10 +20,8 @@ export class FacialCheckinComponent implements OnInit, OnDestroy {
   membershipInfo: any = null;
   lastVisit: any = null;
 
-  manualMode = false;
-  searchTerm = '';
-  clients: any[] = [];
-  manualClientId: number | null = null;
+  pinMode = false;
+  pinInput = '';
 
   private html5QrCode: Html5Qrcode | null = null;
   private displayTimer: any = null;
@@ -37,10 +35,13 @@ export class FacialCheckinComponent implements OnInit, OnDestroy {
     private cdr: ChangeDetectorRef
   ) {}
 
-  ngOnInit(): void {}
+  ngOnInit(): void {
+    setTimeout(() => this.startScanner(), 100);
+  }
 
   ngOnDestroy(): void {
-    this.resetToIdle();
+    this.stopScanner();
+    if (this.displayTimer) { clearTimeout(this.displayTimer); }
   }
 
   async startScanner(): Promise<void> {
@@ -62,11 +63,9 @@ export class FacialCheckinComponent implements OnInit, OnDestroy {
       );
     } catch (err) {
       console.error('Camera error:', err);
-      this.state = 'denied';
       this.message = 'Error al acceder a la cámara';
       this.scanning = false;
       this.cdr.detectChanges();
-      this.displayTimer = setTimeout(() => this.resetToIdle(), 3000);
     }
   }
 
@@ -101,13 +100,13 @@ export class FacialCheckinComponent implements OnInit, OnDestroy {
             this.state = hasAccess ? 'granted' : 'denied';
             this.message = hasAccess ? '¡Acceso Concedido!' : 'Acceso Denegado: Membresía no activa.';
             this.cdr.detectChanges();
-            this.displayTimer = setTimeout(() => this.resetToIdle(), 5000);
+            this.displayTimer = setTimeout(() => this.afterResult(), 4000);
           },
           error: () => {
             this.state = 'denied';
             this.message = 'Error al obtener datos del socio.';
             this.cdr.detectChanges();
-            this.displayTimer = setTimeout(() => this.resetToIdle(), 5000);
+            this.displayTimer = setTimeout(() => this.afterResult(), 3000);
           }
         });
       },
@@ -115,7 +114,7 @@ export class FacialCheckinComponent implements OnInit, OnDestroy {
         this.state = 'denied';
         this.message = err.error?.detail || 'Código inválido o expirado.';
         this.cdr.detectChanges();
-        this.displayTimer = setTimeout(() => this.resetToIdle(), 3000);
+        this.displayTimer = setTimeout(() => this.afterResult(), 3000);
       }
     });
   }
@@ -127,20 +126,19 @@ export class FacialCheckinComponent implements OnInit, OnDestroy {
     }
   }
 
-  resetToIdle(): void {
-    this.stopScanner();
+  private afterResult(): void {
     if (this.displayTimer) { clearTimeout(this.displayTimer); this.displayTimer = null; }
-    this.state = 'idle';
-    this.message = '';
     this.clientInfo = null;
     this.membershipInfo = null;
     this.lastVisit = null;
-    this.manualMode = false;
+    this.pinMode = false;
+    this.pinInput = '';
     this.cdr.detectChanges();
+    this.startScanner();
   }
 
   stopCamera(): void {
-    this.resetToIdle();
+    this.stopScanner();
   }
 
   isMembershipActive(endDate: string | undefined | null): boolean {
@@ -148,47 +146,31 @@ export class FacialCheckinComponent implements OnInit, OnDestroy {
     return new Date(endDate) >= new Date();
   }
 
-  toggleManualMode(): void {
-    this.manualMode = !this.manualMode;
-    if (this.manualMode) {
-      this.searchTerm = '';
-      this.clients = [];
-      this.loadClients();
-    }
-  }
-
-  loadClients(): void {
-    this.clientService.getClients().subscribe({
-      next: (data) => { this.clients = data; this.cdr.detectChanges(); },
-      error: () => { this.clients = []; this.cdr.detectChanges(); }
-    });
-  }
-
-  searchClients(): void {
-    if (this.searchTerm.trim()) {
-      this.clientService.searchClients(this.searchTerm).subscribe({
-        next: (data) => { this.clients = data; this.cdr.detectChanges(); },
-        error: () => { this.clients = []; this.cdr.detectChanges(); }
-      });
+  togglePinMode(): void {
+    this.pinMode = !this.pinMode;
+    if (this.pinMode) {
+      this.pinInput = '';
+      this.stopScanner();
     } else {
-      this.loadClients();
+      this.startScanner();
     }
   }
 
-  checkInManual(): void {
-    if (!this.manualClientId) {
-      this.message = 'Seleccione un socio.';
-      this.state = 'denied';
-      this.cdr.detectChanges();
-      setTimeout(() => this.resetToIdle(), 3000);
-      return;
+  onPinInput(): void {
+    this.pinInput = this.pinInput.replace(/[^0-9]/g, '').slice(0, 6);
+    if (this.pinInput.length === 6) {
+      this.checkInPin();
     }
+  }
+
+  checkInPin(): void {
+    if (!this.pinInput || this.pinInput.length !== 6) return;
 
     this.state = 'verifying';
-    this.message = 'Procesando...';
+    this.message = 'Verificando PIN...';
     this.cdr.detectChanges();
 
-    this.attendanceService.checkInManual(this.manualClientId).subscribe({
+    this.attendanceService.pinCheckIn(this.pinInput).subscribe({
       next: (res) => {
         forkJoin({
           client: this.clientService.getClient(res.client_id).pipe(catchError(() => of(null))),
@@ -206,25 +188,22 @@ export class FacialCheckinComponent implements OnInit, OnDestroy {
             const hasAccess = this.isMembershipActive(data.membership?.end_date);
             this.state = hasAccess ? 'granted' : 'denied';
             this.message = hasAccess ? '¡Acceso Concedido!' : 'Acceso Denegado: Membresía no activa.';
-            this.manualMode = false;
             this.cdr.detectChanges();
-            this.displayTimer = setTimeout(() => this.resetToIdle(), 5000);
+            this.displayTimer = setTimeout(() => this.afterResult(), 4000);
           },
           error: () => {
             this.state = 'denied';
             this.message = 'Error al obtener datos.';
-            this.manualMode = false;
             this.cdr.detectChanges();
-            this.displayTimer = setTimeout(() => this.resetToIdle(), 5000);
+            this.displayTimer = setTimeout(() => this.afterResult(), 3000);
           }
         });
       },
       error: (err) => {
         this.state = 'denied';
-        this.message = err.error?.detail || 'Error al registrar ingreso.';
-        this.manualMode = false;
+        this.message = err.error?.detail || 'PIN inválido o expirado.';
         this.cdr.detectChanges();
-        this.displayTimer = setTimeout(() => this.resetToIdle(), 5000);
+        this.displayTimer = setTimeout(() => this.afterResult(), 3000);
       }
     });
   }

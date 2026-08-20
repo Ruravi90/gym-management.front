@@ -1,37 +1,36 @@
 <div class="kiosk">
 
-  <!-- IDLE State -->
-  <div class="kiosk-idle" *ngIf="state === 'idle'">
-    <div class="idle-icon">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-        <rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/>
-        <rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/>
-      </svg>
-    </div>
-    <h1>Check-in por QR</h1>
-    <p>Solicita al socio que muestre su código QR para registrar asistencia</p>
-    <div class="idle-actions">
-      <button class="kiosk-btn primary" (click)="startScanner()">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
-        Escanear QR
-      </button>
-      <button class="kiosk-btn secondary" (click)="toggleManualMode()">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
-        Acceso Manual
-      </button>
-    </div>
-  </div>
-
-  <!-- SCANNING State -->
-  <div class="kiosk-scanning" *ngIf="state === 'scanning'">
+  <!-- SCANNING State - Cámara siempre visible -->
+  <div class="kiosk-camera" *ngIf="state === 'scanning'">
     <div class="scan-header">
       <h2>Escaneando código QR...</h2>
-      <p>{{ message }}</p>
+      <p>Apunta la cámara al código QR del socio</p>
     </div>
     <div class="qr-reader-wrapper">
       <div id="qr-reader"></div>
     </div>
-    <button class="kiosk-btn danger" (click)="stopCamera()">Cancelar</button>
+    <button class="pin-toggle-btn" (click)="togglePinMode()">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+      ¿No se lee el QR? Ingresa el PIN
+    </button>
+  </div>
+
+  <!-- PIN MODE - Input inline debajo de la cámara -->
+  <div class="kiosk-pin" *ngIf="state === 'scanning' && pinMode">
+    <div class="pin-inline">
+      <p class="pin-label">Ingresa el PIN de 6 dígitos del socio</p>
+      <input
+        class="pin-input"
+        type="text"
+        inputmode="numeric"
+        maxlength="6"
+        placeholder="000000"
+        [(ngModel)]="pinInput"
+        (input)="onPinInput()"
+        autofocus
+      >
+      <button class="pin-cancel-btn" (click)="togglePinMode()">Volver a cámara</button>
+    </div>
   </div>
 
   <!-- VERIFYING State -->
@@ -72,30 +71,6 @@
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>
     </div>
     <h1>{{ message }}</h1>
-  </div>
-
-  <!-- MANUAL MODE Modal -->
-  <div class="modal-overlay" *ngIf="manualMode" (click)="manualMode = false">
-    <div class="modal" (click)="$event.stopPropagation()">
-      <div class="modal-header">
-        <h3>Check-in Manual</h3>
-        <button class="btn-close" (click)="manualMode = false">&times;</button>
-      </div>
-      <div class="modal-body">
-        <input class="app-input" placeholder="Buscar por nombre o email..." [(ngModel)]="searchTerm" (input)="searchClients()">
-        <div class="client-list">
-          <div *ngFor="let c of clients" class="client-item" [class.selected]="manualClientId === c.id" (click)="manualClientId = c.id">
-            <strong>{{ c.name }}</strong>
-            <small>{{ c.email }}</small>
-          </div>
-          <div *ngIf="clients.length === 0" class="muted text-center">Sin resultados</div>
-        </div>
-      </div>
-      <div class="modal-actions">
-        <button class="btn btn-outline" (click)="manualMode = false">Cancelar</button>
-        <button class="btn btn-primary" (click)="checkInManual()" [disabled]="!manualClientId">Registrar</button>
-      </div>
-    </div>
   </div>
 
 </div>

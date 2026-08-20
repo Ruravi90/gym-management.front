@@ -1,5 +1,8 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
-import { QrService } from '@shared';
+import { Router } from '@angular/router';
+import { Location } from '@angular/common';
+import { QrService, AuthService } from '@shared';
+import { Subscription } from 'rxjs';
 import * as QRCode from 'qrcode';
 
 @Component({
@@ -8,6 +11,12 @@ import * as QRCode from 'qrcode';
     <div class="qr-page">
       <div class="qr-card">
         <div class="qr-header">
+          <button class="back-btn" (click)="goBack()">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+              <path d="M19 12H5"/><path d="M12 19l-7-7 7-7"/>
+            </svg>
+            Volver
+          </button>
           <h1>Mi Código QR</h1>
           <p class="subtitle">Presenta este código en recepción para registrar tu asistencia</p>
         </div>
@@ -18,6 +27,13 @@ import * as QRCode from 'qrcode';
             <div class="qr-overlay" *ngIf="refreshing">
               <div class="spinner"></div>
             </div>
+          </div>
+        </div>
+
+        <div class="pin-section" *ngIf="pin">
+          <p class="pin-label">O ingresa este PIN en recepción:</p>
+          <div class="pin-display" [class.expired]="timeLeft <= 5">
+            <span class="pin-digit" *ngFor="let d of pinDigits">{{ d }}</span>
           </div>
         </div>
 
@@ -55,6 +71,37 @@ import * as QRCode from 'qrcode';
       max-width: 380px;
       width: 100%;
       text-align: center;
+    }
+
+    .qr-header {
+      position: relative;
+    }
+
+    .back-btn {
+      position: absolute;
+      top: -0.5rem;
+      left: -0.5rem;
+      display: flex;
+      align-items: center;
+      gap: 0.3rem;
+      background: none;
+      border: none;
+      color: var(--app-primary);
+      font-size: 0.85rem;
+      font-weight: 600;
+      cursor: pointer;
+      padding: 0.4rem 0.6rem;
+      border-radius: 8px;
+      transition: background 0.2s;
+    }
+
+    .back-btn:hover {
+      background: var(--lime-50);
+    }
+
+    .back-btn svg {
+      width: 16px;
+      height: 16px;
     }
 
     .qr-header h1 {
@@ -126,6 +173,42 @@ import * as QRCode from 'qrcode';
       display: block;
     }
 
+    .pin-section {
+      margin-bottom: 1.5rem;
+    }
+
+    .pin-label {
+      color: var(--text-muted);
+      font-size: 0.85rem;
+      margin: 0 0 0.6rem;
+    }
+
+    .pin-display {
+      display: flex;
+      justify-content: center;
+      gap: 0.4rem;
+      transition: opacity 0.3s;
+    }
+
+    .pin-display.expired {
+      opacity: 0.4;
+    }
+
+    .pin-digit {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 40px;
+      height: 48px;
+      background: var(--app-bg);
+      border: 2px solid var(--app-primary);
+      border-radius: 10px;
+      font-size: 1.5rem;
+      font-weight: 800;
+      font-family: 'SF Mono', 'Fira Code', monospace;
+      color: var(--text-main);
+    }
+
     .qr-footer {
       display: flex;
       flex-direction: column;
@@ -172,25 +255,36 @@ import * as QRCode from 'qrcode';
   `]
 })
 export class QrComponent implements OnInit, OnDestroy {
-  qrDataUrl: string = '';
+  pin: string = '';
+  pinDigits: string[] = [];
   timeLeft: number = 30;
   refreshing: boolean = false;
-  private intervalId: any;
   private timerId: any;
+  private wsSub?: Subscription;
 
-  constructor(private qrService: QrService) {}
+  constructor(
+    private qrService: QrService,
+    private authService: AuthService,
+    private router: Router,
+    private location: Location
+  ) {}
 
   ngOnInit(): void {
-    this.generateQr();
+    this.generateCredentials();
     this.startTimer();
+    this.connectWs();
   }
 
   ngOnDestroy(): void {
-    clearInterval(this.intervalId);
     clearInterval(this.timerId);
+    this.wsSub?.unsubscribe();
   }
 
-  generateQr(): void {
+  goBack(): void {
+    this.location.back();
+  }
+
+  generateCredentials(): void {
     this.refreshing = true;
     this.qrService.getMyQrToken().subscribe({
       next: (res) => {
@@ -209,14 +303,41 @@ export class QrComponent implements OnInit, OnDestroy {
         this.refreshing = false;
       }
     });
+
+    this.qrService.getMyPin().subscribe({
+      next: (res) => {
+        this.pin = res.pin;
+        this.pinDigits = res.pin.split('');
+      },
+      error: (err) => {
+        console.error('Error fetching PIN:', err);
+      }
+    });
   }
 
   startTimer(): void {
     this.timerId = setInterval(() => {
       this.timeLeft--;
       if (this.timeLeft <= 0) {
-        this.generateQr();
+        this.generateCredentials();
       }
     }, 1000);
+  }
+
+  private connectWs(): void {
+    this.authService.fetchCurrentUser().subscribe({
+      next: (user) => {
+        console.log('[QR] connectWs - user:', user?.id);
+        if (!user) return;
+        this.wsSub = this.qrService.connectCheckinWs(user.id).subscribe({
+          next: (event) => {
+            console.log('[QR] WS event received:', event);
+            clearInterval(this.timerId);
+            this.refreshing = true;
+            this.router.navigate(['/dashboard'], { queryParams: { checkin: event.status === 'success' ? 'success' : 'error', msg: event.message } });
+          }
+        });
+      }
+    });
   }
 }

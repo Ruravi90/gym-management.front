@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { ActivatedRoute, Router } from '@angular/router';
 import { AuthService, ClientService, AttendanceService } from '@shared';
 import { KaizenService } from '../kaizen/kaizen.service';
 
@@ -6,6 +7,9 @@ import { KaizenService } from '../kaizen/kaizen.service';
   selector: 'app-dashboard',
   template: `
     <div class="page-container">
+      <div *ngIf="toastMessage" class="toast" [class.toast-success]="toastType === 'success'" [class.toast-error]="toastType === 'error'">
+        {{ toastMessage }}
+      </div>
       <header class="welcome-bar">
         <div>
           <h1>Hola, {{ clientName }} 👋</h1>
@@ -150,11 +154,35 @@ import { KaizenService } from '../kaizen/kaizen.service';
     ::ng-deep .ngx-charts text { fill: var(--slate-600) !important; }
     ::ng-deep .ngx-charts .legend-title-text { color: var(--text-main) !important; }
     ::ng-deep .ngx-charts .legend-label-text { color: var(--text-muted) !important; }
+
+    .toast {
+      padding: 1rem 1.5rem;
+      border-radius: var(--radius-lg);
+      margin-bottom: 1rem;
+      font-weight: 600;
+      animation: slideDown 0.3s ease-out;
+    }
+    .toast-success {
+      background: #dcfce7;
+      color: #166534;
+      border: 1px solid #86efac;
+    }
+    .toast-error {
+      background: #fee2e2;
+      color: #991b1b;
+      border: 1px solid #fca5a5;
+    }
+    @keyframes slideDown {
+      from { opacity: 0; transform: translateY(-10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
   `]
 })
 export class DashboardComponent implements OnInit {
   clientName = 'Socio';
   attendanceList: any[] = [];
+  toastMessage: string = '';
+  toastType: 'success' | 'error' = 'success';
 
   kaizenChartData: any[] = [];
   colorScheme: any = {
@@ -170,16 +198,31 @@ export class DashboardComponent implements OnInit {
     private authService: AuthService,
     private clientService: ClientService,
     private attendanceService: AttendanceService,
-    private kaizenService: KaizenService
+    private kaizenService: KaizenService,
+    private route: ActivatedRoute,
+    private router: Router
   ) {}
 
   ngOnInit() {
     const user = this.authService.getCurrentUser();
     if (user) {
       this.clientName = user.name;
-      // In a real scenario, we'd fetch the client profile first
     }
     this.loadKaizenStats();
+    this.handleCheckinQueryParams();
+  }
+
+  private handleCheckinQueryParams(): void {
+    this.route.queryParams.subscribe(params => {
+      if (params['checkin']) {
+        this.toastType = params['checkin'] === 'success' ? 'success' : 'error';
+        this.toastMessage = params['checkin'] === 'success'
+          ? (params['msg'] || '¡Check-in exitoso!')
+          : (params['msg'] || 'Error en el check-in');
+        this.router.navigate([], { relativeTo: this.route, queryParams: {}, replaceUrl: true });
+        setTimeout(() => { this.toastMessage = ''; }, 5000);
+      }
+    });
   }
 
   loadKaizenStats() {
