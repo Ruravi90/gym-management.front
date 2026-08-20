@@ -261,33 +261,6 @@
 
 /* --- Mobile Card Layout --- */
 
-/* Tablet */
-@media (min-width: 769px) and (max-width: 1024px) {
-    .main-header {
-        margin-bottom: 1.25rem;
-    }
-
-    .page-title {
-        font-size: 1.5rem;
-    }
-
-    .filters-grid {
-        grid-template-columns: repeat(2, 1fr);
-        gap: 0.75rem;
-    }
-
-    .app-table th,
-    .app-table td {
-        padding: 0.6rem 0.75rem;
-        font-size: 0.88rem;
-    }
-
-    .actions-cell {
-        width: auto;
-        min-width: 100px;
-    }
-}
-
 .desktop-view {
     display: block;
 }
@@ -296,8 +269,8 @@
     display: none;
 }
 
-/* Mobile view overrides */
-@media (max-width: 768px) {
+/* Mobile + Tablet view overrides */
+@media (max-width: 1024px) {
     .desktop-view {
         display: none;
     }
@@ -305,7 +278,7 @@
     .mobile-view {
         display: block;
     }
-    
+
     /* Card Container */
     .cards-container {
         display: flex;
@@ -313,7 +286,7 @@
         gap: 1rem;
         width: 100%;
     }
-    
+
     /* Individual Membership Type Card */
     .membership-type-card {
         background: white;
@@ -383,7 +356,7 @@
         display: flex;
         flex-direction: column;
         gap: 0.25rem;
-        min-width: 0; /* Allow flex items to shrink below content size */
+        min-width: 0;
     }
     
     .detail-label {
@@ -446,7 +419,7 @@
     .filter-actions {
         justify-content: center;
     }
-    
+
     /* On very small screens, switch to single column */
     @media (max-width: 480px) {
         .type-details-grid {

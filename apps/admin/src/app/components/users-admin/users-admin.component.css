@@ -187,8 +187,8 @@
     display: none;
 }
 
-/* Mobile view overrides */
-@media (max-width: 768px) {
+/* Mobile + Tablet view overrides */
+@media (max-width: 1024px) {
     .desktop-view {
         display: none;
     }

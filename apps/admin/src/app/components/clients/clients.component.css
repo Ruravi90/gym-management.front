@@ -320,45 +320,6 @@
     margin-top: 1rem;
 }
 
-/* --- Tablet View --- */
-@media (min-width: 769px) and (max-width: 1024px) {
-    .main-header {
-        margin-bottom: 1.25rem;
-    }
-
-    .page-title {
-        font-size: 1.5rem;
-    }
-
-    .dashboard-actions {
-        gap: 12px;
-    }
-
-    .search-bar {
-        max-width: 320px;
-    }
-
-    .form-grid {
-        gap: 1rem;
-    }
-
-    /* Compact table on tablet */
-    .app-table th,
-    .app-table td {
-        padding: 0.65rem 0.85rem;
-        font-size: 0.88rem;
-    }
-
-    .actions-cell {
-        width: auto;
-        min-width: 260px;
-    }
-
-    .client-info-cell {
-        min-width: 160px;
-    }
-}
-
 /* --- Mobile Card Layout --- */
 .desktop-view {
     display: block;
@@ -368,8 +329,8 @@
     display: none;
 }
 
-/* Mobile view overrides */
-@media (max-width: 768px) {
+/* Card view for mobile + tablet (up to 1024px) */
+@media (max-width: 1024px) {
     .desktop-view {
         display: none;
     }
@@ -473,7 +434,7 @@
         font-size: 0.75rem;
     }
 
-    /* Adjust table header for mobile */
+    /* Adjust table header */
     .main-header {
         flex-direction: column;
         align-items: stretch;
@@ -497,12 +458,11 @@
         max-width: 100%;
     }
 
-    /* Empty state for mobile */
+    /* Empty state */
     .empty-state-card {
         padding: 2rem 1.5rem;
         border: none;
         box-shadow: none;
         background: transparent;
     }
-
 }
