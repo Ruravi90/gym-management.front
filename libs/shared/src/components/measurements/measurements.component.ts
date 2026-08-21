@@ -63,7 +63,7 @@ import { MeasurementService, MentorService, BodyMeasurement, MEASUREMENT_FIELDS 
             <p class="muted">¡Registra tu primera semana para empezar a ver tu progreso!</p>
           </div>
           <div class="measurement-cards mt-2" *ngIf="measurements.length > 0">
-            <div class="measurement-card" *ngFor="let m of measurements; let i = index"
+            <div class="measurement-card" *ngFor="let m of pagedMeasurements; let i = index"
                  [class.is-latest]="i === 0">
               <div class="mc-header">
                 <span class="mc-date">{{ m.date | date:'dd MMM, yyyy' }}</span>
@@ -85,6 +85,11 @@ import { MeasurementService, MentorService, BodyMeasurement, MEASUREMENT_FIELDS 
                 </div>
               </div>
             </div>
+          </div>
+          <div class="pagination" *ngIf="measurements.length > pageSize">
+            <span>Página {{ page }} de {{ totalPages }}</span>
+            <button class="btn btn-outline btn-sm" [disabled]="page === 1" (click)="previousPage()">Anterior</button>
+            <button class="btn btn-outline btn-sm" [disabled]="page === totalPages" (click)="nextPage()">Siguiente</button>
           </div>
         </section>
       </div>
@@ -138,6 +143,8 @@ import { MeasurementService, MentorService, BodyMeasurement, MEASUREMENT_FIELDS 
     .delta { font-size: 0.75rem; font-weight: 700; }
     .delta.good { color: var(--success); }
     .delta.bad { color: var(--danger); }
+    .pagination { display:flex; align-items:center; justify-content:flex-end; gap:0.6rem; margin-top:1rem; color:var(--text-muted); font-size:0.8rem; }
+    .pagination .btn { padding:0.4rem 0.65rem; }
   `]
 })
 export class MeasurementsComponent implements OnChanges {
@@ -146,6 +153,8 @@ export class MeasurementsComponent implements OnChanges {
 
   fields = MEASUREMENT_FIELDS;
   measurements: BodyMeasurement[] = [];
+  page = 1;
+  pageSize = 10;
   saving = false;
   today = new Date().toISOString().split('T')[0];
 
@@ -186,11 +195,19 @@ export class MeasurementsComponent implements OnChanges {
     this.measurementService.getMeasurements(50, this.clientId).subscribe({
       next: (data) => {
         this.measurements = data;
+        this.page = 1;
         this.computeBmi();
       },
       error: (err) => console.error('Error loading measurements:', err)
     });
   }
+
+  get pagedMeasurements(): BodyMeasurement[] {
+    return this.measurements.slice((this.page - 1) * this.pageSize, this.page * this.pageSize);
+  }
+  get totalPages(): number { return Math.max(1, Math.ceil(this.measurements.length / this.pageSize)); }
+  previousPage(): void { if (this.page > 1) this.page--; }
+  nextPage(): void { if (this.page < this.totalPages) this.page++; }
 
   loadProfile(): void {
     this.mentorService.getProfile().subscribe({

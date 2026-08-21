@@ -363,7 +363,9 @@
 
 
 /* --- Card View for Mobile --- */
-.mobile-view {
+.desktop-view { display:none !important; }
+.mobile-view { display:block !important; }
+.mobile-view-original {
     display: none;
 }
 

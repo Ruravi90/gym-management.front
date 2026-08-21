@@ -114,7 +114,9 @@
   color: #666;
 }
 
-.mobile-view { display: none; }
+.desktop-view { display:none !important; }
+.mobile-view { display:block !important; }
+.mobile-view-original { display: none; }
 
 .audit-card {
   background: var(--app-surface);

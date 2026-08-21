@@ -4,13 +4,13 @@
   <h1>Facturación</h1>
   <p class="intro">Consulta las facturas de los tenants.</p>
   <p *ngIf="error" class="invoice-error" role="alert">{{ error }}</p>
-  <select class="app-input invoice-filter" [(ngModel)]="status">
+  <select class="app-input invoice-filter" [(ngModel)]="status" (ngModelChange)="applyFilter()">
     <option value="">Todos los estados</option><option value="draft">Borrador</option><option value="open">Abierta</option><option value="paid">Pagada</option><option value="void">Anulada</option><option value="uncollectible">Incobrable</option>
   </select>
   <div *ngIf="loading" class="invoice-state">Cargando facturas...</div>
   <div *ngIf="!loading && !filtered.length" class="invoice-state">No hay facturas registradas.</div>
   <div class="invoice-list">
-    <article *ngFor="let invoice of filtered">
+    <article *ngFor="let invoice of pagedInvoices">
       <div><small>{{ invoice.number }}</small><h2>{{ invoice.tenant_name || ('Tenant #' + invoice.tenant_id) }}</h2></div>
       <div><small>Total</small><strong>{{ invoice.total | currency:invoice.currency }}</strong></div>
       <div><small>Estado</small><span [class]="'status status-' + invoice.status">{{ statusLabel(invoice.status) }}</span></div>
@@ -18,4 +18,5 @@
       <div class="invoice-actions" *ngIf="invoice.status === 'draft'"><button class="btn btn-primary btn-sm" (click)="changeStatus(invoice, 'open')">Abrir</button><button class="btn btn-outline btn-sm" (click)="changeStatus(invoice, 'void')">Anular</button></div>
     </article>
   </div>
+  <div class="pagination" *ngIf="!loading && filtered.length"><span>Página {{ page }} de {{ totalPages }}</span><button class="btn btn-outline btn-sm" [disabled]="page === 1" (click)="previousPage()">Anterior</button><button class="btn btn-outline btn-sm" [disabled]="page === totalPages" (click)="nextPage()">Siguiente</button></div>
 </section>

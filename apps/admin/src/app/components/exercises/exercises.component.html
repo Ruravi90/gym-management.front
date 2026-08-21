@@ -18,7 +18,7 @@
   <div *ngIf="loading" class="loading">Cargando ejercicios...</div>
 
   <div class="exercise-grid" *ngIf="!loading">
-    <div class="exercise-card" *ngFor="let exercise of exercises">
+    <div class="exercise-card" *ngFor="let exercise of pagedExercises">
       <div class="card-media">
         <img *ngIf="exercise.gif_url" [src]="exercise.gif_url" [alt]="exercise.name" loading="lazy">
         <div *ngIf="!exercise.gif_url" class="no-media">🎥 Sin GIF</div>
@@ -41,6 +41,7 @@
         </div>
       </div>
     </div>
+    <div class="pagination" *ngIf="exercises.length"><span>Página {{ page }} de {{ totalPages }}</span><button class="btn btn-secondary btn-small" [disabled]="page === 1" (click)="previousPage()">Anterior</button><button class="btn btn-secondary btn-small" [disabled]="page === totalPages" (click)="nextPage()">Siguiente</button></div>
     <div class="empty-state" *ngIf="exercises.length === 0">
       <p>No se encontraron ejercicios.</p>
     </div>

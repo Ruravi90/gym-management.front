@@ -17,6 +17,8 @@ export class TenantsComponent implements OnInit {
   tenantStats: TenantStats | null = null;
   searchTerm = '';
   statusFilter = '';
+  page = 1;
+  pageSize = 20;
 
   formData: TenantCreate = {
     name: '',
@@ -56,6 +58,12 @@ export class TenantsComponent implements OnInit {
       (t.email && t.email.toLowerCase().includes(term))
     );
   }
+
+  get pagedTenants(): Tenant[] { return this.filteredTenants.slice((this.page - 1) * this.pageSize, this.page * this.pageSize); }
+  get totalPages(): number { return Math.max(1, Math.ceil(this.filteredTenants.length / this.pageSize)); }
+  applyFilter(): void { this.page = 1; }
+  previousPage(): void { if (this.page > 1) this.page--; }
+  nextPage(): void { if (this.page < this.totalPages) this.page++; }
 
   openCreateModal(): void {
     this.editingTenant = null;

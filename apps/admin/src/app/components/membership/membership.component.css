@@ -223,7 +223,9 @@
 }
 
 /* --- Mobile Card Layout --- */
-.desktop-view {
+.desktop-view { display:none !important; }
+.mobile-view { display:block !important; }
+.desktop-view-original {
     display: table;
 }
 

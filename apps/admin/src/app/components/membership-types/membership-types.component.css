@@ -259,9 +259,46 @@
   border-top: 1px solid #e5e7eb;
 }
 
+/* Tarjetas de tipos de membresía en todas las resoluciones */
+.cards-container, .cards-container.mobile-view { display:flex !important; flex-direction:column; gap:18px !important; width:100%; padding-top:4px; }
+.membership-type-card { background:var(--app-surface,#fff); border:1px solid var(--app-border,#dbe3ef); border-radius:12px; padding:16px 18px; box-shadow:var(--shadow-sm,0 1px 3px rgba(15,23,42,.08)); }
+.membership-type-card .card-header { display:flex; flex-direction:column; gap:10px; margin-bottom:12px; padding-bottom:12px; border-bottom:1px solid var(--app-border,#dbe3ef); }
+.membership-type-card .header-top { display:flex; align-items:center; gap:10px; }
+.membership-type-card .type-name { flex:1; margin:0; }
+.membership-type-card .card-body { margin-bottom:14px; }
+.membership-type-card .card-actions { display:flex; gap:8px; padding-top:12px; border-top:1px solid var(--app-border,#dbe3ef); }
+.membership-type-card .card-actions .app-btn { flex:0 0 auto; min-width:90px; }
+
+/* Layout principal: una fila compacta y escaneable */
+.membership-type-card { display:grid; grid-template-columns:minmax(220px,1.1fr) minmax(480px,2.4fr) auto; align-items:center; gap:24px; min-height:92px; }
+.membership-type-card .card-header { margin:0; padding:0; border:0; }
+.membership-type-card .card-body { margin:0; }
+.membership-type-card .type-details-grid { display:grid; grid-template-columns:minmax(180px,1.6fr) repeat(3,minmax(90px,1fr)); align-items:center; gap:18px; }
+.membership-type-card .detail-label { display:block; margin-bottom:4px; font-size:.68rem; font-weight:700; color:var(--text-muted,#64748b); text-transform:uppercase; letter-spacing:.04em; }
+.membership-type-card .detail-value { font-size:.85rem; color:var(--text-main,#1e293b); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.membership-type-card .price-info { font-size:1rem; font-weight:800; color:var(--text-main,#1e293b); }
+.membership-type-card .card-actions { justify-content:flex-end; padding:0; border:0; }
+@media (max-width: 768px) {
+    .membership-type-card { display:block; }
+    .membership-type-card .card-header { margin-bottom:12px; padding-bottom:12px; border-bottom:1px solid var(--app-border,#dbe3ef); }
+    .membership-type-card .card-body { margin-bottom:14px; }
+    .membership-type-card .type-details-grid { grid-template-columns:repeat(2,minmax(0,1fr)); gap:12px; }
+    .membership-type-card .card-actions { justify-content:flex-start; padding-top:12px; border-top:1px solid var(--app-border,#dbe3ef); }
+}
+
+@media (min-width: 769px) {
+    .membership-type-card { display:grid; grid-template-columns:minmax(220px,1.1fr) minmax(480px,2.4fr) auto; align-items:center; gap:24px; padding:14px 18px; }
+    .membership-type-card .card-header { margin:0; padding:0; border:0; }
+    .membership-type-card .card-body { margin:0; }
+    .membership-type-card .type-details-grid { grid-template-columns:minmax(180px,1.6fr) repeat(3,minmax(90px,1fr)); gap:18px; }
+    .membership-type-card .card-actions { justify-content:flex-end; padding:0; border:0; }
+}
+
 /* --- Mobile Card Layout --- */
 
-.desktop-view {
+.desktop-view { display:none !important; }
+.mobile-view { display:block !important; }
+.desktop-view-original {
     display: block;
 }
 

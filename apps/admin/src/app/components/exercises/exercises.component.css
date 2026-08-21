@@ -186,3 +186,5 @@
   border: 1px solid var(--app-border);
   background: var(--slate-100);
 }
+
+.pagination { display:flex; align-items:center; justify-content:flex-end; gap:10px; margin-top:18px; color:#94a3b8; font-size:.8rem; }

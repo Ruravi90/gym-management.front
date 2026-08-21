@@ -15,9 +15,9 @@
       type="text"
       class="app-input search-input"
       placeholder="Buscar por nombre, slug o email..."
-      [(ngModel)]="searchTerm"
+      [(ngModel)]="searchTerm" (ngModelChange)="applyFilter()"
     />
-    <select class="app-input filter-select" [(ngModel)]="statusFilter" (change)="loadTenants()">
+    <select class="app-input filter-select" [(ngModel)]="statusFilter" (change)="applyFilter(); loadTenants()">
       <option value="">Todos los estados</option>
       <option value="active">Activo</option>
       <option value="inactive">Inactivo</option>
@@ -53,7 +53,7 @@
         </tr>
       </thead>
       <tbody>
-        <tr *ngFor="let tenant of filteredTenants">
+        <tr *ngFor="let tenant of pagedTenants">
           <td class="font-medium">{{ tenant.name }}</td>
           <td><code>{{ tenant.slug }}</code></td>
           <td>{{ tenant.email || '-' }}</td>
@@ -85,7 +85,7 @@
 
   <!-- Mobile Cards -->
   <div *ngIf="!loading && filteredTenants.length > 0" class="cards-container mobile-only">
-    <div class="tenant-card" *ngFor="let tenant of filteredTenants">
+    <div class="tenant-card" *ngFor="let tenant of pagedTenants">
       <div class="card-header">
         <h3>{{ tenant.name }}</h3>
         <span [class]="'badge ' + getStatusClass(tenant.status)">
@@ -105,6 +105,7 @@
       </div>
     </div>
   </div>
+  <div class="pagination" *ngIf="!loading && filteredTenants.length"><span>Página {{ page }} de {{ totalPages }}</span><button class="btn btn-outline btn-sm" [disabled]="page === 1" (click)="previousPage()">Anterior</button><button class="btn btn-outline btn-sm" [disabled]="page === totalPages" (click)="nextPage()">Siguiente</button></div>
 </div>
 
 <!-- Create/Edit Modal -->

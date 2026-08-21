@@ -19,6 +19,8 @@ export class RoutinesComponent implements OnInit {
   searchTerm = '';
   muscleGroups = MUSCLE_GROUPS;
   daysOfWeek = DAYS_OF_WEEK;
+  page = 1;
+  pageSize = 12;
 
   showModal = false;
   editing: Routine | null = null;
@@ -71,14 +73,21 @@ export class RoutinesComponent implements OnInit {
   }
 
   applyFilters(): void {
+    this.page = 1;
     this.loadData();
   }
 
   clearFilters(): void {
     this.filterClientId = '';
     this.searchTerm = '';
+    this.page = 1;
     this.loadData();
   }
+
+  get pagedRoutines(): Routine[] { return this.routines.slice((this.page - 1) * this.pageSize, this.page * this.pageSize); }
+  get totalPages(): number { return Math.max(1, Math.ceil(this.routines.length / this.pageSize)); }
+  previousPage(): void { if (this.page > 1) this.page--; }
+  nextPage(): void { if (this.page < this.totalPages) this.page++; }
 
   clientName(clientId: number): string {
     const client = this.clients.find(c => c.id === clientId);

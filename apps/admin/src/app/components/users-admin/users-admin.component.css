@@ -69,6 +69,28 @@
 }
 .status-badge.active { background: #f0fdf4; color: var(--app-success); }
 
+/* Tarjetas de usuarios en escritorio y móvil */
+.cards-container, .cards-container.mobile-view { display:flex !important; flex-direction:column; gap:18px !important; width:100%; padding-top:4px; }
+.user-card { background:var(--app-surface,#fff); border:1px solid var(--app-border,#dbe3ef); border-radius:12px; padding:16px 18px; box-shadow:var(--shadow-sm,0 1px 3px rgba(15,23,42,.08)); }
+.user-card .card-header { display:flex; flex-direction:column; gap:10px; margin-bottom:12px; padding-bottom:12px; border-bottom:1px solid var(--app-border,#dbe3ef); }
+.user-card .header-top { display:flex; align-items:center; gap:10px; }
+.user-card .user-name { flex:1; min-width:0; margin-left:0; font-size:1rem; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.user-card .header-tags { display:flex; flex-wrap:wrap; gap:8px; }
+.user-card .card-body { margin-bottom:14px; }
+.user-card .detail-item { display:flex; flex-direction:column; gap:4px; }
+.user-card .card-actions { display:flex; flex-wrap:wrap; gap:8px; padding-top:12px; border-top:1px solid var(--app-border,#dbe3ef); }
+.user-card .card-actions .app-btn { flex:0 0 auto; min-width:90px; }
+
+@media (min-width: 769px) {
+    .user-card { display:grid; grid-template-columns:minmax(240px,1.2fr) minmax(240px,1fr) auto; align-items:center; gap:20px; padding:14px 18px; }
+    .user-card .card-header { margin:0; padding:0; border:0; }
+    .user-card .card-body { margin:0; }
+    .user-card .user-details { gap:4px; }
+    .user-card .detail-item { flex-direction:row; align-items:center; gap:6px; }
+    .user-card .detail-label { text-transform:none; font-size:.8rem; }
+    .user-card .card-actions { justify-content:flex-end; margin:0; padding:0; border:0; }
+}
+
 /* --- Action Buttons --- */
 
 /* --- Form Grids --- */
@@ -179,7 +201,9 @@
 }
 
 /* --- Mobile Card Layout --- */
-.desktop-view {
+.desktop-view { display:none !important; }
+.mobile-view { display:block !important; }
+.desktop-view-original {
     display: block;
 }
 

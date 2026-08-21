@@ -18,7 +18,7 @@
   <div *ngIf="loading" class="loading">Cargando rutinas...</div>
 
   <div class="routine-list" *ngIf="!loading">
-    <div class="routine-card" *ngFor="let routine of routines">
+    <div class="routine-card" *ngFor="let routine of pagedRoutines">
       <div class="routine-header">
         <div>
           <h3>{{ routine.name }} <span class="badge" [class.badge-inactive]="!routine.is_active">{{ routine.is_active ? 'Activa' : 'Inactiva' }}</span></h3>
@@ -46,6 +46,7 @@
         </div>
       </div>
     </div>
+    <div class="pagination" *ngIf="routines.length"><span>Página {{ page }} de {{ totalPages }}</span><button class="btn btn-secondary btn-small" [disabled]="page === 1" (click)="previousPage()">Anterior</button><button class="btn btn-secondary btn-small" [disabled]="page === totalPages" (click)="nextPage()">Siguiente</button></div>
     <div class="empty-state" *ngIf="routines.length === 0">
       <p>No hay rutinas. ¡Crea la primera!</p>
     </div>

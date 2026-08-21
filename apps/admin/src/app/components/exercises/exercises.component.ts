@@ -13,6 +13,8 @@ export class ExercisesComponent implements OnInit {
   searchTerm = '';
   muscleGroup = '';
   muscleGroups = MUSCLE_GROUPS;
+  page = 1;
+  pageSize = 12;
 
   showModal = false;
   editing: Exercise | null = null;
@@ -51,14 +53,21 @@ export class ExercisesComponent implements OnInit {
   }
 
   applyFilters(): void {
+    this.page = 1;
     this.loadData();
   }
 
   clearFilters(): void {
     this.searchTerm = '';
     this.muscleGroup = '';
+    this.page = 1;
     this.loadData();
   }
+
+  get pagedExercises(): Exercise[] { return this.exercises.slice((this.page - 1) * this.pageSize, this.page * this.pageSize); }
+  get totalPages(): number { return Math.max(1, Math.ceil(this.exercises.length / this.pageSize)); }
+  previousPage(): void { if (this.page > 1) this.page--; }
+  nextPage(): void { if (this.page < this.totalPages) this.page++; }
 
   openNewModal(): void {
     this.editing = null;

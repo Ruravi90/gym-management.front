@@ -68,6 +68,24 @@
 }
 .status-badge.active { background: #f0fdf4; color: var(--app-success); }
 
+/* Tarjetas de socios: jerarquía clara en todas las resoluciones */
+.cards-container, .cards-container.mobile-view { display:flex !important; flex-direction:column; gap:18px !important; width:100%; }
+.client-card { background:var(--app-surface,#fff); border:1px solid var(--app-border,#dbe3ef); border-radius:12px; padding:16px 18px; box-shadow:var(--shadow-sm,0 1px 3px rgba(15,23,42,.08)); }
+.client-card .card-top { display:flex; align-items:center; gap:10px; margin-bottom:12px; }
+.client-card .client-name { flex:1; min-width:0; font-size:1rem; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.client-card .card-meta { display:flex; align-items:center; gap:10px; flex-wrap:wrap; padding-bottom:14px; border-bottom:1px solid var(--app-border,#dbe3ef); }
+.client-card .client-contact { min-width:0; overflow:hidden; text-overflow:ellipsis; color:var(--text-muted); font-size:.85rem; }
+.client-card .card-actions { display:flex; flex-wrap:wrap; gap:8px; padding-top:14px; }
+.client-card .card-actions .app-btn { flex:0 0 auto; min-width:90px; }
+
+@media (min-width: 769px) {
+    .cards-container { gap:18px !important; padding-top:4px; }
+    .client-card { display:grid; grid-template-columns:minmax(240px,1.1fr) minmax(280px,1.4fr) auto; align-items:center; gap:20px; padding:14px 18px; }
+    .client-card .card-top { margin:0; }
+    .client-card .card-meta { padding:0; border:0; }
+    .client-card .card-actions { justify-content:flex-end; padding:0; border:0; }
+}
+
 /* --- Form Grids --- */
 .compact-form { display: flex; flex-direction: column; gap: 1.25rem; }
 .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.25rem; }
@@ -321,7 +339,9 @@
 }
 
 /* --- Mobile Card Layout --- */
-.desktop-view {
+.desktop-view { display:none !important; }
+.mobile-view { display:block !important; }
+.desktop-view-original {
     display: block;
 }
 
