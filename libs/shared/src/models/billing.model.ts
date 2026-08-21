@@ -20,6 +20,8 @@ export interface Subscription {
   trial_ends_at?: string;
   renews_at?: string;
   canceled_at?: string;
+  tenant_name?: string;
+  plan_name?: string;
 }
 
 export interface TenantUsage {
