@@ -44,6 +44,14 @@
     color: #1a2e05;
 }
 
+.login-logo {
+    display: block;
+    width: 54px;
+    height: 54px;
+    object-fit: cover;
+    border-radius: 16px;
+}
+
 .login-title {
     font-size: 1.75rem;
     font-weight: 800;
