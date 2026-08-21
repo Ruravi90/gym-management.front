@@ -39,7 +39,6 @@ const routes: Routes = [
       { path: 'routines', component: RoutinesComponent },
       { path: 'measurements', component: AdminMeasurementsComponent },
       { path: 'client-membership-history/:id', component: ClientMembershipHistoryComponent },
-      { path: 'audit-logs', component: AuditLogComponent, canActivate: [AdminGuard] },
       { path: '', redirectTo: 'dashboard', pathMatch: 'full' }
     ]
   },
