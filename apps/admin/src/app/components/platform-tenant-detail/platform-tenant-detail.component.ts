@@ -52,6 +52,11 @@ export class PlatformTenantDetailComponent implements OnInit {
     });
   }
 
+  usagePercent(used: number, limit: number | null): number {
+    if (!limit || limit <= 0) return 0;
+    return Math.min(100, Math.round((used / limit) * 100));
+  }
+
   private loadStats(id: number): void {
     this.tenantService.getTenantStats(id).subscribe({
       next: stats => { this.stats = stats; this.loading = false; },
