@@ -58,7 +58,7 @@
           <td><code>{{ tenant.slug }}</code></td>
           <td>{{ tenant.email || '-' }}</td>
           <td>
-            <span class="badge" [ngClass]="getStatusClass(tenant.status)">
+            <span [class]="'badge ' + getStatusClass(tenant.status)">
               {{ getStatusLabel(tenant.status) }}
             </span>
           </td>
@@ -88,7 +88,7 @@
     <div class="tenant-card" *ngFor="let tenant of filteredTenants">
       <div class="card-header">
         <h3>{{ tenant.name }}</h3>
-        <span class="badge" [ngClass]="getStatusClass(tenant.status)">
+        <span [class]="'badge ' + getStatusClass(tenant.status)">
           {{ getStatusLabel(tenant.status) }}
         </span>
       </div>
@@ -167,7 +167,7 @@
         </div>
         <div class="detail-item">
           <label>Estado</label>
-          <span class="badge" [ngClass]="getStatusClass(selectedTenant.status)">
+          <span [class]="'badge ' + getStatusClass(selectedTenant.status)">
             {{ getStatusLabel(selectedTenant.status) }}
           </span>
         </div>

@@ -27,6 +27,8 @@ import { ExercisesComponent } from './components/exercises/exercises.component';
 import { RoutinesComponent } from './components/routines/routines.component';
 import { AdminMeasurementsComponent } from './components/measurements/admin-measurements.component';
 import { TenantsComponent } from './components/tenants/tenants.component';
+import { PlatformLayoutComponent } from './components/platform-layout/platform-layout.component';
+import { PlatformDashboardComponent } from './components/platform-dashboard/platform-dashboard.component';
 import { MeasurementsComponent, SharedLandingComponent } from '@shared';
 
 import { HTTP_INTERCEPTORS } from '@angular/common/http';
@@ -50,7 +52,9 @@ import { ServiceWorkerModule } from '@angular/service-worker';
     ExercisesComponent,
     RoutinesComponent,
     AdminMeasurementsComponent,
-    TenantsComponent
+    TenantsComponent,
+    PlatformLayoutComponent,
+    PlatformDashboardComponent
   ],
   imports: [
     BrowserModule,

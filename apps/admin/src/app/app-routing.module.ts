@@ -14,6 +14,8 @@ import { ExercisesComponent } from './components/exercises/exercises.component';
 import { RoutinesComponent } from './components/routines/routines.component';
 import { AdminMeasurementsComponent } from './components/measurements/admin-measurements.component';
 import { TenantsComponent } from './components/tenants/tenants.component';
+import { PlatformLayoutComponent } from './components/platform-layout/platform-layout.component';
+import { PlatformDashboardComponent } from './components/platform-dashboard/platform-dashboard.component';
 
 const routes: Routes = [
   { path: '', component: SharedLandingComponent, data: { appType: 'admin' } },
@@ -24,7 +26,6 @@ const routes: Routes = [
     canActivate: [AuthGuard],
     children: [
       { path: 'dashboard', component: DashboardComponent },
-      { path: 'tenants', component: TenantsComponent, canActivate: [SuperAdminGuard] },
       { path: 'checkin', component: FacialCheckinComponent },
       { path: 'membership-types', component: MembershipTypesComponent, canActivate: [AdminGuard] },
       { path: 'admin/users', component: UsersAdminComponent, canActivate: [AdminGuard] },
@@ -35,6 +36,17 @@ const routes: Routes = [
       { path: 'client-membership-history/:id', component: ClientMembershipHistoryComponent },
       { path: 'audit-logs', component: AuditLogComponent, canActivate: [AdminGuard] },
       { path: '', redirectTo: 'dashboard', pathMatch: 'full' }
+    ]
+  },
+  {
+    path: 'platform',
+    component: PlatformLayoutComponent,
+    canActivate: [SuperAdminGuard],
+    children: [
+      { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
+      { path: 'dashboard', component: PlatformDashboardComponent },
+      { path: 'tenants', component: TenantsComponent },
+      { path: 'tenants/:id', component: TenantsComponent }
     ]
   },
   { path: '**', redirectTo: '/login', pathMatch: 'full' }

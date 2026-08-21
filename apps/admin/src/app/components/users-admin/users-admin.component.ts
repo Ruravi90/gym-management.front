@@ -149,6 +149,10 @@ export class UsersAdminComponent implements OnInit {
     this.resetForm();
   }
 
+  setUserStatus(value: string | boolean): void {
+    this.userForm.status = value === true || value === 'true';
+  }
+
   saveUser() {
     if (this.editingUser) {
       this.updateUser();
@@ -347,4 +351,3 @@ export class UsersAdminComponent implements OnInit {
     return pages;
   }
 }
-

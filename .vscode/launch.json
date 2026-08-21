@@ -4,7 +4,7 @@
   "configurations": [
     {
       "name": "Debug Admin",
-      "type": "pwa-chrome",
+      "type": "chrome",
       "request": "launch",
       "url": "http://localhost:4200",
       "webRoot": "${workspaceFolder}",
@@ -15,7 +15,7 @@
     },
     {
       "name": "Debug Member Portal",
-      "type": "pwa-chrome",
+      "type": "chrome",
       "request": "launch",
       "url": "http://localhost:4201",
       "webRoot": "${workspaceFolder}",
@@ -26,7 +26,7 @@
     },
     {
       "name": "ng test",
-      "type": "pwa-chrome",
+      "type": "chrome",
       "request": "launch",
       "preLaunchTask": "npm: test",
       "url": "http://localhost:9876/debug.html",

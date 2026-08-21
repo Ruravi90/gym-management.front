@@ -1,0 +1,24 @@
+<div class="platform-shell">
+  <aside class="platform-sidebar">
+    <a routerLink="/platform/dashboard" class="platform-brand">
+      <span class="platform-logo">M</span>
+      <span>MyGym <small>Control Center</small></span>
+    </a>
+
+    <div class="platform-label">Administración SaaS</div>
+    <nav>
+      <a routerLink="/platform/dashboard" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">⌂ <span>Resumen</span></a>
+      <a routerLink="/platform/tenants" routerLinkActive="active">▦ <span>Tenants</span></a>
+      <a class="disabled-link">◈ <span>Planes y suscripciones</span><em>Próximo</em></a>
+      <a class="disabled-link">◫ <span>Facturación</span><em>Próximo</em></a>
+      <a class="disabled-link">◌ <span>Consumo y límites</span><em>Próximo</em></a>
+      <a class="disabled-link">◉ <span>Auditoría global</span><em>Próximo</em></a>
+    </nav>
+
+    <div class="platform-footer">
+      <a routerLink="/dashboard">← Volver al gimnasio</a>
+      <button (click)="logout()">Cerrar sesión</button>
+    </div>
+  </aside>
+  <main class="platform-content"><router-outlet></router-outlet></main>
+</div>

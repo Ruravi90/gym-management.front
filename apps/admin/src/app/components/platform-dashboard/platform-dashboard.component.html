@@ -1,0 +1,5 @@
+<section class="platform-page">
+  <div class="platform-heading"><div><span class="eyebrow">Control Center</span><h1>Resumen de la plataforma</h1><p>Supervisa todos los gimnasios y la operación de MyGym SaaS.</p></div><a routerLink="/platform/tenants" class="btn btn-primary">Administrar tenants</a></div>
+  <div class="platform-cards"><article><span>Tenants registrados</span><strong>{{ (tenantCount$ | async)?.total || 0 }}</strong><small>Espacios dentro de la plataforma</small></article><article><span>Tenants activos</span><strong class="ok">{{ (tenantCount$ | async)?.active || 0 }}</strong><small>Gimnasios operando actualmente</small></article><article><span>Estado de la plataforma</span><strong class="ok">Operativa</strong><small>Servicios principales disponibles</small></article></div>
+  <div class="platform-next"><h2>Siguiente etapa</h2><p>El backend ya soporta la administración y estadísticas de tenants. Planes, suscripciones, consumo y facturación requieren definir primero el modelo comercial.</p><a routerLink="/platform/tenants">Administrar tenants →</a></div>
+</section>

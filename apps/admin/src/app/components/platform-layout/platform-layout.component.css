@@ -1,0 +1,17 @@
+.platform-shell { min-height: 100vh; display: flex; background: #0b1120; color: #e2e8f0; }
+.platform-sidebar { width: 260px; padding: 28px 18px; background: #111827; border-right: 1px solid #243044; display: flex; flex-direction: column; }
+.platform-brand { display: flex; align-items: center; gap: 11px; color: #f8fafc; text-decoration: none; font-size: 1.05rem; font-weight: 700; margin: 0 10px 42px; }
+.platform-brand small { display: block; color: #84cc16; font-size: .68rem; font-weight: 500; margin-top: 3px; }
+.platform-logo { display: grid; place-items: center; width: 34px; height: 34px; border-radius: 10px; color: #0b1120; background: #84cc16; font-weight: 900; }
+.platform-label { color: #64748b; font-size: .68rem; letter-spacing: .1em; text-transform: uppercase; margin: 0 12px 12px; }
+.platform-sidebar nav { display: grid; gap: 5px; }
+.platform-sidebar nav a { display: flex; align-items: center; gap: 12px; padding: 12px; border-radius: 8px; color: #94a3b8; text-decoration: none; font-size: .88rem; }
+.platform-sidebar nav a:hover, .platform-sidebar nav a.active { color: #f8fafc; background: #1e293b; }
+.platform-sidebar nav a.active { box-shadow: inset 3px 0 #84cc16; }
+.disabled-link { opacity: .55; cursor: default; }
+.disabled-link em { margin-left: auto; font-size: .6rem; color: #64748b; font-style: normal; }
+.platform-footer { margin-top: auto; display: grid; gap: 14px; padding: 20px 10px 0; border-top: 1px solid #243044; }
+.platform-footer a, .platform-footer button { color: #94a3b8; background: none; border: 0; text-align: left; text-decoration: none; cursor: pointer; font: inherit; font-size: .82rem; }
+.platform-footer a:hover, .platform-footer button:hover { color: #84cc16; }
+.platform-content { flex: 1; min-width: 0; padding: 32px; }
+@media (max-width: 700px) { .platform-shell { display: block; } .platform-sidebar { width: auto; min-height: auto; } .platform-sidebar nav { grid-template-columns: repeat(2, minmax(0, 1fr)); } .platform-footer { margin-top: 25px; } .platform-content { padding: 20px 14px; } }

@@ -183,9 +183,9 @@
                     </div>
                     <div class="form-group">
                         <label>Estado de Cuenta</label>
-                        <select [(ngModel)]="userForm.status" name="status" class="app-input">
-                            <option [ngValue]="true">Activo</option>
-                            <option [ngValue]="false">Inactivo</option>
+                        <select [ngModel]="userForm.status ? 'true' : 'false'" (ngModelChange)="setUserStatus($event)" name="status" class="app-input">
+                            <option value="true">Activo</option>
+                            <option value="false">Inactivo</option>
                         </select>
                     </div>
                 </div>
