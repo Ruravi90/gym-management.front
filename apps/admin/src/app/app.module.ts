@@ -26,6 +26,7 @@ import { EntityAuditTrailComponent } from './components/audit-log/entity-audit-t
 import { ExercisesComponent } from './components/exercises/exercises.component';
 import { RoutinesComponent } from './components/routines/routines.component';
 import { AdminMeasurementsComponent } from './components/measurements/admin-measurements.component';
+import { TenantsComponent } from './components/tenants/tenants.component';
 import { MeasurementsComponent, SharedLandingComponent } from '@shared';
 
 import { HTTP_INTERCEPTORS } from '@angular/common/http';
@@ -48,7 +49,8 @@ import { ServiceWorkerModule } from '@angular/service-worker';
     EntityAuditTrailComponent,
     ExercisesComponent,
     RoutinesComponent,
-    AdminMeasurementsComponent
+    AdminMeasurementsComponent,
+    TenantsComponent
   ],
   imports: [
     BrowserModule,

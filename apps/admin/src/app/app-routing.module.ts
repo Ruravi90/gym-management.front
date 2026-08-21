@@ -6,13 +6,14 @@ import { FacialCheckinComponent } from './components/facial-checkin/facial-check
 import { MembershipTypesComponent } from './components/membership-types/membership-types.component';
 import { ClientMembershipHistoryComponent } from './components/client-membership-history/client-membership-history.component';
 import { MainLayoutComponent } from './components/main-layout/main-layout.component';
-import { AuthGuard, AdminGuard, SharedLandingComponent } from '@shared';
+import { AuthGuard, AdminGuard, SuperAdminGuard, SharedLandingComponent } from '@shared';
 import { UsersAdminComponent } from './components/users-admin/users-admin.component';
 import { ClientsComponent } from './components/clients/clients.component';
 import { AuditLogComponent } from './components/audit-log/audit-log.component';
 import { ExercisesComponent } from './components/exercises/exercises.component';
 import { RoutinesComponent } from './components/routines/routines.component';
 import { AdminMeasurementsComponent } from './components/measurements/admin-measurements.component';
+import { TenantsComponent } from './components/tenants/tenants.component';
 
 const routes: Routes = [
   { path: '', component: SharedLandingComponent, data: { appType: 'admin' } },
@@ -23,6 +24,7 @@ const routes: Routes = [
     canActivate: [AuthGuard],
     children: [
       { path: 'dashboard', component: DashboardComponent },
+      { path: 'tenants', component: TenantsComponent, canActivate: [SuperAdminGuard] },
       { path: 'checkin', component: FacialCheckinComponent },
       { path: 'membership-types', component: MembershipTypesComponent, canActivate: [AdminGuard] },
       { path: 'admin/users', component: UsersAdminComponent, canActivate: [AdminGuard] },

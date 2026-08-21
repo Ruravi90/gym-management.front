@@ -7,4 +7,6 @@ export interface User {
   status: boolean;
   created_at: string;
   profile_image?: string;
+  tenant_id?: number;
+  tenant_name?: string;
 }

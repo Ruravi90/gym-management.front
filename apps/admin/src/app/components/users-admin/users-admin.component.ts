@@ -10,6 +10,8 @@ interface User {
   email: string;
   role: string;
   status: boolean;
+  tenant_id?: number;
+  tenant_name?: string;
   created_at?: string;
   updated_at?: string;
 }

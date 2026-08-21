@@ -1,0 +1,223 @@
+<div class="page-container">
+  <div class="page-header">
+    <div>
+      <h1 class="page-title">Gestión de Tenants</h1>
+      <p class="page-subtitle">Administra los gimnasios del sistema SaaS</p>
+    </div>
+    <button class="btn btn-primary" (click)="openCreateModal()">
+      <span>+</span> Nuevo Tenant
+    </button>
+  </div>
+
+  <!-- Filters -->
+  <div class="filters-bar">
+    <input
+      type="text"
+      class="app-input search-input"
+      placeholder="Buscar por nombre, slug o email..."
+      [(ngModel)]="searchTerm"
+    />
+    <select class="app-input filter-select" [(ngModel)]="statusFilter" (change)="loadTenants()">
+      <option value="">Todos los estados</option>
+      <option value="active">Activo</option>
+      <option value="inactive">Inactivo</option>
+      <option value="suspended">Suspendido</option>
+    </select>
+  </div>
+
+  <!-- Loading -->
+  <div *ngIf="loading" class="loading-state">
+    <div class="spinner"></div>
+    <p>Cargando tenants...</p>
+  </div>
+
+  <!-- Empty State -->
+  <div *ngIf="!loading && filteredTenants.length === 0" class="empty-state">
+    <div class="empty-icon">🏢</div>
+    <h3>No hay tenants registrados</h3>
+    <p>Crea el primer tenant para comenzar</p>
+  </div>
+
+  <!-- Desktop Table -->
+  <div *ngIf="!loading && filteredTenants.length > 0" class="table-container desktop-only">
+    <table class="app-table">
+      <thead>
+        <tr>
+          <th>Nombre</th>
+          <th>Slug</th>
+          <th>Email</th>
+          <th>Estado</th>
+          <th>Max Usuarios</th>
+          <th>Creado</th>
+          <th>Acciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let tenant of filteredTenants">
+          <td class="font-medium">{{ tenant.name }}</td>
+          <td><code>{{ tenant.slug }}</code></td>
+          <td>{{ tenant.email || '-' }}</td>
+          <td>
+            <span class="badge" [ngClass]="getStatusClass(tenant.status)">
+              {{ getStatusLabel(tenant.status) }}
+            </span>
+          </td>
+          <td>{{ tenant.max_users }}</td>
+          <td>{{ tenant.created_at | date:'dd/MM/yyyy' }}</td>
+          <td class="actions-cell">
+            <button class="btn btn-ghost btn-sm" (click)="viewTenant(tenant)" title="Ver detalles">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg>
+            </button>
+            <button class="btn btn-ghost btn-sm" (click)="openEditModal(tenant)" title="Editar">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><path d="M17 3a2.85 2.85 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"/></svg>
+            </button>
+            <button class="btn btn-ghost btn-sm" (click)="toggleStatus(tenant)" [title]="tenant.status === 'active' ? 'Desactivar' : 'Activar'">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><circle cx="12" cy="12" r="10"/><line x1="4.93" y1="4.93" x2="19.07" y2="19.07" *ngIf="tenant.status === 'active'"/><polyline points="20 6 9 17 4 12" *ngIf="tenant.status !== 'active'"/></svg>
+            </button>
+            <button class="btn btn-ghost btn-sm btn-danger-icon" (click)="deleteTenant(tenant)" title="Eliminar">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+            </button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Mobile Cards -->
+  <div *ngIf="!loading && filteredTenants.length > 0" class="cards-container mobile-only">
+    <div class="tenant-card" *ngFor="let tenant of filteredTenants">
+      <div class="card-header">
+        <h3>{{ tenant.name }}</h3>
+        <span class="badge" [ngClass]="getStatusClass(tenant.status)">
+          {{ getStatusLabel(tenant.status) }}
+        </span>
+      </div>
+      <div class="card-body">
+        <p><strong>Slug:</strong> <code>{{ tenant.slug }}</code></p>
+        <p><strong>Email:</strong> {{ tenant.email || '-' }}</p>
+        <p><strong>Max Usuarios:</strong> {{ tenant.max_users }}</p>
+        <p><strong>Creado:</strong> {{ tenant.created_at | date:'dd/MM/yyyy' }}</p>
+      </div>
+      <div class="card-actions">
+        <button class="btn btn-ghost btn-sm" (click)="viewTenant(tenant)">Ver</button>
+        <button class="btn btn-outline btn-sm" (click)="openEditModal(tenant)">Editar</button>
+        <button class="btn btn-ghost btn-sm btn-danger-text" (click)="deleteTenant(tenant)">Eliminar</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Create/Edit Modal -->
+<div class="modal-overlay" *ngIf="showModal" (click)="closeModal()">
+  <div class="modal-card" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+      <h2>{{ editingTenant ? 'Editar Tenant' : 'Nuevo Tenant' }}</h2>
+      <button class="btn btn-ghost btn-sm" (click)="closeModal()">&times;</button>
+    </div>
+    <div class="modal-body">
+      <div class="form-group">
+        <label>Nombre *</label>
+        <input class="app-input" [(ngModel)]="formData.name" (blur)="!editingTenant && generateSlug()" placeholder="Mi Gimnasio" />
+      </div>
+      <div class="form-group">
+        <label>Slug *</label>
+        <input class="app-input" [(ngModel)]="formData.slug" [disabled]="!!editingTenant" placeholder="mi-gimnasio" />
+        <small class="form-hint">Identificador único (sin espacios, solo minúsculas y guiones)</small>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label>Email</label>
+          <input class="app-input" type="email" [(ngModel)]="formData.email" placeholder="admin@gym.com" />
+        </div>
+        <div class="form-group">
+          <label>Teléfono</label>
+          <input class="app-input" [(ngModel)]="formData.phone" placeholder="3312345678" />
+        </div>
+      </div>
+      <div class="form-group">
+        <label>Dirección</label>
+        <input class="app-input" [(ngModel)]="formData.address" placeholder="Calle Principal #123" />
+      </div>
+      <div class="form-group">
+        <label>Máximo de Usuarios</label>
+        <input class="app-input" type="number" [(ngModel)]="formData.max_users" min="1" />
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-outline" (click)="closeModal()">Cancelar</button>
+      <button class="btn btn-primary" (click)="saveTenant()">
+        {{ editingTenant ? 'Guardar Cambios' : 'Crear Tenant' }}
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- Detail Modal -->
+<div class="modal-overlay" *ngIf="showDetailModal" (click)="closeDetailModal()">
+  <div class="modal-card modal-lg" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+      <h2>{{ selectedTenant?.name }}</h2>
+      <button class="btn btn-ghost btn-sm" (click)="closeDetailModal()">&times;</button>
+    </div>
+    <div class="modal-body" *ngIf="selectedTenant">
+      <div class="detail-grid">
+        <div class="detail-item">
+          <label>Slug</label>
+          <span><code>{{ selectedTenant.slug }}</code></span>
+        </div>
+        <div class="detail-item">
+          <label>Estado</label>
+          <span class="badge" [ngClass]="getStatusClass(selectedTenant.status)">
+            {{ getStatusLabel(selectedTenant.status) }}
+          </span>
+        </div>
+        <div class="detail-item">
+          <label>Email</label>
+          <span>{{ selectedTenant.email || '-' }}</span>
+        </div>
+        <div class="detail-item">
+          <label>Teléfono</label>
+          <span>{{ selectedTenant.phone || '-' }}</span>
+        </div>
+        <div class="detail-item">
+          <label>Dirección</label>
+          <span>{{ selectedTenant.address || '-' }}</span>
+        </div>
+        <div class="detail-item">
+          <label>Max Usuarios</label>
+          <span>{{ selectedTenant.max_users }}</span>
+        </div>
+        <div class="detail-item">
+          <label>Creado</label>
+          <span>{{ selectedTenant.created_at | date:'dd/MM/yyyy HH:mm' }}</span>
+        </div>
+        <div class="detail-item">
+          <label>Actualizado</label>
+          <span>{{ selectedTenant.updated_at | date:'dd/MM/yyyy HH:mm' }}</span>
+        </div>
+      </div>
+
+      <div class="stats-section" *ngIf="tenantStats">
+        <h3>Estadísticas</h3>
+        <div class="stats-grid">
+          <div class="stat-card">
+            <span class="stat-value">{{ tenantStats.total_users }}</span>
+            <span class="stat-label">Usuarios</span>
+          </div>
+          <div class="stat-card">
+            <span class="stat-value">{{ tenantStats.total_clients }}</span>
+            <span class="stat-label">Socios</span>
+          </div>
+          <div class="stat-card">
+            <span class="stat-value">{{ tenantStats.active_memberships }}</span>
+            <span class="stat-label">Membresías Activas</span>
+          </div>
+          <div class="stat-card">
+            <span class="stat-value">{{ tenantStats.total_revenue | currency }}</span>
+            <span class="stat-label">Ingresos Totales</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
