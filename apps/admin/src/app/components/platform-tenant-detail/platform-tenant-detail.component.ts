@@ -20,6 +20,7 @@ export class PlatformTenantDetailComponent implements OnInit {
   selectedPlanId: number | null = null;
   savingPlan = false;
   planError = '';
+  subscriptionAction = false;
   usage: TenantUsage | null = null;
 
   constructor(private route: ActivatedRoute, private router: Router, private tenantService: TenantService, private userService: UserService, private auditLogService: AuditLogService, private billingService: BillingService) {}
@@ -57,6 +58,15 @@ export class PlatformTenantDetailComponent implements OnInit {
   usagePercent(used: number, limit: number | null): number {
     if (!limit || limit <= 0) return 0;
     return Math.min(100, Math.round((used / limit) * 100));
+  }
+
+  changeSubscriptionStatus(action: 'cancel' | 'reactivate'): void {
+    if (!this.tenant || !this.subscription) return;
+    const message = action === 'cancel' ? '¿Cancelar la suscripción de este tenant?' : '¿Reactivar la suscripción de este tenant?';
+    if (!window.confirm(message)) return;
+    this.subscriptionAction = true;
+    const request = action === 'cancel' ? this.billingService.cancelSubscription(this.tenant.id) : this.billingService.reactivateSubscription(this.tenant.id);
+    request.subscribe({ next: subscription => { this.subscription = subscription; this.subscriptionAction = false; }, error: error => { this.planError = error?.error?.detail || 'No se pudo actualizar el estado de la suscripción.'; this.subscriptionAction = false; } });
   }
 
   private loadStats(id: number): void {
