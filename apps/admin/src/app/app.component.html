@@ -1,1 +1,13 @@
 <router-outlet></router-outlet>
+<aside class="app-notices" aria-live="polite">
+  <div class="app-notice" *ngIf="updateAvailable">
+    <div><strong>Nueva versión disponible</strong><span>Actualiza para obtener las últimas mejoras.</span></div>
+    <button class="notice-primary" (click)="applyUpdate()">Actualizar</button>
+    <button class="notice-close" (click)="dismissUpdate()" aria-label="Cerrar">×</button>
+  </div>
+  <div class="app-notice install-notice" *ngIf="canInstall">
+    <div><strong>Instala Mi GYM</strong><span>Accede más rápido desde tu dispositivo.</span></div>
+    <button class="notice-primary" (click)="installApp()">Instalar</button>
+    <button class="notice-close" (click)="dismissInstall()" aria-label="Cerrar">×</button>
+  </div>
+</aside>

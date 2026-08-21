@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { first } from 'rxjs/operators';
-import { interval } from 'rxjs';
+import { BehaviorSubject, interval } from 'rxjs';
 
 interface VersionData {
   version: string;
@@ -15,6 +15,8 @@ interface VersionData {
 export class VersionService {
   public currentVersion: string = '';
   private currentHash: string | null = null;
+  private updateAvailableSubject = new BehaviorSubject<boolean>(false);
+  updateAvailable$ = this.updateAvailableSubject.asObservable();
   private versionUrl = 'assets/version.json';
 
   constructor(private http: HttpClient) {
@@ -43,7 +45,7 @@ export class VersionService {
             console.log(`New version available: ${response.version} (${response.hash})`);
             this.currentHash = response.hash;
             this.currentVersion = response.version;
-            this.promptUpdate();
+            this.updateAvailableSubject.next(true);
           }
         },
         error: (err) => {
@@ -52,9 +54,7 @@ export class VersionService {
       });
   }
 
-  private promptUpdate(): void {
-    if (confirm('Nueva versión disponible. ¿Desea recargar la aplicación para actualizar?')) {
-      window.location.reload();
-    }
+  applyUpdate(): void {
+    window.location.reload();
   }
 }
