@@ -21,6 +21,7 @@ export class PlatformTenantDetailComponent implements OnInit {
   savingPlan = false;
   planError = '';
   subscriptionAction = false;
+  generatingInvoice = false;
   usage: TenantUsage | null = null;
 
   constructor(private route: ActivatedRoute, private router: Router, private tenantService: TenantService, private userService: UserService, private auditLogService: AuditLogService, private billingService: BillingService) {}
@@ -67,6 +68,13 @@ export class PlatformTenantDetailComponent implements OnInit {
     this.subscriptionAction = true;
     const request = action === 'cancel' ? this.billingService.cancelSubscription(this.tenant.id) : this.billingService.reactivateSubscription(this.tenant.id);
     request.subscribe({ next: subscription => { this.subscription = subscription; this.subscriptionAction = false; }, error: error => { this.planError = error?.error?.detail || 'No se pudo actualizar el estado de la suscripción.'; this.subscriptionAction = false; } });
+  }
+
+  generateInvoice(): void {
+    if (!this.tenant || !this.subscription) return;
+    if (!window.confirm('¿Generar una factura en borrador para este tenant?')) return;
+    this.generatingInvoice = true;
+    this.billingService.createDraftInvoice(this.tenant.id).subscribe({ next: () => this.generatingInvoice = false, error: error => { this.planError = error?.error?.detail || 'No se pudo generar la factura.'; this.generatingInvoice = false; } });
   }
 
   private loadStats(id: number): void {
