@@ -3,3 +3,4 @@
 .usage-row{display:flex;justify-content:space-between;align-items:center;color:#94a3b8;font-size:.82rem;margin-top:12px}.usage-row strong{color:#e2e8f0}.usage-bar{height:7px;background:#1e293b;border-radius:99px;overflow:hidden;margin-top:7px}.usage-bar span{display:block;height:100%;background:#84cc16;border-radius:inherit;transition:width .25s ease}.usage-card .muted{margin-top:16px;font-size:.75rem}
 .plan-error{color:#fca5a5;font-size:.8rem;margin:12px 0 0}
 .plan-assignment{display:flex;align-items:center;gap:12px;margin-top:16px}.plan-assignment .app-input{flex:1;min-width:0}.subscription-actions{display:flex;gap:10px;margin-top:14px}@media(max-width:600px){.plan-assignment{display:grid}.plan-assignment .btn{width:100%}.subscription-actions{display:grid}.subscription-actions .btn{width:100%}}
+.invoice-success{color:#86efac;font-size:.8rem;margin-top:12px}.invoice-success a{color:#bef264;margin-left:6px}
