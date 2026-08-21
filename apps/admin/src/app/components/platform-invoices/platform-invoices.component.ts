@@ -8,4 +8,5 @@ export class PlatformInvoicesComponent {
   get filtered(): Invoice[] { return this.invoices.filter(item => !this.status || item.status === this.status); }
   statusLabel(status: string): string { return ({ draft: 'Borrador', open: 'Abierta', paid: 'Pagada', void: 'Anulada', uncollectible: 'Incobrable' } as any)[status] || status; }
   generateFor(tenantId: number): void { if (!window.confirm('¿Generar una factura en borrador para este tenant?')) return; this.generating = true; this.error = ''; this.billing.createDraftInvoice(tenantId).subscribe({ next: invoice => { this.invoices = [invoice, ...this.invoices]; this.generating = false; }, error: err => { this.error = err?.error?.detail || 'No se pudo generar la factura.'; this.generating = false; } }); }
+  changeStatus(invoice: Invoice, next: string): void { if (!window.confirm(`${next === 'open' ? '¿Abrir' : '¿Anular'} esta factura?`)) return; this.billing.updateInvoiceStatus(invoice.id, next).subscribe({ next: updated => this.invoices = this.invoices.map(item => item.id === updated.id ? updated : item), error: err => this.error = err?.error?.detail || 'No se pudo actualizar la factura.' }); }
 }
