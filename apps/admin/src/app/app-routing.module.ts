@@ -19,6 +19,7 @@ import { PlatformDashboardComponent } from './components/platform-dashboard/plat
 import { PlatformTenantDetailComponent } from './components/platform-tenant-detail/platform-tenant-detail.component';
 import { PlatformPlansComponent } from './components/platform-plans/platform-plans.component';
 import { PlatformSubscriptionsComponent } from './components/platform-subscriptions/platform-subscriptions.component';
+import { PlatformInvoicesComponent } from './components/platform-invoices/platform-invoices.component';
 
 const routes: Routes = [
   { path: '', component: SharedLandingComponent, data: { appType: 'admin' } },
@@ -50,6 +51,7 @@ const routes: Routes = [
       { path: 'dashboard', component: PlatformDashboardComponent },
       { path: 'plans', component: PlatformPlansComponent },
       { path: 'subscriptions', component: PlatformSubscriptionsComponent },
+      { path: 'invoices', component: PlatformInvoicesComponent },
       { path: 'tenants', component: TenantsComponent },
       { path: 'tenants/:id', component: PlatformTenantDetailComponent }
     ]

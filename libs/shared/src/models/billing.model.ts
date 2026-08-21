@@ -31,3 +31,5 @@ export interface TenantUsage {
   subscription_status?: string;
   plan_code?: string;
 }
+
+export interface Invoice { id: number; tenant_id: number; subscription_id?: number; number: string; subtotal: number; tax: number; total: number; currency: string; status: string; due_at?: string; paid_at?: string; tenant_name?: string; }

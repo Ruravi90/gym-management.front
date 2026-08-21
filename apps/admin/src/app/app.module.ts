@@ -32,6 +32,7 @@ import { PlatformDashboardComponent } from './components/platform-dashboard/plat
 import { PlatformTenantDetailComponent } from './components/platform-tenant-detail/platform-tenant-detail.component';
 import { PlatformPlansComponent } from './components/platform-plans/platform-plans.component';
 import { PlatformSubscriptionsComponent } from './components/platform-subscriptions/platform-subscriptions.component';
+import { PlatformInvoicesComponent } from './components/platform-invoices/platform-invoices.component';
 import { MeasurementsComponent, SharedLandingComponent } from '@shared';
 
 import { HTTP_INTERCEPTORS } from '@angular/common/http';
@@ -60,7 +61,8 @@ import { ServiceWorkerModule } from '@angular/service-worker';
     PlatformDashboardComponent,
     PlatformTenantDetailComponent,
     PlatformPlansComponent,
-    PlatformSubscriptionsComponent
+    PlatformSubscriptionsComponent,
+    PlatformInvoicesComponent
   ],
   imports: [
     BrowserModule,
