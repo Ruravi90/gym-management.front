@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { Tenant, TenantStats, TenantService, UserService, User, AuditLogService, AuditLog, BillingService, Subscription, Plan } from '@shared';
+import { Tenant, TenantStats, TenantService, UserService, User, AuditLogService, AuditLog, BillingService, Subscription, Plan, TenantUsage } from '@shared';
 
 @Component({
   selector: 'app-platform-tenant-detail',
@@ -19,6 +19,7 @@ export class PlatformTenantDetailComponent implements OnInit {
   plans: Plan[] = [];
   selectedPlanId: number | null = null;
   savingPlan = false;
+  usage: TenantUsage | null = null;
 
   constructor(private route: ActivatedRoute, private router: Router, private tenantService: TenantService, private userService: UserService, private auditLogService: AuditLogService, private billingService: BillingService) {}
 
@@ -39,6 +40,7 @@ export class PlatformTenantDetailComponent implements OnInit {
       this.billingService.getPlans().subscribe({ next: plans => this.plan = plans.find(plan => plan.id === subscription.plan_id) || null });
     } });
     this.billingService.getPlans().subscribe({ next: plans => this.plans = plans });
+    this.billingService.getTenantUsage(id).subscribe({ next: usage => this.usage = usage });
   }
 
   assignPlan(): void {

@@ -21,3 +21,11 @@ export interface Subscription {
   renews_at?: string;
   canceled_at?: string;
 }
+
+export interface TenantUsage {
+  tenant_id: number;
+  users: { used: number; limit: number | null };
+  clients: { used: number; limit: number | null };
+  subscription_status?: string;
+  plan_code?: string;
+}
