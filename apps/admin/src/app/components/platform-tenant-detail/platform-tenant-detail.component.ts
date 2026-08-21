@@ -16,6 +16,9 @@ export class PlatformTenantDetailComponent implements OnInit {
   activity: AuditLog[] = [];
   subscription: Subscription | null = null;
   plan: Plan | null = null;
+  plans: Plan[] = [];
+  selectedPlanId: number | null = null;
+  savingPlan = false;
 
   constructor(private route: ActivatedRoute, private router: Router, private tenantService: TenantService, private userService: UserService, private auditLogService: AuditLogService, private billingService: BillingService) {}
 
@@ -35,6 +38,16 @@ export class PlatformTenantDetailComponent implements OnInit {
       this.subscription = subscription;
       this.billingService.getPlans().subscribe({ next: plans => this.plan = plans.find(plan => plan.id === subscription.plan_id) || null });
     } });
+    this.billingService.getPlans().subscribe({ next: plans => this.plans = plans });
+  }
+
+  assignPlan(): void {
+    if (!this.tenant || !this.selectedPlanId) return;
+    this.savingPlan = true;
+    this.billingService.assignTenantSubscription(this.tenant.id, this.selectedPlanId).subscribe({
+      next: subscription => { this.subscription = subscription; this.plan = this.plans.find(item => item.id === subscription.plan_id) || null; this.selectedPlanId = null; this.savingPlan = false; },
+      error: () => this.savingPlan = false
+    });
   }
 
   private loadStats(id: number): void {
