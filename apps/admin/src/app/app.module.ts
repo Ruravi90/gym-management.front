@@ -33,6 +33,7 @@ import { PlatformTenantDetailComponent } from './components/platform-tenant-deta
 import { PlatformPlansComponent } from './components/platform-plans/platform-plans.component';
 import { PlatformSubscriptionsComponent } from './components/platform-subscriptions/platform-subscriptions.component';
 import { PlatformInvoicesComponent } from './components/platform-invoices/platform-invoices.component';
+import { PlatformAuditComponent } from './components/platform-audit/platform-audit.component';
 import { MeasurementsComponent, SharedLandingComponent } from '@shared';
 
 import { HTTP_INTERCEPTORS } from '@angular/common/http';
@@ -62,7 +63,8 @@ import { ServiceWorkerModule } from '@angular/service-worker';
     PlatformTenantDetailComponent,
     PlatformPlansComponent,
     PlatformSubscriptionsComponent,
-    PlatformInvoicesComponent
+    PlatformInvoicesComponent,
+    PlatformAuditComponent
   ],
   imports: [
     BrowserModule,
