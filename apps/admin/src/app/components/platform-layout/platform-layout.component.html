@@ -1,5 +1,7 @@
 <div class="platform-shell">
-  <aside class="platform-sidebar">
+  <button class="platform-menu-toggle" type="button" aria-label="Abrir menú" (click)="toggleSidebar()">☰</button>
+  <div class="platform-backdrop" *ngIf="sidebarOpen" (click)="closeSidebar()"></div>
+  <aside class="platform-sidebar" [class.open]="sidebarOpen">
     <a routerLink="/platform/dashboard" class="platform-brand">
       <span class="platform-logo">M</span>
       <span>MyGym <small>Control Center</small></span>
@@ -7,10 +9,10 @@
 
     <div class="platform-label">Administración SaaS</div>
     <nav>
-      <a routerLink="/platform/dashboard" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">⌂ <span>Resumen</span></a>
-      <a routerLink="/platform/tenants" routerLinkActive="active">▦ <span>Tenants</span></a>
-      <a routerLink="/platform/plans" routerLinkActive="active">◈ <span>Planes</span></a>
-      <a routerLink="/platform/subscriptions" routerLinkActive="active">◫ <span>Suscripciones</span></a>
+      <a routerLink="/platform/dashboard" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }" (click)="closeSidebar()">⌂ <span>Resumen</span></a>
+      <a routerLink="/platform/tenants" routerLinkActive="active" (click)="closeSidebar()">▦ <span>Tenants</span></a>
+      <a routerLink="/platform/plans" routerLinkActive="active" (click)="closeSidebar()">◈ <span>Planes</span></a>
+      <a routerLink="/platform/subscriptions" routerLinkActive="active" (click)="closeSidebar()">◫ <span>Suscripciones</span></a>
       <a class="disabled-link">◫ <span>Facturación</span><em>Próximo</em></a>
       <a class="disabled-link">◌ <span>Consumo y límites</span><em>Próximo</em></a>
       <a class="disabled-link">◉ <span>Auditoría global</span><em>Próximo</em></a>
