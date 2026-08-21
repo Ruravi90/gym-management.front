@@ -109,17 +109,7 @@ export class TenantsComponent implements OnInit {
   }
 
   viewTenant(tenant: Tenant): void {
-    this.selectedTenant = tenant;
-    this.tenantService.getTenantStats(tenant.id).subscribe({
-      next: (stats) => {
-        this.tenantStats = stats;
-        this.showDetailModal = true;
-      },
-      error: (err) => {
-        console.error('Error loading tenant stats', err);
-        this.showDetailModal = true;
-      }
-    });
+    window.location.href = `/platform/tenants/${tenant.id}`;
   }
 
   closeDetailModal(): void {

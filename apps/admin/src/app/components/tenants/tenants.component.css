@@ -20,6 +20,140 @@
   width: 180px;
 }
 
+/* La vista de tenants usa tarjetas fluidas: son más legibles que una tabla ancha
+   y mantienen las acciones accesibles en pantallas pequeñas. */
+.page-container {
+  max-width: 1180px;
+  margin: 0 auto;
+}
+
+.page-header {
+  align-items: flex-end;
+  margin-bottom: 28px;
+}
+
+.page-title {
+  color: #f8fafc;
+  font-size: 2rem;
+  letter-spacing: -0.03em;
+  margin-bottom: 8px;
+}
+
+.filters-bar {
+  padding: 16px;
+  border: 1px solid #243044;
+  border-radius: 12px;
+  background: rgba(17, 24, 39, .72);
+}
+
+.app-input {
+  background: #0f172a;
+  border-color: #334155;
+  color: #e2e8f0;
+}
+
+/* Reemplaza la tabla por una lista de tarjetas en desktop y móvil. */
+.table-container.desktop-only {
+  display: none !important;
+}
+
+.cards-container.mobile-only {
+  display: grid !important;
+  grid-template-columns: repeat(auto-fit, minmax(290px, 1fr));
+  gap: 14px;
+}
+
+.tenant-card {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  grid-template-areas:
+    "header actions"
+    "body body";
+  align-items: center;
+  gap: 14px 24px;
+  min-height: 0;
+  padding: 14px 18px;
+  border: 1px solid #243044;
+  border-radius: 12px;
+  background: #111827;
+  transition: border-color .2s ease, transform .2s ease;
+}
+
+.tenant-card:hover {
+  border-color: #84cc16;
+  transform: translateY(-2px);
+}
+
+.tenant-card .card-header {
+  grid-area: header;
+  align-items: flex-start;
+  padding: 0;
+  border-bottom: 0;
+}
+
+.tenant-card .card-header h3 {
+  color: #f8fafc;
+  font-size: 1rem;
+  margin: 0;
+}
+
+.tenant-card .card-body {
+  grid-area: body;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  padding: 0;
+  border-top: 1px solid #243044;
+  padding-top: 12px;
+}
+
+.tenant-card .card-body p {
+  color: #cbd5e1;
+  font-size: .82rem;
+  margin: 0;
+}
+
+.tenant-card .card-body strong {
+  color: #64748b;
+  font-weight: 500;
+  margin-right: 5px;
+}
+
+.tenant-card .card-actions {
+  grid-area: actions;
+  display: flex;
+  gap: 8px;
+  border-top: 0;
+  padding-top: 0;
+}
+
+.tenant-card .card-actions .btn:first-child {
+  color: #0b1120;
+  background: #84cc16;
+}
+
+@media (max-width: 640px) {
+  .page-container { padding: 0; }
+  .page-header { display: block; }
+  .page-header .btn { width: 100%; margin-top: 18px; }
+  .page-title { font-size: 1.55rem; }
+  .filters-bar { padding: 12px; }
+  .search-input, .filter-select { width: 100%; min-width: 0; }
+  .cards-container.mobile-only { grid-template-columns: 1fr; }
+}
+
+@media (max-width: 900px) and (min-width: 641px) {
+  .tenant-card .card-body { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px 18px; }
+}
+
+@media (max-width: 640px) {
+  .tenant-card { display: flex; flex-direction: column; align-items: stretch; gap: 0; padding: 18px; }
+  .tenant-card .card-header { padding-bottom: 16px; border-bottom: 1px solid #243044; }
+  .tenant-card .card-body { display: grid; gap: 8px; padding: 16px 0; border-top: 0; }
+  .tenant-card .card-actions { border-top: 1px solid #243044; padding-top: 14px; }
+}
+
 .table-container {
   overflow-x: auto;
 }
@@ -103,7 +237,28 @@ code {
 }
 
 .btn-danger-text {
-  color: #ef4444;
+  color: #f87171 !important;
+  background: transparent;
+}
+
+.btn-danger-text:hover,
+.btn-danger-text:focus-visible {
+  color: #fecaca !important;
+  background: rgba(239, 68, 68, 0.18) !important;
+  outline: 2px solid rgba(248, 113, 113, .45);
+  outline-offset: 2px;
+}
+
+.tenant-card .btn-danger-icon {
+  color: #f87171 !important;
+}
+
+.tenant-card .btn-danger-icon:hover,
+.tenant-card .btn-danger-icon:focus-visible {
+  color: #fecaca !important;
+  background: rgba(239, 68, 68, 0.18) !important;
+  outline: 2px solid rgba(248, 113, 113, .45);
+  outline-offset: 2px;
 }
 
 /* Cards */

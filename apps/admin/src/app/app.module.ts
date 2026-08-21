@@ -29,6 +29,8 @@ import { AdminMeasurementsComponent } from './components/measurements/admin-meas
 import { TenantsComponent } from './components/tenants/tenants.component';
 import { PlatformLayoutComponent } from './components/platform-layout/platform-layout.component';
 import { PlatformDashboardComponent } from './components/platform-dashboard/platform-dashboard.component';
+import { PlatformTenantDetailComponent } from './components/platform-tenant-detail/platform-tenant-detail.component';
+import { PlatformPlansComponent } from './components/platform-plans/platform-plans.component';
 import { MeasurementsComponent, SharedLandingComponent } from '@shared';
 
 import { HTTP_INTERCEPTORS } from '@angular/common/http';
@@ -54,7 +56,9 @@ import { ServiceWorkerModule } from '@angular/service-worker';
     AdminMeasurementsComponent,
     TenantsComponent,
     PlatformLayoutComponent,
-    PlatformDashboardComponent
+    PlatformDashboardComponent,
+    PlatformTenantDetailComponent,
+    PlatformPlansComponent
   ],
   imports: [
     BrowserModule,
