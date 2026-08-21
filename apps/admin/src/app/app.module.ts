@@ -31,6 +31,7 @@ import { PlatformLayoutComponent } from './components/platform-layout/platform-l
 import { PlatformDashboardComponent } from './components/platform-dashboard/platform-dashboard.component';
 import { PlatformTenantDetailComponent } from './components/platform-tenant-detail/platform-tenant-detail.component';
 import { PlatformPlansComponent } from './components/platform-plans/platform-plans.component';
+import { PlatformSubscriptionsComponent } from './components/platform-subscriptions/platform-subscriptions.component';
 import { MeasurementsComponent, SharedLandingComponent } from '@shared';
 
 import { HTTP_INTERCEPTORS } from '@angular/common/http';
@@ -58,7 +59,8 @@ import { ServiceWorkerModule } from '@angular/service-worker';
     PlatformLayoutComponent,
     PlatformDashboardComponent,
     PlatformTenantDetailComponent,
-    PlatformPlansComponent
+    PlatformPlansComponent,
+    PlatformSubscriptionsComponent
   ],
   imports: [
     BrowserModule,
