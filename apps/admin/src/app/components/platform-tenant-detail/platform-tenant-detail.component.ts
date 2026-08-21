@@ -19,6 +19,7 @@ export class PlatformTenantDetailComponent implements OnInit {
   plans: Plan[] = [];
   selectedPlanId: number | null = null;
   savingPlan = false;
+  planError = '';
   usage: TenantUsage | null = null;
 
   constructor(private route: ActivatedRoute, private router: Router, private tenantService: TenantService, private userService: UserService, private auditLogService: AuditLogService, private billingService: BillingService) {}
@@ -46,9 +47,10 @@ export class PlatformTenantDetailComponent implements OnInit {
   assignPlan(): void {
     if (!this.tenant || !this.selectedPlanId) return;
     this.savingPlan = true;
+    this.planError = '';
     this.billingService.assignTenantSubscription(this.tenant.id, this.selectedPlanId).subscribe({
       next: subscription => { this.subscription = subscription; this.plan = this.plans.find(item => item.id === subscription.plan_id) || null; this.selectedPlanId = null; this.savingPlan = false; },
-      error: () => this.savingPlan = false
+      error: error => { this.planError = error?.error?.detail || 'No se pudo actualizar la suscripción.'; this.savingPlan = false; }
     });
   }
 
