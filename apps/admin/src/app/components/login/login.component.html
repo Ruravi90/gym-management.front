@@ -28,15 +28,20 @@
 
       <div class="form-group">
         <label>Contraseña</label>
-        <input
-          type="password"
-          [(ngModel)]="password"
-          name="password"
-          class="app-input"
-          placeholder="••••••••"
-          required
-          [disabled]="loading"
-        />
+        <div class="password-field">
+          <input
+            [type]="showPassword ? 'text' : 'password'"
+            [(ngModel)]="password"
+            name="password"
+            class="app-input"
+            placeholder="••••••••"
+            required
+            [disabled]="loading"
+          />
+          <button type="button" class="password-toggle" (click)="showPassword = !showPassword" [attr.aria-label]="showPassword ? 'Ocultar contraseña' : 'Mostrar contraseña'">
+            {{ showPassword ? 'Ocultar' : 'Mostrar' }}
+          </button>
+        </div>
       </div>
 
       <button type="submit" class="app-btn app-btn-primary full-width" [disabled]="loading || !loginForm.valid">

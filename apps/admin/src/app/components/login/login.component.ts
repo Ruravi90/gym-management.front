@@ -10,6 +10,7 @@ import { Router, ActivatedRoute } from '@angular/router';
 export class LoginComponent implements OnInit {
   email = '';
   password = '';
+  showPassword = false;
   loading = false;
   error = '';
   returnUrl = '/dashboard'; // Default redirect route

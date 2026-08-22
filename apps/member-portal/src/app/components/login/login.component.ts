@@ -21,7 +21,10 @@ import { AuthService } from '@shared';
           </label>
           <label class="field">
             Contraseña
-            <input type="password" class="app-input" [(ngModel)]="password" name="password" placeholder="••••••••" required>
+            <div class="password-field">
+              <input [type]="showPassword ? 'text' : 'password'" class="app-input" [(ngModel)]="password" name="password" placeholder="••••••••" required>
+              <button type="button" class="password-toggle" (click)="showPassword = !showPassword" [attr.aria-label]="showPassword ? 'Ocultar contraseña' : 'Mostrar contraseña'">{{ showPassword ? 'Ocultar' : 'Mostrar' }}</button>
+            </div>
           </label>
           <button type="submit" class="btn btn-primary btn-lg btn-block" [disabled]="loading">
             {{ loading ? 'Iniciando...' : 'Entrar' }}
@@ -78,11 +81,16 @@ import { AuthService } from '@shared';
     .auth-brand h1 { margin: 0; font-size: 1.6rem; font-weight: 800; letter-spacing: -0.02em; }
     .auth-brand p { margin: 0.25rem 0 0; color: var(--text-muted); font-size: 0.95rem; }
     .auth-alt { margin-top: 1.25rem; text-align: center; color: var(--text-muted); font-size: 0.88rem; }
+    .password-field { position: relative; }
+    .password-field .app-input { padding-right: 5rem; }
+    .password-toggle { position: absolute; top: 50%; right: 10px; transform: translateY(-50%); border: 0; background: transparent; color: var(--lime-700); font-size: .75rem; font-weight: 700; cursor: pointer; padding: 6px 4px; }
+    .password-toggle:focus-visible { outline: 2px solid var(--app-primary); outline-offset: 2px; border-radius: 4px; }
   `]
 })
 export class LoginComponent {
   email = '';
   password = '';
+  showPassword = false;
   loading = false;
   error = '';
   registered = false;
