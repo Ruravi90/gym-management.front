@@ -36,7 +36,9 @@ import { ClientService, Client, MeasurementsComponent } from '@shared';
     </div>
   `,
   styles: [`
-    .client-selector { display: flex; align-items: flex-end; gap: 1rem; }
+    .client-selector { display: flex; align-items: flex-end; gap: 1rem; width: 100%; }
+    .client-selector .field { flex: 1 1 100%; width: 100%; min-width: 0; }
+    .client-selector .app-input { display: block; width: 100%; min-width: 0; box-sizing: border-box; }
     @media (max-width: 520px) { .client-selector { flex-direction: column; } }
   `]
 })

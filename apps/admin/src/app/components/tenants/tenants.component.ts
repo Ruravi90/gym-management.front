@@ -22,7 +22,7 @@ export class TenantsComponent implements OnInit {
 
   formData: TenantCreate = {
     name: '',
-    slug: '',
+    slug: undefined,
     email: '',
     phone: '',
     address: '',

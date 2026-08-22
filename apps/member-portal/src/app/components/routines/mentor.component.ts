@@ -38,6 +38,30 @@ interface Message {
         </div>
       </header>
 
+      <details class="mentor-rules card">
+        <summary>📌 Reglas de reportes y rutinas con IA</summary>
+        <div class="rules-grid">
+          <div>
+            <h3>Reportes</h3>
+            <ul>
+              <li>Reporte semanal: uno cada 7 días.</li>
+              <li>Reporte mensual: uno cada 28 días.</li>
+              <li>Necesitas una rutina activa y al menos 50% de las sesiones planificadas.</li>
+            </ul>
+          </div>
+          <div>
+            <h3>Rutinas con IA</h3>
+            <ul>
+              <li>Máximo 2 rutinas generadas por mes.</li>
+              <li>Debes indicar tu tipo de cuerpo, objetivo y preferencias de entrenamiento.</li>
+              <li>La rutina tendrá los días solicitados y entre 4 y 6 ejercicios por día.</li>
+              <li>Solo usará ejercicios disponibles en el catálogo del gimnasio.</li>
+              <li>Al crear una nueva, la anterior se desactiva para evitar mezclar planes.</li>
+            </ul>
+          </div>
+        </div>
+      </details>
+
       <div class="card wizard" *ngIf="showWizard">
         <div class="wizard-head">
           <span class="wizard-title">🤖 FitMentor — Tu instructor</span>
@@ -155,6 +179,14 @@ interface Message {
   styles: [`
     .mentor-container { max-width: 780px; }
     .header-actions { display: flex; gap: 0.6rem; flex-wrap: wrap; }
+
+    .mentor-rules { margin: -0.5rem 0 1.25rem; padding: 0.85rem 1rem; }
+    .mentor-rules summary { cursor: pointer; font-weight: 800; color: var(--lime-700); }
+    .rules-grid { display: grid; grid-template-columns: 1fr; gap: 1rem; margin-top: 0.9rem; padding-top: 0.9rem; border-top: 1px solid var(--app-border); }
+    @media (min-width: 560px) { .rules-grid { grid-template-columns: 1fr 1fr; } }
+    .rules-grid h3 { margin: 0 0 0.4rem; font-size: 0.9rem; }
+    .rules-grid ul { margin: 0; padding-left: 1.1rem; color: var(--text-muted); font-size: 0.82rem; line-height: 1.5; }
+    .rules-grid li + li { margin-top: 0.25rem; }
 
     .wizard { margin-bottom: 1.25rem; border-color: var(--app-primary-soft-border); }
     .wizard-head {

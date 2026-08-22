@@ -23,6 +23,18 @@
   width: 180px;
 }
 
+.slug-preview .slug-value {
+  min-height: 42px;
+  display: flex;
+  align-items: center;
+  padding: 0 12px;
+  border: 1px solid #334155;
+  border-radius: 8px;
+  background: #0f172a;
+  color: #84cc16;
+  font-family: 'JetBrains Mono', monospace;
+}
+
 /* La vista de tenants usa tarjetas fluidas: son más legibles que una tabla ancha
    y mantienen las acciones accesibles en pantallas pequeñas. */
 .page-container {
@@ -69,12 +81,13 @@
 
 .tenant-card {
   display: grid;
-  grid-template-columns: 1fr auto;
+  grid-template-columns: 1fr;
   grid-template-areas:
-    "header actions"
-    "body body";
-  align-items: center;
-  gap: 14px 24px;
+    "header"
+    "body"
+    "actions";
+  align-items: start;
+  gap: 14px;
   min-height: 0;
   padding: 14px 18px;
   border: 1px solid #243044;
@@ -103,10 +116,9 @@
 
 .tenant-card .card-body {
   grid-area: body;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 20px;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px 24px;
   padding: 0;
   border-top: 1px solid #243044;
   padding-top: 12px;
@@ -128,8 +140,9 @@
   grid-area: actions;
   display: flex;
   gap: 8px;
-  border-top: 0;
-  padding-top: 0;
+  border-top: 1px solid #243044;
+  padding-top: 14px;
+  justify-content: flex-start;
 }
 
 .tenant-card .card-actions .btn:first-child {
@@ -145,6 +158,10 @@
   .filters-bar { padding: 12px; }
   .search-input, .filter-select { width: 100%; min-width: 0; }
   .cards-container.mobile-only { grid-template-columns: 1fr; }
+}
+
+@media (min-width: 641px) {
+  .tenant-card .card-actions { grid-area: actions; }
 }
 
 @media (max-width: 900px) and (min-width: 641px) {

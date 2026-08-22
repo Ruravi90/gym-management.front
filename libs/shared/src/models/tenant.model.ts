@@ -14,7 +14,7 @@ export interface Tenant {
 
 export interface TenantCreate {
   name: string;
-  slug: string;
+  slug?: string;
   email?: string;
   phone?: string;
   address?: string;

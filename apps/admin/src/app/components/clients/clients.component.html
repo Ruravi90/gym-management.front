@@ -56,8 +56,6 @@
                         <button class="btn-action-icon" (click)="navigateToMembershipHistory(client.id)"
                             title="Historial de Membresías"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line></svg>
                         </button>
-                        <button class="btn-action-icon" (click)="openFaceScanModal(client)" title="Registrar Rostro"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path><circle cx="12" cy="13" r="4"></circle></svg>
-                        </button>
                         <button class="btn-action-icon delete" (click)="confirmDelete(client)" title="Eliminar"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
                         </button>
                     </div>
@@ -87,7 +85,6 @@
             <button class="app-btn app-btn-secondary btn-sm" (click)="openEditModal(client)">Editar</button>
             <button class="app-btn app-btn-warning btn-sm" (click)="navigateToMembershipHistory(client.id)">Membresía</button>
             <button class="app-btn app-btn-danger btn-sm" (click)="confirmDelete(client)">Eliminar</button>
-            <button class="app-btn app-btn-primary btn-sm" (click)="openFaceScanModal(client)">Rostro</button>
         </div>
     </div>
 </div>

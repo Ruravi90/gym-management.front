@@ -104,10 +104,16 @@ import { MeasurementService, MentorService, BodyMeasurement, MEASUREMENT_FIELDS 
       padding-top: 1.25rem;
       border-top: 1px solid var(--app-border);
     }
-    .altura-box { display: flex; align-items: flex-end; gap: 0.6rem; }
+    .altura-box { display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: end; gap: 0.6rem; }
+    .altura-box .field, .form-card .app-input { min-width: 0; width: 100%; box-sizing: border-box; }
+    .form-card .field { display: block; min-width: 0; }
     .hint { color: var(--text-muted); font-size: 0.82rem; margin: 0.7rem 0 0; }
     .fields { display: grid; grid-template-columns: 1fr; gap: 0; }
     @media (min-width: 520px) { .fields { grid-template-columns: 1fr 1fr; gap: 0 0.9rem; } }
+    @media (max-width: 519px) {
+      .altura-box { grid-template-columns: 1fr; }
+      .altura-box .btn { width: 100%; }
+    }
 
     .measurement-cards { display: flex; flex-direction: column; gap: 0.75rem; }
     .measurement-card {
