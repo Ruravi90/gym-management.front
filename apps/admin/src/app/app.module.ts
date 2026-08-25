@@ -34,6 +34,7 @@ import { PlatformPlansComponent } from './components/platform-plans/platform-pla
 import { PlatformSubscriptionsComponent } from './components/platform-subscriptions/platform-subscriptions.component';
 import { PlatformInvoicesComponent } from './components/platform-invoices/platform-invoices.component';
 import { PlatformAuditComponent } from './components/platform-audit/platform-audit.component';
+import { PlatformWahaSettingsComponent } from './components/platform-waha-settings/platform-waha-settings.component';
 import { MeasurementsComponent, SharedLandingComponent } from '@shared';
 
 import { HTTP_INTERCEPTORS } from '@angular/common/http';
@@ -64,7 +65,8 @@ import { ServiceWorkerModule } from '@angular/service-worker';
     PlatformPlansComponent,
     PlatformSubscriptionsComponent,
     PlatformInvoicesComponent,
-    PlatformAuditComponent
+    PlatformAuditComponent,
+    PlatformWahaSettingsComponent
   ],
   imports: [
     BrowserModule,

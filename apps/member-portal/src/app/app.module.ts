@@ -16,6 +16,8 @@ import { ServiceWorkerModule } from '@angular/service-worker';
 import { ProgressModule } from './components/progress/progress.module';
 import { ProgressComponent } from './components/progress/progress.component';
 import { MemberLayoutComponent } from './components/member-layout/member-layout.component';
+import { ActivateAccountComponent } from './components/activate-account/activate-account.component';
+import { ForgotPasswordComponent } from './components/forgot-password/forgot-password.component';
 
 @NgModule({
   declarations: [
@@ -27,7 +29,9 @@ import { MemberLayoutComponent } from './components/member-layout/member-layout.
     PaymentResultComponent,
     QrComponent,
     ProgressComponent,
-    MemberLayoutComponent
+    MemberLayoutComponent,
+    ActivateAccountComponent,
+    ForgotPasswordComponent
   ],
   imports: [
     BrowserModule,

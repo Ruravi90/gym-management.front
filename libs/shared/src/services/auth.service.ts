@@ -55,6 +55,10 @@ export class AuthService {
     });
   }
 
+  forgotPassword(identifier: string, audience: 'member' | 'admin' = 'member'): Observable<{ message: string }> {
+    return this.http.post<{ message: string }>(`${this.apiUrl}/${audience}/forgot-password`, { identifier });
+  }
+
   register(userData: RegisterRequest): Observable<User> {
     return this.http.post<User>(`${this.apiUrl}/register`, userData);
   }

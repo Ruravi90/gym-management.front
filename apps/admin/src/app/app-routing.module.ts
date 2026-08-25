@@ -21,6 +21,7 @@ import { PlatformPlansComponent } from './components/platform-plans/platform-pla
 import { PlatformSubscriptionsComponent } from './components/platform-subscriptions/platform-subscriptions.component';
 import { PlatformInvoicesComponent } from './components/platform-invoices/platform-invoices.component';
 import { PlatformAuditComponent } from './components/platform-audit/platform-audit.component';
+import { PlatformWahaSettingsComponent } from './components/platform-waha-settings/platform-waha-settings.component';
 
 const routes: Routes = [
   { path: '', component: SharedLandingComponent, data: { appType: 'admin' } },
@@ -53,6 +54,7 @@ const routes: Routes = [
       { path: 'subscriptions', component: PlatformSubscriptionsComponent },
       { path: 'invoices', component: PlatformInvoicesComponent },
       { path: 'audit', component: PlatformAuditComponent },
+      { path: 'whatsapp', component: PlatformWahaSettingsComponent },
       { path: 'tenants', component: TenantsComponent },
       { path: 'tenants/:id', component: PlatformTenantDetailComponent }
     ]

@@ -23,12 +23,13 @@ import { AuthService } from '@shared';
             Contraseña
             <div class="password-field">
               <input [type]="showPassword ? 'text' : 'password'" class="app-input" [(ngModel)]="password" name="password" placeholder="••••••••" required>
-              <button type="button" class="password-toggle" (click)="showPassword = !showPassword" [attr.aria-label]="showPassword ? 'Ocultar contraseña' : 'Mostrar contraseña'">{{ showPassword ? 'Ocultar' : 'Mostrar' }}</button>
+              <button type="button" class="password-toggle" (click)="showPassword = !showPassword" [attr.aria-label]="showPassword ? 'Ocultar contraseña' : 'Mostrar contraseña'"><svg viewBox="0 0 24 24" aria-hidden="true"><path *ngIf="!showPassword" d="M2 12s3.5-6 10-6 10 6 10 6-3.5 6-10 6S2 12 2 12Z"/><circle *ngIf="!showPassword" cx="12" cy="12" r="2.5"/><path *ngIf="showPassword" d="m3 3 18 18M10.6 6.2A10.8 10.8 0 0 1 12 6c6.5 0 10 6 10 6a17.7 17.7 0 0 1-3.2 3.7M6.2 6.2C3.6 7.8 2 12 2 12s3.5 6 10 6c1.8 0 3.3-.4 4.6-1.1"/></svg></button>
             </div>
           </label>
           <button type="submit" class="btn btn-primary btn-lg btn-block" [disabled]="loading">
             {{ loading ? 'Iniciando...' : 'Entrar' }}
           </button>
+          <a class="forgot-link" routerLink="/recuperar-contrasena">¿Olvidaste tu contraseña?</a>
           <p class="alert alert-success" *ngIf="registered">¡Cuenta creada! Ya puedes iniciar sesión.</p>
           <p class="alert alert-danger" *ngIf="error">{{ error }}</p>
           <p class="auth-alt">
@@ -83,8 +84,10 @@ import { AuthService } from '@shared';
     .auth-alt { margin-top: 1.25rem; text-align: center; color: var(--text-muted); font-size: 0.88rem; }
     .password-field { position: relative; }
     .password-field .app-input { padding-right: 5rem; }
-    .password-toggle { position: absolute; top: 50%; right: 10px; transform: translateY(-50%); border: 0; background: transparent; color: var(--lime-700); font-size: .75rem; font-weight: 700; cursor: pointer; padding: 6px 4px; }
+    .password-toggle { position: absolute; top: 50%; right: 10px; transform: translateY(-50%); border: 0; background: transparent; color: var(--lime-700); cursor: pointer; padding: 6px 4px; display:grid; place-items:center; }
+    .password-toggle svg { width:20px; height:20px; fill:none; stroke:currentColor; stroke-width:1.8; stroke-linecap:round; stroke-linejoin:round; }
     .password-toggle:focus-visible { outline: 2px solid var(--app-primary); outline-offset: 2px; border-radius: 4px; }
+    .forgot-link { display:block; margin:1rem auto 0; border:0; background:none; color:var(--lime-700); cursor:pointer; font:inherit; font-size:.85rem; }
   `]
 })
 export class LoginComponent {
@@ -115,4 +118,5 @@ export class LoginComponent {
       }
     });
   }
+
 }

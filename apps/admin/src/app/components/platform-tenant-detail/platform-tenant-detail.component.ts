@@ -24,6 +24,8 @@ export class PlatformTenantDetailComponent implements OnInit {
   generatingInvoice = false;
   invoiceMessage = '';
   usage: TenantUsage | null = null;
+  savingWaha = false;
+  wahaMessage = '';
 
   constructor(private route: ActivatedRoute, private router: Router, private tenantService: TenantService, private userService: UserService, private auditLogService: AuditLogService, private billingService: BillingService) {}
 
@@ -77,6 +79,15 @@ export class PlatformTenantDetailComponent implements OnInit {
     this.generatingInvoice = true;
     this.invoiceMessage = '';
     this.billingService.createDraftInvoice(this.tenant.id).subscribe({ next: () => { this.invoiceMessage = 'Factura en borrador generada correctamente.'; this.generatingInvoice = false; }, error: error => { this.planError = error?.error?.detail || 'No se pudo generar la factura.'; this.generatingInvoice = false; } });
+  }
+
+  saveWaha(): void {
+    if (!this.tenant) return;
+    this.savingWaha = true; this.wahaMessage = '';
+    this.tenantService.updateTenant(this.tenant.id, { waha_session: this.tenant.waha_session || '', waha_enabled: !!this.tenant.waha_enabled }).subscribe({
+      next: tenant => { this.tenant = tenant; this.wahaMessage = 'Configuración de WhatsApp guardada.'; this.savingWaha = false; },
+      error: error => { this.wahaMessage = error?.error?.detail || 'No se pudo guardar la configuración.'; this.savingWaha = false; }
+    });
   }
 
   private loadStats(id: number): void {

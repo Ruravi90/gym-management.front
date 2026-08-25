@@ -9,11 +9,15 @@ import { MembershipPurchaseComponent } from './components/membership-purchase/me
 import { PaymentResultComponent } from './components/payment-result/payment-result.component';
 import { QrComponent } from './components/qr/qr.component';
 import { ProgressComponent } from './components/progress/progress.component';
+import { ActivateAccountComponent } from './components/activate-account/activate-account.component';
+import { ForgotPasswordComponent } from './components/forgot-password/forgot-password.component';
 
 const routes: Routes = [
   { path: '', component: SharedLandingComponent, data: { appType: 'member' } },
   { path: 'login', component: LoginComponent },
   { path: 'register', component: RegisterComponent },
+  { path: 'activar-cuenta', component: ActivateAccountComponent },
+  { path: 'recuperar-contrasena', component: ForgotPasswordComponent },
   {
     path: '',
     component: MemberLayoutComponent,

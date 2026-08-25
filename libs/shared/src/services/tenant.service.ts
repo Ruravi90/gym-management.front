@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { environment } from '../environments/environment';
-import { Tenant, TenantCreate, TenantUpdate, TenantStats } from '../models/tenant.model';
+import { Tenant, TenantCreate, TenantUpdate, TenantStats, WahaStatus } from '../models/tenant.model';
 
 @Injectable({
   providedIn: 'root'
@@ -42,6 +42,14 @@ export class TenantService {
 
   getTenantCount(): Observable<{ total: number; active: number }> {
     return this.http.get<{ total: number; active: number }>(`${this.apiUrl}/count`, { withCredentials: true });
+  }
+
+  getWahaStatus(): Observable<WahaStatus> {
+    return this.http.get<WahaStatus>(`${this.apiUrl}/waha/status`, { withCredentials: true });
+  }
+
+  sendWahaTestMessage(phone: string, message: string): Observable<{ message: string; phone: string }> {
+    return this.http.post<{ message: string; phone: string }>(`${this.apiUrl}/waha/test-message`, { phone, message }, { withCredentials: true });
   }
 
   assignAdmin(tenantId: number, userId: number): Observable<any> {

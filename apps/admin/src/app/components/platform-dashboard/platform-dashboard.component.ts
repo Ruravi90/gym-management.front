@@ -8,5 +8,6 @@ import { TenantService } from '@shared';
 })
 export class PlatformDashboardComponent {
   tenantCount$ = this.tenantService.getTenantCount();
+  wahaStatus$ = this.tenantService.getWahaStatus();
   constructor(private tenantService: TenantService) {}
 }
