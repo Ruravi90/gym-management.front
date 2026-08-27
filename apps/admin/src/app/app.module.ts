@@ -3,6 +3,7 @@ import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { HttpClientModule } from '@angular/common/http';
 import { FormsModule } from '@angular/forms';
+import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { NgxChartsModule } from '@swimlane/ngx-charts';
 import { registerLocaleData } from '@angular/common';
 import localeEs from '@angular/common/locales/es';
@@ -35,6 +36,7 @@ import { PlatformSubscriptionsComponent } from './components/platform-subscripti
 import { PlatformInvoicesComponent } from './components/platform-invoices/platform-invoices.component';
 import { PlatformAuditComponent } from './components/platform-audit/platform-audit.component';
 import { PlatformWahaSettingsComponent } from './components/platform-waha-settings/platform-waha-settings.component';
+import { ActivateAccountComponent } from './components/activate-account/activate-account.component';
 import { MeasurementsComponent, SharedLandingComponent } from '@shared';
 
 import { HTTP_INTERCEPTORS } from '@angular/common/http';
@@ -66,7 +68,8 @@ import { ServiceWorkerModule } from '@angular/service-worker';
     PlatformSubscriptionsComponent,
     PlatformInvoicesComponent,
     PlatformAuditComponent,
-    PlatformWahaSettingsComponent
+    PlatformWahaSettingsComponent,
+    ActivateAccountComponent
   ],
   imports: [
     BrowserModule,
@@ -74,6 +77,7 @@ import { ServiceWorkerModule } from '@angular/service-worker';
     AppRoutingModule,
     HttpClientModule,
     FormsModule,
+    FontAwesomeModule,
     NgxChartsModule,
     MeasurementsComponent,
     SharedLandingComponent,

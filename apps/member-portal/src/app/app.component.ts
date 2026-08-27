@@ -1,5 +1,5 @@
 import { Component, HostListener } from '@angular/core';
-import { VersionService } from '@shared';
+import { ToastService, VersionService } from '@shared';
 
 @Component({
   selector: 'app-root',
@@ -7,10 +7,12 @@ import { VersionService } from '@shared';
   styles: [`.app-notices{position:fixed;right:20px;bottom:20px;z-index:2000;display:grid;gap:10px;width:min(420px,calc(100vw - 32px))}.app-notice{display:flex;align-items:center;gap:12px;padding:14px 16px;background:#111827;color:#e2e8f0;border:1px solid #334155;border-radius:12px;box-shadow:0 12px 36px rgba(2,6,23,.28)}.app-notice div{display:grid;gap:3px;flex:1}.app-notice strong{font-size:.88rem;color:#f8fafc}.app-notice span{font-size:.76rem;color:#94a3b8}.notice-primary{border:0;border-radius:8px;padding:8px 12px;background:#84cc16;color:#17200b;font-weight:700;cursor:pointer}.notice-close{border:0;background:transparent;color:#94a3b8;font-size:1.25rem;cursor:pointer}@media(max-width:600px){.app-notices{right:12px;bottom:12px}.app-notice{align-items:flex-start;flex-wrap:wrap}.app-notice .notice-primary{margin-left:auto}}`]
 })
 export class AppComponent {
+  toast: any = null;
+  private toastTimer: any;
   updateAvailable = false;
   canInstall = false;
   private installPrompt: any;
-  constructor(private versionService: VersionService) { this.versionService.updateAvailable$.subscribe(value => this.updateAvailable = value); }
+  constructor(private versionService: VersionService, toastService: ToastService) { this.versionService.updateAvailable$.subscribe(value => this.updateAvailable = value); toastService.toast$.subscribe(value => { this.toast = value; clearTimeout(this.toastTimer); this.toastTimer = setTimeout(() => this.toast = null, 3500); }); }
   @HostListener('window:beforeinstallprompt', ['$event']) onInstallPrompt(event: Event): void { event.preventDefault(); this.installPrompt = event; this.canInstall = true; }
   installApp(): void { if (!this.installPrompt) return; this.installPrompt.prompt(); this.installPrompt.userChoice.finally(() => { this.installPrompt = null; this.canInstall = false; }); }
   applyUpdate(): void { this.versionService.applyUpdate(); }

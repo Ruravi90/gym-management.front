@@ -15,6 +15,7 @@ export * from './guards/super-admin.guard';
 export * from './services/analytics.service';
 export * from './services/audit-log.service';
 export * from './services/user.service';
+export * from './services/toast.service';
 export * from './services/exercise.service';
 export * from './services/routine.service';
 export * from './services/mentor.service';

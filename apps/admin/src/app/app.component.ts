@@ -1,5 +1,6 @@
 import { Component, HostListener, OnInit } from '@angular/core';
-import { VersionService } from '@shared';
+import { ToastService, VersionService } from '@shared';
+import { faCircleCheck, faCircleExclamation } from '@fortawesome/free-solid-svg-icons';
 
 @Component({
   selector: 'app-root',
@@ -11,8 +12,12 @@ export class AppComponent implements OnInit {
   updateAvailable = false;
   canInstall = false;
   private installPrompt: any;
+  toast: any = null;
+  faCircleCheck = faCircleCheck;
+  faCircleExclamation = faCircleExclamation;
+  private toastTimer: any;
 
-  constructor(private versionService: VersionService) {}
+  constructor(private versionService: VersionService, toastService: ToastService) { toastService.toast$.subscribe(value => { this.toast = value; clearTimeout(this.toastTimer); this.toastTimer = setTimeout(() => this.toast = null, 3500); }); }
 
   ngOnInit(): void {
     this.versionService.updateAvailable$.subscribe(value => this.updateAvailable = value);

@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { UserService } from '@shared';
 import { AuthService } from '@shared';
+import Swal from 'sweetalert2';
 
 interface RoleOption { value: string; label: string }
 
@@ -8,6 +9,7 @@ interface User {
   id: number;
   name: string;
   email: string;
+  phone?: string;
   role: string;
   status: boolean;
   tenant_id?: number;
@@ -26,6 +28,16 @@ export class UsersAdminComponent implements OnInit {
   filteredUsers: User[] = [];
   loading = false;
   error: string | null = null;
+  toastMessage = '';
+  toastType: 'success' | 'error' = 'success';
+  private toastTimer: any;
+
+  showToast(message: string, type: 'success' | 'error' = 'success'): void {
+    this.toastMessage = message;
+    this.toastType = type;
+    clearTimeout(this.toastTimer);
+    this.toastTimer = setTimeout(() => this.toastMessage = '', 3500);
+  }
 
   // Pagination properties
   currentPage: number = 1;
@@ -39,6 +51,7 @@ export class UsersAdminComponent implements OnInit {
   userForm = {
     name: '',
     email: '',
+    phone: '',
     password: '',
     role: 'receptionist',
     status: true as boolean
@@ -49,7 +62,6 @@ export class UsersAdminComponent implements OnInit {
   deletingUser: User | null = null;
 
   roles: RoleOption[] = [
-    { value: 'super_admin', label: 'Super Admin' },
     { value: 'admin', label: 'Admin' },
     { value: 'receptionist', label: 'Receptionist' },
     { value: 'manager', label: 'Manager' },
@@ -77,16 +89,7 @@ export class UsersAdminComponent implements OnInit {
   getFilteredRoles(): RoleOption[] {
     if (!this.currentUser) return [];
     
-    if (this.currentUser.role === 'super_admin') {
-      return this.roles;
-    }
-    
-    if (this.currentUser.role === 'admin') {
-      // Admins cannot create or edit Super Admins
-      return this.roles.filter(r => r.value !== 'super_admin');
-    }
-    
-    return [];
+    return this.roles;
   }
 
   canCreateUsers(): boolean {
@@ -117,7 +120,7 @@ export class UsersAdminComponent implements OnInit {
   // --- User Modal Controls ---
   openRegisterModal() {
     if (!this.canCreateUsers()) {
-      alert('No tienes permisos para crear usuarios.');
+      this.showToast('No tienes permisos para crear usuarios.', 'error');
       return;
     }
     this.editingUser = null;
@@ -128,7 +131,7 @@ export class UsersAdminComponent implements OnInit {
 
   openEditModal(user: User) {
     if (!this.canManageUser(user)) {
-      alert('No tienes permisos para editar este usuario.');
+      this.showToast('No tienes permisos para editar este usuario.', 'error');
       return;
     }
     // Usar Object.assign en lugar de spread para mayor compatibilidad
@@ -136,6 +139,7 @@ export class UsersAdminComponent implements OnInit {
     this.userForm = {
       name: user.name,
       email: user.email,
+      phone: user.phone || '',
       password: '', // Don't prefill password for security
       role: user.role,
       status: user.status
@@ -154,6 +158,15 @@ export class UsersAdminComponent implements OnInit {
   }
 
   saveUser() {
+    this.userForm.email = this.userForm.email.trim().toLowerCase();
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(this.userForm.email)) {
+      this.showToast('Ingresa un correo electrónico válido.', 'error');
+      return;
+    }
+    if (this.userForm.phone && !/^\d{10}$/.test(this.userForm.phone)) {
+      this.showToast('El teléfono debe contener exactamente 10 dígitos numéricos.', 'error');
+      return;
+    }
     if (this.editingUser) {
       this.updateUser();
     } else {
@@ -161,15 +174,26 @@ export class UsersAdminComponent implements OnInit {
     }
   }
 
+  onPhoneInput(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    const digits = input.value.replace(/\D/g, '').slice(0, 10);
+    input.value = digits;
+    this.userForm.phone = digits;
+  }
+
+  onEmailBlur(): void {
+    this.userForm.email = this.userForm.email.trim().toLowerCase();
+  }
+
   registerUser() {
     if (!this.userForm.email || !this.userForm.password) {
-      alert('Email y contraseña son obligatorios');
+      this.showToast('Email y contraseña son obligatorios', 'error');
       return;
     }
 
     this.userService.createUser(this.userForm).subscribe({
       next: (res) => {
-        alert('Usuario registrado exitosamente');
+        this.showToast('Usuario registrado exitosamente');
         this.closeUserModal();
         this.loadUsers();
       },
@@ -177,7 +201,7 @@ export class UsersAdminComponent implements OnInit {
         console.error(err);
         // Usar sintaxis compatible en lugar de encadenamiento opcional
         const errorMessage = err.error && err.error.detail ? err.error.detail : err.message;
-        alert('Error al registrar usuario: ' + errorMessage);
+        this.showToast('Error al registrar usuario: ' + errorMessage, 'error');
       }
     });
   }
@@ -189,6 +213,7 @@ export class UsersAdminComponent implements OnInit {
     const updateData: any = {
       name: this.userForm.name,
       email: this.userForm.email,
+      phone: this.userForm.phone,
       role: this.userForm.role,
       status: this.userForm.status
     };
@@ -200,7 +225,7 @@ export class UsersAdminComponent implements OnInit {
 
     this.userService.updateUser(this.editingUser.id, updateData).subscribe({
       next: (res) => {
-        alert('Usuario actualizado exitosamente');
+        this.showToast('Usuario actualizado exitosamente');
         this.closeUserModal();
         this.loadUsers();
       },
@@ -208,8 +233,28 @@ export class UsersAdminComponent implements OnInit {
         console.error(err);
         // Usar sintaxis compatible en lugar de encadenamiento opcional
         const errorMessage = err.error && err.error.detail ? err.error.detail : err.message;
-        alert('Error actualizando usuario: ' + errorMessage);
+        this.showToast('Error actualizando usuario: ' + errorMessage, 'error');
       }
+    });
+  }
+
+  async sendPasswordReset(): Promise<void> {
+    if (!this.editingUser || !this.editingUser.email) return;
+    const result = await Swal.fire({
+      title: '¿Enviar enlace de contraseña?',
+      text: `Se intentará enviar un enlace a ${this.editingUser.email} y también por WhatsApp si tiene teléfono registrado.`,
+      icon: 'question',
+      showCancelButton: true,
+      confirmButtonText: 'Sí, enviar enlace',
+      cancelButtonText: 'Cancelar',
+      reverseButtons: true,
+      buttonsStyling: false,
+      customClass: { confirmButton: 'app-btn app-btn-primary', cancelButton: 'app-btn app-btn-secondary' }
+    });
+    if (!result.isConfirmed) return;
+    this.authService.forgotPassword(this.editingUser.email, 'admin').subscribe({
+      next: result => this.showToast(result.message),
+      error: () => this.showToast('No se pudo solicitar el enlace. Intenta nuevamente.', 'error')
     });
   }
 
@@ -217,6 +262,7 @@ export class UsersAdminComponent implements OnInit {
     this.userForm = {
       name: '',
       email: '',
+      phone: '',
       password: '',
       role: 'receptionist',
       status: true
@@ -239,7 +285,7 @@ export class UsersAdminComponent implements OnInit {
 
     this.userService.deleteUser(id).subscribe({
       next: (res) => {
-        alert('Usuario eliminado exitosamente');
+        this.showToast('Usuario eliminado exitosamente');
         this.closeDeleteConfirmation();
         this.loadUsers();
       },
@@ -247,7 +293,7 @@ export class UsersAdminComponent implements OnInit {
         console.error(err);
         // Usar sintaxis compatible en lugar de encadenamiento opcional
         const errorMessage = err.error && err.error.detail ? err.error.detail : err.message;
-        alert('Error eliminando usuario: ' + errorMessage);
+        this.showToast('Error eliminando usuario: ' + errorMessage, 'error');
       }
     });
   }

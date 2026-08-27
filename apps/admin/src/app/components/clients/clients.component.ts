@@ -3,6 +3,7 @@ import { Router } from '@angular/router';
 import { ClientService } from '@shared';
 import { Client } from '@shared';
 import { AuthService } from '@shared';
+import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-clients',
@@ -196,6 +197,26 @@ export class ClientsComponent implements OnInit, OnDestroy {
         const errorMessage = err.error && err.error.detail ? err.error.detail : err.message;
         alert('Error actualizando cliente: ' + errorMessage);
       }
+    });
+  }
+
+  async sendMemberPasswordReset(): Promise<void> {
+    if (!this.editingClient || !this.editingClient.email) {
+      Swal.fire({ icon: 'warning', title: 'Correo requerido', text: 'El socio necesita un correo registrado para recibir el enlace.' });
+      return;
+    }
+    const result = await Swal.fire({
+      icon: 'question',
+      title: '¿Enviar enlace de contraseña?',
+      text: `Se intentará enviar a ${this.editingClient.email} y por WhatsApp si tiene teléfono registrado.`,
+      showCancelButton: true, reverseButtons: true,
+      confirmButtonText: 'Sí, enviar enlace', cancelButtonText: 'Cancelar', buttonsStyling: false,
+      customClass: { confirmButton: 'app-btn app-btn-primary', cancelButton: 'app-btn app-btn-secondary' }
+    });
+    if (!result.isConfirmed) return;
+    this.authService.forgotPassword(this.editingClient.email, 'member').subscribe({
+      next: response => Swal.fire({ icon: 'success', title: 'Solicitud enviada', text: response.message, timer: 3000, showConfirmButton: false }),
+      error: () => Swal.fire({ icon: 'error', title: 'No se pudo enviar', text: 'Intenta nuevamente en unos momentos.' })
     });
   }
 

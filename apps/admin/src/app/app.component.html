@@ -1,4 +1,5 @@
 <router-outlet></router-outlet>
+<div class="global-toast" *ngIf="toast" [class.error]="toast.type === 'error'" role="status"><fa-icon [icon]="toast.type === 'error' ? faCircleExclamation : faCircleCheck"></fa-icon>{{toast.message}}</div>
 <aside class="app-notices" aria-live="polite">
   <div class="app-notice" *ngIf="updateAvailable">
     <div><strong>Nueva versión disponible</strong><span>Actualiza para obtener las últimas mejoras.</span></div>

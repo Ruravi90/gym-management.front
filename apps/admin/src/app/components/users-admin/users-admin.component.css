@@ -359,3 +359,20 @@
 
 
 }
+.users-toast {
+    position: fixed;
+    top: 1.25rem;
+    right: 1.5rem;
+    z-index: 2000;
+    display: flex;
+    align-items: center;
+    gap: .65rem;
+    max-width: min(420px, calc(100vw - 2rem));
+    padding: .9rem 1.15rem;
+    color: #fff;
+    background: #1f8f4d;
+    border-radius: 10px;
+    box-shadow: 0 8px 24px rgba(15, 23, 42, .2);
+    font-weight: 600;
+}
+.users-toast.error { background: #c0392b; }

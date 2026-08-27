@@ -166,6 +166,7 @@
                     </div>
                 </div>
                 <div class="modal-actions">
+                    <button *ngIf="editingClient" type="button" class="app-btn app-btn-secondary" (click)="sendMemberPasswordReset()">Enviar enlace de contraseña</button>
                     <button type="button" class="app-btn app-btn-secondary"
                         (click)="closeClientModal()">Cancelar</button>
                     <button type="submit" class="app-btn app-btn-primary">{{editingClient ? 'Actualizar' :

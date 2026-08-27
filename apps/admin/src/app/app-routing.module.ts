@@ -22,10 +22,12 @@ import { PlatformSubscriptionsComponent } from './components/platform-subscripti
 import { PlatformInvoicesComponent } from './components/platform-invoices/platform-invoices.component';
 import { PlatformAuditComponent } from './components/platform-audit/platform-audit.component';
 import { PlatformWahaSettingsComponent } from './components/platform-waha-settings/platform-waha-settings.component';
+import { ActivateAccountComponent } from './components/activate-account/activate-account.component';
 
 const routes: Routes = [
   { path: '', component: SharedLandingComponent, data: { appType: 'admin' } },
   { path: 'login', component: LoginComponent },
+  { path: 'activar-cuenta', component: ActivateAccountComponent },
   {
     path: '',
     component: MainLayoutComponent,
