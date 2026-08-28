@@ -91,6 +91,26 @@
 .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.25rem; }
 .form-group label { display: block; font-size: 0.75rem; font-weight: 700; color: var(--text-muted); margin-bottom: 6px; text-transform: uppercase; }
 
+/* En pantallas pequeñas, evita que las acciones del modal desborden el viewport. */
+@media (max-width: 600px) {
+    .modal-actions {
+        flex-wrap: wrap;
+    }
+
+    .modal-actions .app-btn {
+        min-width: 0;
+        white-space: normal;
+    }
+
+    .modal-actions .app-btn:first-child {
+        flex: 1 1 100%;
+    }
+
+    .modal-actions .app-btn:not(:first-child) {
+        flex: 1 1 calc(50% - 0.325rem);
+    }
+}
+
 /* --- Face Scan Special --- */
 .tech-modal .centered { text-align: center; }
 .viewfinder-wrapper {
