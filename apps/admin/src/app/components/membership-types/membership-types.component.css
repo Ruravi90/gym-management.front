@@ -259,6 +259,22 @@
   border-top: 1px solid #e5e7eb;
 }
 
+/* El modal de tipos también debe ocupar todo el ancho como bottom sheet. */
+@media (max-width: 768px) {
+  .modal-backdrop {
+    align-items: flex-end;
+    padding: 0;
+  }
+
+  .modal-backdrop .modal-card {
+    width: 100%;
+    max-width: none;
+    max-height: 90vh;
+    margin: 0;
+    border-radius: var(--radius-xl, 1rem) var(--radius-xl, 1rem) 0 0;
+  }
+}
+
 /* Tarjetas de tipos de membresía en todas las resoluciones */
 .cards-container, .cards-container.mobile-view { display:flex !important; flex-direction:column; gap:18px !important; width:100%; padding-top:4px; }
 .membership-type-card { background:var(--app-surface,#fff); border:1px solid var(--app-border,#dbe3ef); border-radius:12px; padding:16px 18px; box-shadow:var(--shadow-sm,0 1px 3px rgba(15,23,42,.08)); }

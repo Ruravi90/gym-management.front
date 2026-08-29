@@ -56,7 +56,10 @@
 <!-- Modal crear/editar -->
 <div class="modal-overlay" *ngIf="showModal" (click.self)="closeModal()">
   <div class="modal modal-wide">
-    <h2>{{ editing ? 'Editar Rutina' : 'Nueva Rutina' }}</h2>
+    <div class="modal-heading">
+      <h2>{{ editing ? 'Editar Rutina' : 'Nueva Rutina' }}</h2>
+      <button type="button" class="modal-close" (click)="closeModal()" aria-label="Cerrar modal">&times;</button>
+    </div>
 
     <div class="form-row">
       <label class="grow">Nombre *
