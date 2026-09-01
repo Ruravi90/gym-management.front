@@ -63,7 +63,21 @@ export class RoutinesComponent implements OnInit {
     });
   }
 
-  openAiModal(): void { this.aiForm.client_id = this.filterClientId ? Number(this.filterClientId) : null; this.showAiModal = true; }
+  openAiModal(): void {
+    const clientId = this.filterClientId ? Number(this.filterClientId) : null;
+    const client = clientId ? this.clients.find(item => item.id === clientId) : undefined;
+
+    // Los datos fijos del socio son la fuente inicial; el entrenador puede
+    // ajustar los parámetros de esta rutina sin modificar su ficha.
+    this.aiForm = {
+      ...this.aiForm,
+      client_id: clientId,
+      body_type: client?.body_type || 'mesomorph',
+      goal: client?.goal || 'general',
+      injuries: [client?.injuries, client?.restrictions].filter(Boolean).join('; ')
+    };
+    this.showAiModal = true;
+  }
   closeAiModal(): void { if (!this.aiGenerating) this.showAiModal = false; }
   generateWithAi(): void {
     if (!this.aiForm.client_id) return;
