@@ -8,6 +8,8 @@ export interface Client {
   name: string;
   email: string;
   phone?: string;
+  birth_date?: string | null; body_type?: string | null; height_cm?: number | null; sex?: string | null;
+  injuries?: string | null; goal?: string | null; restrictions?: string | null; emergency_contact?: string | null;
   membership_type: string;
   status: boolean;
   profile_image?: string;
@@ -18,6 +20,8 @@ export interface CreateClientRequest {
   name: string;
   email: string;
   phone?: string;
+  birth_date?: string | null; body_type?: string | null; height_cm?: number | null; sex?: string | null;
+  injuries?: string | null; goal?: string | null; restrictions?: string | null; emergency_contact?: string | null;
   membership_type?: string;
 }
 

@@ -1,6 +1,7 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { RoutineService, Routine, WorkoutSession, RoutineDay } from '@shared';
+import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-routine-detail',
@@ -98,7 +99,8 @@ import { RoutineService, Routine, WorkoutSession, RoutineDay } from '@shared';
 
           <!-- GIF -->
           <div class="gif-demo" *ngIf="gifUrls.length > 0" (click)="openGifModal()">
-            <img [src]="gifUrls[0]" [alt]="selectedExercise?.exercise?.name">
+            <video *ngIf="selectedExercise?.exercise?.video_url" [src]="selectedExercise.exercise.video_url" controls playsinline></video>
+            <img *ngIf="!selectedExercise?.exercise?.video_url" [src]="gifUrls[0]" [alt]="selectedExercise?.exercise?.name">
             <span class="gif-hint">Toca para ver grande</span>
           </div>
           <div class="gif-demo gif-placeholder" *ngIf="gifUrls.length === 0">
@@ -265,7 +267,7 @@ import { RoutineService, Routine, WorkoutSession, RoutineDay } from '@shared';
       display: flex; align-items: center; justify-content: center;
       flex-shrink: 0; border: 1px solid var(--app-border);
     }
-    .ex-media img { width: 100%; height: 100%; object-fit: cover; }
+    .ex-media img { width: 100%; height: 100%; object-fit: contain; background: #06243a; }
     .ex-media-placeholder { font-size: 1.6rem; }
     .ex-info { flex: 1; min-width: 0; }
     .ex-info h3 { margin: 0 0 0.25rem; font-size: 1rem; }
@@ -301,7 +303,7 @@ import { RoutineService, Routine, WorkoutSession, RoutineDay } from '@shared';
       overflow: hidden; background: var(--slate-100); flex-shrink: 0;
       display: flex; align-items: center; justify-content: center;
     }
-    .wex-media img { width: 100%; height: 100%; object-fit: cover; }
+    .wex-media img { width: 100%; height: 100%; object-fit: contain; background: #06243a; }
     .wex-info { flex: 1; min-width: 0; }
     .wex-info h3 { margin: 0 0 0.15rem; font-size: 0.95rem; }
     .wex-info p { margin: 0; font-size: 0.8rem; }
@@ -513,7 +515,7 @@ export class RoutineDetailComponent implements OnInit, OnDestroy {
       error: (err) => {
         console.error('Error loading routine:', err);
         this.loading = false;
-        alert('No se pudo cargar la rutina');
+        void Swal.fire({ icon: 'error', title: 'No se pudo cargar la rutina', text: 'Intenta nuevamente en unos momentos.' });
         this.router.navigate(['/rutinas']);
       }
     });
@@ -623,7 +625,7 @@ export class RoutineDetailComponent implements OnInit, OnDestroy {
       },
       error: (err) => {
         const msg = err.error?.detail || err.message || 'Error';
-        alert('Error al iniciar la sesión: ' + msg);
+        void Swal.fire({ icon: 'error', title: 'No se pudo iniciar el entrenamiento', text: msg });
       }
     });
   }
@@ -768,7 +770,7 @@ export class RoutineDetailComponent implements OnInit, OnDestroy {
     }).subscribe({
       next: () => {
         this.finishing = false;
-        alert('🏆 ¡Entrenamiento completado! Sigue así.');
+        void Swal.fire({ icon: 'success', title: '🏆 ¡Entrenamiento completado!', text: 'Sigue así.', timer: 2200, showConfirmButton: false });
         this.sessionMode = false;
         this.session = null;
         this.selectedExerciseIndex = -1;
@@ -777,7 +779,7 @@ export class RoutineDetailComponent implements OnInit, OnDestroy {
       error: (err) => {
         this.finishing = false;
         const msg = err.error?.detail || err.message || 'Error';
-        alert('Error al completar: ' + msg);
+        void Swal.fire({ icon: 'error', title: 'No se pudo completar', text: msg });
       }
     });
   }

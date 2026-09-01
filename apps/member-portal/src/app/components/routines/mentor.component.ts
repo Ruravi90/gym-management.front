@@ -114,6 +114,7 @@ interface Message {
                 <option *ngFor="let g of goals" [value]="g.value">{{ g.label }}</option>
               </select>
             </label>
+            <div class="field"><span>¿Qué tipo de entrenamiento quieres?</span><div class="modality-options"><label><input type="checkbox" [checked]="hasModality('gym')" (change)="toggleModality('gym')"> Gimnasio</label><label><input type="checkbox" [checked]="hasModality('crossfit')" (change)="toggleModality('crossfit')"> CrossFit</label><label><input type="checkbox" [checked]="hasModality('calisthenics')" (change)="toggleModality('calisthenics')"> Calistenia</label></div></div>
             <label class="field">Días por semana
               <select class="app-input" [(ngModel)]="daysPerWeek">
                 <option *ngFor="let d of dayOptions" [value]="d">{{ d }} día(s)</option>
@@ -301,6 +302,7 @@ export class MentorComponent implements OnInit {
   age: number | null = null;
   sex = '';
   goal = 'general';
+  trainingType = 'gym';
   daysPerWeek = 3;
   equipment = 'gimnasio';
   experience = 'principiante';
@@ -414,6 +416,7 @@ export class MentorComponent implements OnInit {
   }
 
   generateRoutine(): void {
+    if (!this.trainingType) { this.messages.push({ role: 'mentor', text: 'Selecciona al menos una modalidad de entrenamiento.' }); return; }
     if (this.generating) { return; }
     this.generating = true;
     this.mentorService.generateRoutine({
@@ -429,6 +432,7 @@ export class MentorComponent implements OnInit {
       equipment: this.equipment,
       experience: this.experience,
       duration_minutes: this.durationMinutes
+      ,training_type: this.trainingType
     }).subscribe({
       next: (res) => {
         this.generating = false;
@@ -448,6 +452,12 @@ export class MentorComponent implements OnInit {
         this.addMessage('No pude generar tu rutina ahora. Verifica tu conexión e inténtalo de nuevo. 💪');
       }
     });
+  }
+
+  hasModality(modality: string): boolean { return this.trainingType.split(',').includes(modality); }
+  toggleModality(modality: string): void {
+    const selected = this.trainingType ? this.trainingType.split(',').filter(Boolean) : [];
+    this.trainingType = selected.includes(modality) ? selected.filter(m => m !== modality).join(',') : [...selected, modality].join(',');
   }
 
   openGeneratedRoutine(): void {

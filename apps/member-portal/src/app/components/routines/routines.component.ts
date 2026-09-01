@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { RoutineService, ExerciseService, Routine, WorkoutSession, Exercise, DAYS_OF_WEEK } from '@shared';
+import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-routines',
@@ -217,7 +218,7 @@ export class RoutinesComponent implements OnInit {
   }
 
   addExercise(dayIndex: number): void {
-    if (!this.picker.exercise_id) { alert('Selecciona un ejercicio'); return; }
+    if (!this.picker.exercise_id) { void Swal.fire({ icon: 'warning', title: 'Falta seleccionar un ejercicio', text: 'Selecciona un ejercicio para continuar.' }); return; }
     this.form.days[dayIndex].exercises.push({
       exercise_id: Number(this.picker.exercise_id),
       sets: Number(this.picker.sets) || 3,
@@ -241,7 +242,7 @@ export class RoutinesComponent implements OnInit {
   }
 
   saveRoutine(): void {
-    if (!this.form.name) { alert('El nombre es obligatorio'); return; }
+    if (!this.form.name) { void Swal.fire({ icon: 'warning', title: 'Nombre obligatorio', text: 'Escribe un nombre para la rutina.' }); return; }
     const payload = {
       name: this.form.name,
       description: this.form.description || null,
@@ -264,16 +265,21 @@ export class RoutinesComponent implements OnInit {
       next: () => { this.closeModal(); this.loadData(); },
       error: (err) => {
         const message = err.error && err.error.detail ? err.error.detail : (err.message || 'Error');
-        alert('Error: ' + message);
+        void Swal.fire({ icon: 'error', title: 'No se pudo guardar la rutina', text: message });
       }
     });
   }
 
-  deleteRoutine(routine: Routine): void {
-    if (confirm(`¿Eliminar la rutina "${routine.name}"?`)) {
+  async deleteRoutine(routine: Routine): Promise<void> {
+    const result = await Swal.fire({
+      icon: 'warning', title: '¿Eliminar rutina?', text: `La rutina "${routine.name}" se eliminará.`,
+      showCancelButton: true, confirmButtonText: 'Sí, eliminar', cancelButtonText: 'Cancelar',
+      confirmButtonColor: '#dc3545'
+    });
+    if (result.isConfirmed) {
       this.routineService.deleteRoutine(routine.id).subscribe({
-        next: () => this.loadData(),
-        error: (err) => console.error(err)
+        next: () => { void Swal.fire({ icon: 'success', title: 'Rutina eliminada', timer: 1800, showConfirmButton: false }); this.loadData(); },
+        error: (err) => void Swal.fire({ icon: 'error', title: 'No se pudo eliminar', text: err.error?.detail || 'Intenta nuevamente.' })
       });
     }
   }

@@ -13,6 +13,7 @@
     <button class="btn btn-primary" (click)="applyFilters()">Filtrar</button>
     <button class="btn btn-secondary" (click)="clearFilters()">Limpiar</button>
     <button class="btn btn-accent" (click)="openNewModal()">+ Nueva Rutina</button>
+    <button class="btn btn-primary" (click)="openAiModal()">🤖 Generar con IA</button>
   </div>
 
   <div *ngIf="loading" class="loading">Cargando rutinas...</div>
@@ -50,6 +51,24 @@
     <div class="empty-state" *ngIf="routines.length === 0">
       <p>No hay rutinas. ¡Crea la primera!</p>
     </div>
+  </div>
+</div>
+
+<div class="modal-overlay" *ngIf="showAiModal" (click.self)="closeAiModal()">
+  <div class="modal modal-wide">
+    <div class="modal-heading"><h2>Generar rutina con IA</h2><button class="modal-close" (click)="closeAiModal()">&times;</button></div>
+    <p>Selecciona el cliente y las modalidades que quieres combinar.</p>
+    <div class="form-row">
+      <label class="grow">Cliente *<select class="app-input" [(ngModel)]="aiForm.client_id"><option [ngValue]="null">Selecciona...</option><option *ngFor="let client of clients" [ngValue]="client.id">{{ client.name }}</option></select></label>
+      <label>Tipo de cuerpo *<select class="app-input" [(ngModel)]="aiForm.body_type"><option *ngFor="let type of bodyTypes" [value]="type.value">{{ type.label }}</option></select></label>
+      <label>Objetivo<select class="app-input" [(ngModel)]="aiForm.goal"><option value="general">General</option><option value="muscle">Ganar músculo</option><option value="strength">Fuerza</option><option value="fat_loss">Pérdida de grasa</option></select></label>
+    </div>
+    <div class="form-row">
+      <label class="grow">Modalidades (puedes combinar)<select class="app-input" [(ngModel)]="aiForm.training_type"><option value="gym">Gimnasio</option><option value="crossfit">CrossFit</option><option value="calisthenics">Calistenia</option><option value="gym,crossfit">Gimnasio + CrossFit</option><option value="gym,calisthenics">Gimnasio + Calistenia</option><option value="crossfit,calisthenics">CrossFit + Calistenia</option><option value="gym,crossfit,calisthenics">Las tres</option></select></label>
+      <label>Días/semana<input class="app-input" type="number" min="1" max="6" [(ngModel)]="aiForm.days_per_week"></label>
+    </div>
+    <label class="field">Lesiones o limitaciones (opcional)<textarea class="app-input" rows="2" [(ngModel)]="aiForm.injuries"></textarea></label>
+    <div class="modal-actions"><button class="btn btn-secondary" (click)="closeAiModal()">Cancelar</button><button class="btn btn-primary" [disabled]="aiGenerating || !aiForm.client_id" (click)="generateWithAi()">{{ aiGenerating ? 'Diseñando...' : '🤖 Generar rutina' }}</button></div>
   </div>
 </div>
 

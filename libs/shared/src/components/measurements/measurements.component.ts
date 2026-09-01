@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
 import { MeasurementService, MentorService, BodyMeasurement, MEASUREMENT_FIELDS } from '@shared';
+import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-measurements',
@@ -14,14 +15,14 @@ import { MeasurementService, MentorService, BodyMeasurement, MEASUREMENT_FIELDS 
         <div class="back-row" *ngIf="!hideBackButton">
           <button routerLink="/rutinas" class="btn btn-ghost btn-sm">← Volver a Mis Rutinas</button>
         </div>
-        <h1>📏 Mis Medidas</h1>
-        <p>Registra tus medidas cada semana para ver tu progreso real. FitMentor las usará para darte mejores recomendaciones.</p>
+        <h1>📏 {{ adminMode ? 'Medidas del cliente' : 'Mis Medidas' }}</h1>
+        <p>{{ adminMode ? 'Registra y consulta el progreso corporal del cliente seleccionado.' : 'Registra tus medidas cada semana para ver tu progreso real. FitMentor las usará para darte mejores recomendaciones.' }}</p>
       </header>
 
       <div class="grid grid-measurements">
         <!-- Formulario semanal -->
         <section class="card form-card">
-          <h2 class="card-title">Tu altura (una sola vez)</h2>
+          <h2 class="card-title">{{ adminMode ? 'Altura del cliente' : 'Tu altura (una sola vez)' }}</h2>
           <div class="altura-box">
             <label class="field" style="flex:1; margin-bottom: 0;">
               Altura
@@ -156,6 +157,7 @@ import { MeasurementService, MentorService, BodyMeasurement, MEASUREMENT_FIELDS 
 export class MeasurementsComponent implements OnChanges {
   @Input() clientId?: number;
   @Input() hideBackButton = false;
+  @Input() adminMode = false;
 
   fields = MEASUREMENT_FIELDS;
   measurements: BodyMeasurement[] = [];
@@ -227,7 +229,7 @@ export class MeasurementsComponent implements OnChanges {
 
   saveHeight(): void {
     const h = Number(this.heightCm);
-    if (!h || h < 80 || h > 250) { alert('Ingresa una altura válida (80-250 cm)'); return; }
+    if (!h || h < 80 || h > 250) { void Swal.fire({ icon: 'warning', title: 'Altura no válida', text: 'Ingresa una altura entre 80 y 250 cm.' }); return; }
     this.savingHeight = true;
     this.mentorService.saveProfile({ height_cm: h }).subscribe({
       next: (p) => {
@@ -237,7 +239,7 @@ export class MeasurementsComponent implements OnChanges {
       error: (err) => {
         this.savingHeight = false;
         const message = err.error && err.error.detail ? err.error.detail : (err.message || 'Error');
-        alert('Error: ' + message);
+        void Swal.fire({ icon: 'error', title: 'No se pudo guardar la altura', text: message });
       }
     });
   }
@@ -261,7 +263,7 @@ export class MeasurementsComponent implements OnChanges {
   }
 
   save(): void {
-    if (!this.form.date) { alert('Selecciona una fecha'); return; }
+    if (!this.form.date) { void Swal.fire({ icon: 'warning', title: 'Fecha requerida', text: 'Selecciona una fecha.' }); return; }
     this.saving = true;
     const payload: any = { date: this.form.date, notes: this.form.notes || null };
     for (const f of this.fields) {
@@ -277,7 +279,7 @@ export class MeasurementsComponent implements OnChanges {
       error: (err) => {
         this.saving = false;
         const message = err.error && err.error.detail ? err.error.detail : (err.message || 'Error');
-        alert('Error: ' + message);
+        void Swal.fire({ icon: 'error', title: 'No se pudieron guardar las medidas', text: message });
       }
     });
   }
@@ -295,8 +297,9 @@ export class MeasurementsComponent implements OnChanges {
     };
   }
 
-  remove(m: BodyMeasurement): void {
-    if (confirm(`¿Eliminar las medidas del ${m.date}?`)) {
+  async remove(m: BodyMeasurement): Promise<void> {
+    const result = await Swal.fire({ icon: 'warning', title: '¿Eliminar medidas?', text: `Se eliminarán las medidas del ${m.date}.`, showCancelButton: true, confirmButtonText: 'Sí, eliminar', cancelButtonText: 'Cancelar', confirmButtonColor: '#dc3545' });
+    if (result.isConfirmed) {
       this.measurementService.deleteMeasurement(m.id).subscribe({
         next: () => this.loadData(),
         error: (err) => console.error(err)

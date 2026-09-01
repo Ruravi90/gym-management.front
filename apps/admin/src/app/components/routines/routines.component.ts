@@ -1,8 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import {
   RoutineService, ExerciseService, ClientService,
-  Routine, Exercise, Client, MUSCLE_GROUPS, DAYS_OF_WEEK
+  Routine, Exercise, Client, MUSCLE_GROUPS, DAYS_OF_WEEK, MentorService, BODY_TYPES
 } from '@shared';
+import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-routines',
@@ -19,10 +20,14 @@ export class RoutinesComponent implements OnInit {
   searchTerm = '';
   muscleGroups = MUSCLE_GROUPS;
   daysOfWeek = DAYS_OF_WEEK;
+  bodyTypes = BODY_TYPES;
   page = 1;
   pageSize = 12;
 
   showModal = false;
+  showAiModal = false;
+  aiGenerating = false;
+  aiForm: any = { client_id: null, body_type: 'mesomorph', goal: 'general', days_per_week: 3, training_type: 'gym', equipment: '', experience: 'beginner', duration_minutes: 60, injuries: '' };
   editing: Routine | null = null;
   form: any = {
     name: '',
@@ -46,7 +51,8 @@ export class RoutinesComponent implements OnInit {
   constructor(
     private routineService: RoutineService,
     private exerciseService: ExerciseService,
-    private clientService: ClientService
+    private clientService: ClientService,
+    private mentorService: MentorService
   ) { }
 
   ngOnInit(): void {
@@ -54,6 +60,17 @@ export class RoutinesComponent implements OnInit {
     this.clientService.getClients().subscribe({
       next: (data) => this.clients = data,
       error: (err) => console.error('Error loading clients:', err)
+    });
+  }
+
+  openAiModal(): void { this.aiForm.client_id = this.filterClientId ? Number(this.filterClientId) : null; this.showAiModal = true; }
+  closeAiModal(): void { if (!this.aiGenerating) this.showAiModal = false; }
+  generateWithAi(): void {
+    if (!this.aiForm.client_id) return;
+    this.aiGenerating = true;
+    this.mentorService.generateRoutine(this.aiForm).subscribe({
+      next: (result) => { this.aiGenerating = false; this.showAiModal = false; this.loadData(); void Swal.fire({ icon: 'success', title: 'Rutina generada', text: result.reply || 'Rutina generada correctamente.', timer: 2200, showConfirmButton: false }); },
+      error: (err) => { this.aiGenerating = false; void Swal.fire({ icon: 'error', title: 'No se pudo generar la rutina', text: err?.error?.detail || 'Intenta nuevamente.' }); }
     });
   }
 
@@ -180,7 +197,7 @@ export class RoutinesComponent implements OnInit {
   addExerciseToDay(): void {
     const picker = this.exercisePicker;
     if (picker.dayIndex < 0 || !picker.exercise_id) {
-      alert('Selecciona un ejercicio');
+      void Swal.fire({ icon: 'warning', title: 'Ejercicio requerido', text: 'Selecciona un ejercicio para continuar.' });
       return;
     }
     const day = this.form.days[picker.dayIndex];
@@ -213,11 +230,11 @@ export class RoutinesComponent implements OnInit {
   // ---------- Guardar / eliminar ----------
   save(): void {
     if (!this.form.name) {
-      alert('El nombre de la rutina es obligatorio');
+      void Swal.fire({ icon: 'warning', title: 'Nombre obligatorio', text: 'Escribe un nombre para la rutina.' });
       return;
     }
     if (!this.form.client_id) {
-      alert('Selecciona el cliente al que se asignará la rutina');
+      void Swal.fire({ icon: 'warning', title: 'Cliente requerido', text: 'Selecciona el cliente al que se asignará la rutina.' });
       return;
     }
     const payload: any = {
@@ -254,10 +271,11 @@ export class RoutinesComponent implements OnInit {
     }
   }
 
-  deleteRoutine(routine: Routine): void {
-    if (confirm(`¿Eliminar la rutina "${routine.name}"?`)) {
+  async deleteRoutine(routine: Routine): Promise<void> {
+    const result = await Swal.fire({ icon: 'warning', title: '¿Eliminar rutina?', text: `La rutina "${routine.name}" se eliminará.`, showCancelButton: true, confirmButtonText: 'Sí, eliminar', cancelButtonText: 'Cancelar', confirmButtonColor: '#dc3545' });
+    if (result.isConfirmed) {
       this.routineService.deleteRoutine(routine.id).subscribe({
-        next: () => this.loadData(),
+        next: () => { void Swal.fire({ icon: 'success', title: 'Rutina eliminada', timer: 1800, showConfirmButton: false }); this.loadData(); },
         error: (err) => this.showError(err)
       });
     }
@@ -282,6 +300,6 @@ export class RoutinesComponent implements OnInit {
 
   private showError(err: any): void {
     const message = err.error && err.error.detail ? err.error.detail : (err.message || 'Error de servidor');
-    alert('Error: ' + message);
+    void Swal.fire({ icon: 'error', title: 'Ocurrió un error', text: message });
   }
 }

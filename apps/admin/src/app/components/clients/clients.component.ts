@@ -1,5 +1,5 @@
 import { Component, OnInit, ViewChild, ElementRef, OnDestroy, ChangeDetectorRef } from '@angular/core';
-import { Router } from '@angular/router';
+import { Router, ActivatedRoute } from '@angular/router';
 import { ClientService } from '@shared';
 import { Client } from '@shared';
 import { AuthService } from '@shared';
@@ -30,6 +30,7 @@ export class ClientsComponent implements OnInit, OnDestroy {
     phone: '',
     membership_type: 'basic',
     status: true as boolean
+    , birth_date: '', body_type: '', height_cm: null as number | null, sex: '', injuries: '', goal: '', restrictions: '', emergency_contact: ''
   };
 
   // Delete Confirmation State
@@ -56,6 +57,7 @@ export class ClientsComponent implements OnInit, OnDestroy {
     private clientService: ClientService,
     private authService: AuthService,
     private router: Router,
+    private route: ActivatedRoute,
     private cdr: ChangeDetectorRef
   ) { }
 
@@ -97,6 +99,9 @@ export class ClientsComponent implements OnInit, OnDestroy {
     this.clientService.getClients().subscribe(data => {
       this.clients = data;
       this.applyFilter(); // This will also call calculatePagination()
+      const editId = Number(this.route.snapshot.queryParamMap.get('edit'));
+      const client = this.clients.find(item => item.id === editId);
+      if (client) { this.openEditModal(client); }
     });
   }
 
@@ -146,7 +151,7 @@ export class ClientsComponent implements OnInit, OnDestroy {
       email: client.email,
       phone: client.phone || '',
       membership_type: client.membership_type,
-      status: client.status
+      status: client.status, birth_date: client.birth_date || '', body_type: client.body_type || '', height_cm: client.height_cm || null, sex: client.sex || '', injuries: client.injuries || '', goal: client.goal || '', restrictions: client.restrictions || '', emergency_contact: client.emergency_contact || ''
     };
     this.showClientModal = true;
   }
@@ -169,15 +174,15 @@ export class ClientsComponent implements OnInit, OnDestroy {
 
     this.clientService.createClient(this.clientForm).subscribe({
       next: (res) => {
-        alert('Cliente registrado exitosamente');
+        void Swal.fire({ icon: 'success', title: 'Cliente registrado', timer: 1800, showConfirmButton: false });
         this.closeClientModal();
         this.loadClients();
       },
       error: (err) => {
         console.error(err);
         // Usar sintaxis compatible en lugar de encadenamiento opcional
-        const errorMessage = err.error && err.error.detail ? err.error.detail : err.message;
-        alert('Error al registrar cliente: ' + errorMessage);
+        const errorMessage = this.getUserErrorMessage(err);
+        void Swal.fire({ icon: 'error', title: 'No se pudo registrar el cliente', text: errorMessage });
       }
     });
   }
@@ -187,17 +192,28 @@ export class ClientsComponent implements OnInit, OnDestroy {
 
     this.clientService.updateClient(this.editingClient.id, this.clientForm).subscribe({
       next: (res) => {
-        alert('Cliente actualizado exitosamente');
+        void Swal.fire({ icon: 'success', title: 'Cliente actualizado', timer: 1800, showConfirmButton: false });
         this.closeClientModal();
         this.loadClients();
       },
       error: (err) => {
         console.error(err);
         // Usar sintaxis compatible en lugar de encadenamiento opcional
-        const errorMessage = err.error && err.error.detail ? err.error.detail : err.message;
-        alert('Error actualizando cliente: ' + errorMessage);
+        const errorMessage = this.getUserErrorMessage(err);
+        void Swal.fire({ icon: 'error', title: 'No se pudo actualizar el cliente', text: errorMessage });
       }
     });
+  }
+
+  private getUserErrorMessage(err: any): string {
+    if (err?.status === 0) return 'No se pudo conectar con el servidor. Verifica que la API esté activa.';
+    const detail = err?.error?.detail;
+    const raw = Array.isArray(detail) ? detail.map(item => item?.msg || '').filter(Boolean).join('. ') : detail;
+    const message = String(raw || err?.message || 'Verifica los datos e inténtalo nuevamente.');
+    if (message.toLowerCase().includes('duplicate') || message.toLowerCase().includes('users.email')) {
+      return 'Ese correo electrónico ya está registrado. Usa otro correo.';
+    }
+    return message;
   }
 
   async sendMemberPasswordReset(): Promise<void> {
@@ -226,7 +242,7 @@ export class ClientsComponent implements OnInit, OnDestroy {
       email: '',
       phone: '',
       membership_type: 'basic',
-      status: true
+      status: true, birth_date: '', body_type: '', height_cm: null, sex: '', injuries: '', goal: '', restrictions: '', emergency_contact: ''
     };
   }
 
@@ -266,7 +282,7 @@ export class ClientsComponent implements OnInit, OnDestroy {
       }
     } catch (error) {
       console.error('Error accessing camera', error);
-      alert('No se pudo acceder a la cámara. Por favor verifica los permisos.');
+      void Swal.fire({ icon: 'error', title: 'No se pudo acceder a la cámara', text: 'Verifica los permisos del navegador.' });
     }
   }
 
@@ -375,7 +391,7 @@ export class ClientsComponent implements OnInit, OnDestroy {
 
     this.clientService.deleteClient(this.deletingClient.id).subscribe({
       next: (res) => {
-        alert('Cliente eliminado exitosamente');
+        void Swal.fire({ icon: 'success', title: 'Cliente eliminado', timer: 1800, showConfirmButton: false });
         this.closeDeleteConfirmation();
         this.loadClients();
       },
@@ -383,7 +399,7 @@ export class ClientsComponent implements OnInit, OnDestroy {
         console.error(err);
         // Usar sintaxis compatible en lugar de encadenamiento opcional
         const errorMessage = err.error && err.error.detail ? err.error.detail : err.message;
-        alert('Error eliminando cliente: ' + errorMessage);
+        void Swal.fire({ icon: 'error', title: 'No se pudo eliminar el cliente', text: errorMessage });
       }
     });
   }

@@ -151,6 +151,16 @@
                         <input type="email" [(ngModel)]="clientForm.email" name="email" class="app-input" required>
                     </div>
                 </div>
+                <h4 class="form-section-title">Datos fijos y perfil físico</h4>
+                <div class="form-grid">
+                    <div class="form-group"><label>Fecha de nacimiento</label><input type="date" [(ngModel)]="clientForm.birth_date" name="birth_date" class="app-input"></div>
+                    <div class="form-group"><label>Sexo</label><select [(ngModel)]="clientForm.sex" name="sex" class="app-input"><option value="">No especificado</option><option value="masculino">Masculino</option><option value="femenino">Femenino</option><option value="otro">Otro</option></select></div>
+                    <div class="form-group"><label>Altura (cm)</label><input type="number" [(ngModel)]="clientForm.height_cm" name="height_cm" class="app-input"></div>
+                    <div class="form-group"><label>Tipo de cuerpo</label><select [(ngModel)]="clientForm.body_type" name="body_type" class="app-input"><option value="">No especificado</option><option value="ectomorph">Ectomorfo</option><option value="mesomorph">Mesomorfo</option><option value="endomorph">Endomorfo</option></select></div>
+                    <div class="form-group"><label>Objetivo</label><input [(ngModel)]="clientForm.goal" name="goal" class="app-input" placeholder="Ej. ganar músculo"></div>
+                    <div class="form-group"><label>Contacto de emergencia</label><input [(ngModel)]="clientForm.emergency_contact" name="emergency_contact" class="app-input"></div>
+                </div>
+                <div class="form-grid"><div class="form-group"><label>Lesiones</label><textarea [(ngModel)]="clientForm.injuries" name="injuries" class="app-input" rows="2"></textarea></div><div class="form-group"><label>Restricciones</label><textarea [(ngModel)]="clientForm.restrictions" name="restrictions" class="app-input" rows="2"></textarea></div></div>
                 <!-- Password removed for clients (not required) -->
                 <div class="form-grid">
                     <div class="form-group">
