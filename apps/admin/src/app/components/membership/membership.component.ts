@@ -10,6 +10,7 @@ import {
   UpdateMembershipRequest
 } from '@shared';
 import { ClientService } from '@shared';
+import Swal from 'sweetalert2';
 import { AuthService } from '@shared';
 
 @Component({
@@ -182,7 +183,7 @@ export class MembershipComponent implements OnInit {
           console.error('Error updating membership:', error);
           // Usar sintaxis compatible en lugar de encadenamiento opcional
           const errorMessage = error.error && error.error.detail ? error.error.detail : error.message;
-          alert('Error updating membership: ' + errorMessage);
+          void Swal.fire({ icon: 'error', title: 'No se pudo actualizar la membresía', text: errorMessage });
         }
       );
     } else {
@@ -197,7 +198,7 @@ export class MembershipComponent implements OnInit {
           console.error('Error creating membership:', error);
           // Usar sintaxis compatible en lugar de encadenamiento opcional
           const errorMessage = error.error && error.error.detail ? error.error.detail : error.message;
-          alert('Error creating membership: ' + errorMessage);
+          void Swal.fire({ icon: 'error', title: 'No se pudo crear la membresía', text: errorMessage });
         }
       );
     }
@@ -214,7 +215,7 @@ export class MembershipComponent implements OnInit {
           console.error('Error deleting membership:', error);
           // Usar sintaxis compatible en lugar de encadenamiento opcional
           const errorMessage = error.error && error.error.detail ? error.error.detail : error.message;
-          alert('Error eliminando membresía: ' + errorMessage);
+          void Swal.fire({ icon: 'error', title: 'No se pudo eliminar la membresía', text: errorMessage });
         }
       );
     }

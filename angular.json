@@ -98,6 +98,11 @@
             "assets": [
               "apps/member-portal/src/favicon.ico",
               "apps/member-portal/src/assets",
+              {
+                "glob": "**/*.gif",
+                "input": "apps/member-portal/src/assets/exercises/gifs",
+                "output": "assets/exercises/gifs"
+              },
               "apps/member-portal/src/manifest.webmanifest"
             ],
             "styles": [

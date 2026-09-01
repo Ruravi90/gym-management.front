@@ -40,6 +40,8 @@ export interface RoutineGenerationPayload extends PhysicalProfile {
   equipment?: string;
   experience?: string;
   duration_minutes?: number;
+  training_type?: string;
+  client_id?: number;
 }
 
 export const BODY_TYPES: { value: string; label: string; description: string }[] = [

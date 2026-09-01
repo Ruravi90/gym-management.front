@@ -12,11 +12,13 @@ export class ExerciseService {
 
   constructor(private http: HttpClient) { }
 
-  getExercises(search?: string, muscleGroup?: string, equipment?: string): Observable<Exercise[]> {
+  getExercises(search?: string, muscleGroup?: string, equipment?: string, trainingType?: string, difficulty?: string): Observable<Exercise[]> {
     let params = new HttpParams();
     if (search) { params = params.set('search', search); }
     if (muscleGroup) { params = params.set('muscle_group', muscleGroup); }
     if (equipment) { params = params.set('equipment', equipment); }
+    if (trainingType) { params = params.set('training_type', trainingType); }
+    if (difficulty) { params = params.set('difficulty', difficulty); }
     return this.http.get<Exercise[]>(this.apiUrl, { params });
   }
 

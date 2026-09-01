@@ -7,6 +7,7 @@ import {
   UpdateMembershipTypeRequest
 } from '@shared';
 import { AuthService } from '@shared';
+import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-membership-types',
@@ -98,7 +99,7 @@ export class MembershipTypesComponent implements OnInit {
           console.error('Error updating membership type:', error);
           // Usar sintaxis compatible en lugar de encadenamiento opcional
           const errorMessage = error.error && error.error.detail ? error.error.detail : error.message;
-          alert('Error updating membership type: ' + errorMessage);
+          void Swal.fire({ icon: 'error', title: 'No se pudo actualizar el tipo', text: errorMessage });
         }
       );
     } else {
@@ -113,7 +114,7 @@ export class MembershipTypesComponent implements OnInit {
           console.error('Error creating membership type:', error);
           // Usar sintaxis compatible en lugar de encadenamiento opcional
           const errorMessage = error.error && error.error.detail ? error.error.detail : error.message;
-          alert('Error creating membership type: ' + errorMessage);
+          void Swal.fire({ icon: 'error', title: 'No se pudo crear el tipo', text: errorMessage });
         }
       );
     }
@@ -130,7 +131,7 @@ export class MembershipTypesComponent implements OnInit {
           console.error('Error deactivating membership type:', error);
           // Usar sintaxis compatible en lugar de encadenamiento opcional
           const errorMessage = error.error && error.error.detail ? error.error.detail : error.message;
-          alert('Error desactivating membership type: ' + errorMessage);
+          void Swal.fire({ icon: 'error', title: 'No se pudo desactivar el tipo', text: errorMessage });
         }
       );
     }

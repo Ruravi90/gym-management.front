@@ -10,6 +10,8 @@
       <option value="">Todos los grupos musculares</option>
       <option *ngFor="let mg of muscleGroups" [value]="mg.value">{{ mg.label }}</option>
     </select>
+    <select class="app-input" [(ngModel)]="trainingType" (change)="applyFilters()"><option value="">Todas las modalidades</option><option *ngFor="let t of trainingTypes" [value]="t.value">{{t.label}}</option></select>
+    <select class="app-input" [(ngModel)]="difficulty" (change)="applyFilters()"><option value="">Todos los niveles</option><option value="beginner">Principiante</option><option value="intermediate">Intermedio</option><option value="advanced">Avanzado</option></select>
     <button class="btn btn-primary" (click)="applyFilters()">Filtrar</button>
     <button class="btn btn-secondary" (click)="clearFilters()">Limpiar</button>
     <button class="btn btn-accent" (click)="openNewModal()">+ Nuevo Ejercicio</button>
@@ -28,7 +30,8 @@
         <h3>{{ exercise.name }}</h3>
         <div class="meta">
           <span class="chip">{{ muscleLabel(exercise.muscle_group) }}</span>
-          <span class="chip chip-outline">{{ exercise.equipment || 'Sin equipo' }}</span>
+        <span class="chip chip-outline">{{ exercise.equipment || 'Sin equipo' }}</span>
+          <span class="chip">{{ exercise.training_type || 'gym' }}</span>
         </div>
         <p class="target" *ngIf="exercise.target">Objetivo: {{ exercise.target }}</p>
         <p class="instructions" *ngIf="exercise.instructions">{{ exercise.instructions | slice:0:120 }}{{ exercise.instructions.length > 120 ? '...' : '' }}</p>
@@ -68,6 +71,7 @@
       <label>Equipamiento
         <input type="text" class="app-input" placeholder="barbell, dumbbell, body weight..." [(ngModel)]="form.equipment">
       </label>
+      <label>Modalidad<select class="app-input" [(ngModel)]="form.training_type"><option *ngFor="let t of trainingTypes" [value]="t.value">{{t.label}}</option></select></label>
       <label>Dificultad
         <select class="app-input" [(ngModel)]="form.difficulty">
           <option value="beginner">Principiante</option>
@@ -93,6 +97,7 @@
       <label class="full">URL de imagen
         <input type="text" class="app-input" placeholder="https://..." [(ngModel)]="form.image_url">
       </label>
+      <label class="full">URL de video (opcional)<input type="text" class="app-input" placeholder="https://...mp4" [(ngModel)]="form.video_url"></label>
     </div>
     <div class="modal-preview" *ngIf="form.gif_url">
       <p>Vista previa:</p>

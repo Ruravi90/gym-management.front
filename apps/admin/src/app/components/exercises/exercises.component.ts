@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { ExerciseService, Exercise, MUSCLE_GROUPS } from '@shared';
+import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-exercises',
@@ -12,6 +13,9 @@ export class ExercisesComponent implements OnInit {
 
   searchTerm = '';
   muscleGroup = '';
+  trainingType = '';
+  difficulty = '';
+  trainingTypes = [{value:'gym',label:'Gimnasio'},{value:'calisthenics',label:'Calistenia'},{value:'crossfit',label:'CrossFit'}];
   muscleGroups = MUSCLE_GROUPS;
   page = 1;
   pageSize = 12;
@@ -29,6 +33,8 @@ export class ExercisesComponent implements OnInit {
     instructions: '',
     gif_url: '',
     image_url: '',
+    training_type: 'gym',
+    video_url: '',
     is_active: true
   };
 
@@ -40,7 +46,7 @@ export class ExercisesComponent implements OnInit {
 
   loadData(): void {
     this.loading = true;
-    this.exerciseService.getExercises(this.searchTerm || undefined, this.muscleGroup || undefined).subscribe({
+    this.exerciseService.getExercises(this.searchTerm || undefined, this.muscleGroup || undefined, undefined, this.trainingType || undefined, this.difficulty || undefined).subscribe({
       next: (data) => {
         this.exercises = data;
         this.loading = false;
@@ -60,6 +66,8 @@ export class ExercisesComponent implements OnInit {
   clearFilters(): void {
     this.searchTerm = '';
     this.muscleGroup = '';
+    this.trainingType = '';
+    this.difficulty = '';
     this.page = 1;
     this.loadData();
   }
@@ -82,6 +90,7 @@ export class ExercisesComponent implements OnInit {
       instructions: '',
       gif_url: '',
       image_url: '',
+      training_type: 'gym', video_url: '',
       is_active: true
     };
     this.showModal = true;
@@ -100,6 +109,7 @@ export class ExercisesComponent implements OnInit {
       instructions: exercise.instructions || '',
       gif_url: exercise.gif_url || '',
       image_url: exercise.image_url || '',
+      training_type: exercise.training_type || 'gym', video_url: exercise.video_url || '',
       is_active: exercise.is_active
     };
     this.showModal = true;
@@ -111,7 +121,7 @@ export class ExercisesComponent implements OnInit {
 
   save(): void {
     if (!this.form.name) {
-      alert('El nombre del ejercicio es obligatorio');
+      void Swal.fire({ icon: 'warning', title: 'Nombre obligatorio', text: 'Escribe el nombre del ejercicio.' });
       return;
     }
     const payload: Partial<Exercise> = {
@@ -126,6 +136,7 @@ export class ExercisesComponent implements OnInit {
       gif_url: this.form.gif_url || null,
       image_url: this.form.image_url || null,
       is_active: this.form.is_active
+      ,training_type: this.form.training_type || 'gym', video_url: this.form.video_url || null
     };
 
     if (this.editing) {
@@ -163,7 +174,7 @@ export class ExercisesComponent implements OnInit {
 
   private showError(err: any): void {
     const message = err.error && err.error.detail ? err.error.detail : (err.message || 'Error de servidor');
-    alert('Error: ' + message);
+    void Swal.fire({ icon: 'error', title: 'Ocurrió un error', text: message });
   }
 
   muscleLabel(value: string): string {

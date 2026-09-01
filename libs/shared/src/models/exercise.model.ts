@@ -1,6 +1,7 @@
 export interface Exercise {
   id: number;
   name: string;
+  training_type?: 'gym' | 'calisthenics' | 'crossfit';
   description?: string;
   muscle_group?: string;
   body_part?: string;
@@ -14,6 +15,7 @@ export interface Exercise {
   modifications?: string;
   gif_url?: string;
   gif_urls?: string[];
+  video_url?: string;
   image_url?: string;
   is_active: boolean;
   created_at: string;
