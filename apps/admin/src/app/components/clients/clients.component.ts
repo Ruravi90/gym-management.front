@@ -151,7 +151,7 @@ export class ClientsComponent implements OnInit, OnDestroy {
       email: client.email,
       phone: client.phone || '',
       membership_type: client.membership_type,
-      status: client.status, birth_date: client.birth_date || '', body_type: client.body_type || '', height_cm: client.height_cm || null, sex: client.sex || '', injuries: client.injuries || '', goal: client.goal || '', daily_activity: client.daily_activity || '', restrictions: client.restrictions || '', emergency_contact: client.emergency_contact || ''
+      status: client.status, birth_date: client.birth_date ? client.birth_date.slice(0, 10) : '', body_type: client.body_type || '', height_cm: client.height_cm || null, sex: client.sex || '', injuries: client.injuries || '', goal: client.goal || '', daily_activity: client.daily_activity || '', restrictions: client.restrictions || '', emergency_contact: client.emergency_contact || ''
     };
     this.showClientModal = true;
   }
