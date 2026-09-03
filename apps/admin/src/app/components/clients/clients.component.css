@@ -93,6 +93,11 @@
 
 /* En pantallas pequeñas, evita que las acciones del modal desborden el viewport. */
 @media (max-width: 600px) {
+    .modal-backdrop { padding: 0; }
+    .modal-card { max-height: 92vh; border-radius: 18px 18px 0 0; }
+    .modal-body { padding: 1rem; }
+    .form-grid { grid-template-columns: 1fr; gap: 1rem; }
+
     .modal-actions {
         flex-wrap: wrap;
     }

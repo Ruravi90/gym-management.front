@@ -22,18 +22,6 @@ import Swal from 'sweetalert2';
       <div class="grid grid-measurements">
         <!-- Formulario semanal -->
         <section class="card form-card">
-          <h2 class="card-title">{{ adminMode ? 'Altura del cliente' : 'Tu altura (una sola vez)' }}</h2>
-          <div class="altura-box">
-            <label class="field" style="flex:1; margin-bottom: 0;">
-              Altura
-              <input type="number" step="0.1" min="80" max="250" class="app-input" [(ngModel)]="heightCm" placeholder="Ej. 175">
-            </label>
-            <button class="btn btn-outline" (click)="saveHeight()" [disabled]="savingHeight">
-              {{ savingHeight ? 'Guardando...' : '💾 Guardar' }}
-            </button>
-          </div>
-          <p class="hint" *ngIf="bmi">📊 Tu IMC actual: <strong>{{ bmi }}</strong> (altura + último peso)</p>
-
           <h2 class="card-title sec">Registrar medidas de esta semana</h2>
           <label class="field">Fecha
             <input type="date" class="app-input" [(ngModel)]="form.date" [max]="today">
@@ -98,6 +86,7 @@ import Swal from 'sweetalert2';
   `,
   styles: [`
     .grid-measurements { grid-template-columns: 1fr; align-items: start; }
+    .page-container { padding-left: 0; padding-right: 0; }
     @media (min-width: 900px) { .grid-measurements { grid-template-columns: 360px 1fr; } }
     .card-title { font-size: 1.15rem; font-weight: 800; }
     .card-title.sec {
@@ -108,12 +97,18 @@ import Swal from 'sweetalert2';
     .altura-box { display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: end; gap: 0.6rem; }
     .altura-box .field, .form-card .app-input { min-width: 0; width: 100%; box-sizing: border-box; }
     .form-card .field { display: block; min-width: 0; }
+    input[type="date"].app-input { text-align: left; }
+    input[type="date"].app-input::-webkit-date-and-time-value { text-align: left; }
     .hint { color: var(--text-muted); font-size: 0.82rem; margin: 0.7rem 0 0; }
     .fields { display: grid; grid-template-columns: 1fr; gap: 0; }
     @media (min-width: 520px) { .fields { grid-template-columns: 1fr 1fr; gap: 0 0.9rem; } }
     @media (max-width: 519px) {
-      .altura-box { grid-template-columns: 1fr; }
-      .altura-box .btn { width: 100%; }
+      .form-card, .history-card { padding: 1rem !important; }
+      .form-card .card-title.sec { margin-top: 0; padding-top: 0; border-top: 0; }
+      .form-card .app-input { padding: 0.55rem 0.7rem; }
+      .page-header { margin-bottom: 1rem; }
+      .page-header h1 { font-size: 1.35rem; }
+      .page-header p { font-size: 0.88rem; margin-bottom: 0; }
     }
 
     .measurement-cards { display: flex; flex-direction: column; gap: 0.75rem; }
