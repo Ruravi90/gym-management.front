@@ -30,7 +30,7 @@ export class ClientsComponent implements OnInit, OnDestroy {
     phone: '',
     membership_type: 'basic',
     status: true as boolean
-    , birth_date: '', body_type: '', height_cm: null as number | null, sex: '', injuries: '', goal: '', restrictions: '', emergency_contact: ''
+    , birth_date: '', body_type: '', height_cm: null as number | null, sex: '', injuries: '', goal: '', daily_activity: '', restrictions: '', emergency_contact: ''
   };
 
   // Delete Confirmation State
@@ -151,7 +151,7 @@ export class ClientsComponent implements OnInit, OnDestroy {
       email: client.email,
       phone: client.phone || '',
       membership_type: client.membership_type,
-      status: client.status, birth_date: client.birth_date || '', body_type: client.body_type || '', height_cm: client.height_cm || null, sex: client.sex || '', injuries: client.injuries || '', goal: client.goal || '', restrictions: client.restrictions || '', emergency_contact: client.emergency_contact || ''
+      status: client.status, birth_date: client.birth_date || '', body_type: client.body_type || '', height_cm: client.height_cm || null, sex: client.sex || '', injuries: client.injuries || '', goal: client.goal || '', daily_activity: client.daily_activity || '', restrictions: client.restrictions || '', emergency_contact: client.emergency_contact || ''
     };
     this.showClientModal = true;
   }
@@ -242,7 +242,7 @@ export class ClientsComponent implements OnInit, OnDestroy {
       email: '',
       phone: '',
       membership_type: 'basic',
-      status: true, birth_date: '', body_type: '', height_cm: null, sex: '', injuries: '', goal: '', restrictions: '', emergency_contact: ''
+      status: true, birth_date: '', body_type: '', height_cm: null, sex: '', injuries: '', goal: '', daily_activity: '', restrictions: '', emergency_contact: ''
     };
   }
 

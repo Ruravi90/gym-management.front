@@ -19,6 +19,7 @@ import { ProgressComponent } from './components/progress/progress.component';
 import { MemberLayoutComponent } from './components/member-layout/member-layout.component';
 import { ActivateAccountComponent } from './components/activate-account/activate-account.component';
 import { ForgotPasswordComponent } from './components/forgot-password/forgot-password.component';
+import { ProfileComponent } from './components/profile/profile.component';
 
 @NgModule({
   declarations: [
@@ -32,7 +33,8 @@ import { ForgotPasswordComponent } from './components/forgot-password/forgot-pas
     ProgressComponent,
     MemberLayoutComponent,
     ActivateAccountComponent,
-    ForgotPasswordComponent
+    ForgotPasswordComponent,
+    ProfileComponent
   ],
   imports: [
     BrowserModule,

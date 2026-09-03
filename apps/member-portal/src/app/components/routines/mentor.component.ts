@@ -9,7 +9,8 @@ import {
   TRAINING_EQUIPMENT,
   TRAINING_EXPERIENCE,
   SEX_OPTIONS,
-  ACTIVITY_LEVELS
+  ACTIVITY_LEVELS,
+  MemberProfileService
 } from '@shared';
 
 interface Message {
@@ -53,7 +54,7 @@ interface Message {
             <h3>Rutinas con IA</h3>
             <ul>
               <li>Máximo 2 rutinas generadas por mes.</li>
-              <li>Debes indicar tu tipo de cuerpo, objetivo y preferencias de entrenamiento.</li>
+              <li>FitMentor reutiliza tu perfil y solo solicita datos faltantes o cambios para esta rutina.</li>
               <li>La rutina tendrá los días solicitados y entre 4 y 6 ejercicios por día.</li>
               <li>Solo usará ejercicios disponibles en el catálogo del gimnasio.</li>
               <li>Al crear una nueva, la anterior se desactiva para evitar mezclar planes.</li>
@@ -68,61 +69,23 @@ interface Message {
           <button class="btn btn-ghost btn-sm" (click)="closeWizard()">✕</button>
         </div>
 
-        <ng-container *ngIf="wizardStep === 'body'">
-          <p class="wizard-question">Como tu instructor, primero necesito conocer tu cuerpo. ¿Qué tipo de cuerpo tienes?</p>
-          <div class="body-types">
-            <button *ngFor="let bt of bodyTypes" class="body-card" (click)="selectBodyType(bt.value)">
-              <strong>{{ bt.label }}</strong>
-              <span>{{ bt.description }}</span>
-            </button>
-          </div>
-        </ng-container>
-
-        <ng-container *ngIf="wizardStep === 'physical'">
-          <p class="wizard-question">Perfecto, <strong>{{ bodyTypeLabel }}</strong>. Ahora tus datos físicos (necesarios para calcular tu IMC y adaptar el plan):</p>
-          <div class="wizard-grid">
-            <label class="field">Altura
-              <input type="number" class="app-input" [(ngModel)]="heightCm" placeholder="Ej. 175">
-              <span class="unit">cm</span>
-            </label>
-            <label class="field">Peso actual (opcional)
-              <input type="number" class="app-input" [(ngModel)]="weightKg" placeholder="Ej. 75">
-              <span class="unit">kg</span>
-            </label>
-            <label class="field">Edad
-              <input type="number" class="app-input" [(ngModel)]="age" placeholder="Ej. 25">
-              <span class="unit">años</span>
-            </label>
-            <label class="field">Sexo
-              <select class="app-input" [(ngModel)]="sex">
-                <option value="">Selecciona...</option>
-                <option *ngFor="let s of sexOptions" [value]="s.value">{{ s.label }}</option>
-              </select>
-            </label>
-          </div>
-          <div class="wizard-actions">
-            <button class="btn btn-outline" (click)="goBackToBody()">← Tipo de cuerpo</button>
-            <button class="btn btn-primary" (click)="nextToTraining()">Siguiente: objetivo y entrenamiento →</button>
-          </div>
-        </ng-container>
-
         <ng-container *ngIf="wizardStep === 'training'">
-          <p class="wizard-question">Ya casi. Ahora cuéntame sobre tu objetivo y tu entrenamiento:</p>
+          <p class="wizard-question">Define cómo quieres entrenar esta vez:</p>
           <div class="wizard-grid">
-            <label class="field">Objetivo principal
-              <select class="app-input" [(ngModel)]="goal">
-                <option *ngFor="let g of goals" [value]="g.value">{{ g.label }}</option>
+            <label class="field">Modalidad de entrenamiento
+              <select class="app-input" [(ngModel)]="trainingType">
+                <option value="gym">Gimnasio</option>
+                <option value="crossfit">CrossFit</option>
+                <option value="calisthenics">Calistenia</option>
+                <option value="gym,crossfit">Gimnasio + CrossFit</option>
+                <option value="gym,calisthenics">Gimnasio + Calistenia</option>
+                <option value="crossfit,calisthenics">CrossFit + Calistenia</option>
+                <option value="gym,crossfit,calisthenics">Las tres modalidades</option>
               </select>
             </label>
-            <div class="field"><span>¿Qué tipo de entrenamiento quieres?</span><div class="modality-options"><label><input type="checkbox" [checked]="hasModality('gym')" (change)="toggleModality('gym')"> Gimnasio</label><label><input type="checkbox" [checked]="hasModality('crossfit')" (change)="toggleModality('crossfit')"> CrossFit</label><label><input type="checkbox" [checked]="hasModality('calisthenics')" (change)="toggleModality('calisthenics')"> Calistenia</label></div></div>
             <label class="field">Días por semana
               <select class="app-input" [(ngModel)]="daysPerWeek">
                 <option *ngFor="let d of dayOptions" [value]="d">{{ d }} día(s)</option>
-              </select>
-            </label>
-            <label class="field">Equipamiento
-              <select class="app-input" [(ngModel)]="equipment">
-                <option *ngFor="let e of equipments" [value]="e.value">{{ e.label }}</option>
               </select>
             </label>
             <label class="field">Experiencia
@@ -135,18 +98,11 @@ interface Message {
                 <option *ngFor="let m of durationOptions" [value]="m">{{ m }} min</option>
               </select>
             </label>
-            <label class="field">Actividad diaria (fuera del gym)
-              <select class="app-input" [(ngModel)]="dailyActivity">
-                <option value="">Selecciona...</option>
-                <option *ngFor="let a of activityLevels" [value]="a.value">{{ a.label }}</option>
-              </select>
-            </label>
           </div>
-          <label class="field mt-1">¿Lesiones o limitaciones físicas? (opcional)
-            <textarea class="app-input" rows="2" [(ngModel)]="injuries" placeholder="Ej. dolor de rodilla al sentadillar, hernia lumbar..."></textarea>
+          <label class="field mt-1">¿Tienes algún dolor o molestia hoy? (opcional y solo para esta rutina)
+            <textarea class="app-input" rows="2" [(ngModel)]="currentDiscomfort" placeholder="Ej. hoy me molesta la rodilla derecha..."></textarea>
           </label>
           <div class="wizard-actions">
-            <button class="btn btn-outline" (click)="goBackToPhysical()">← Datos físicos</button>
             <button class="btn btn-primary" (click)="generateRoutine()" [disabled]="generating">
               {{ generating ? 'Diseñando tu rutina...' : '🤖 Generar mi rutina' }}
             </button>
@@ -189,7 +145,7 @@ interface Message {
     .rules-grid ul { margin: 0; padding-left: 1.1rem; color: var(--text-muted); font-size: 0.82rem; line-height: 1.5; }
     .rules-grid li + li { margin-top: 0.25rem; }
 
-    .wizard { margin-bottom: 1.25rem; border-color: var(--app-primary-soft-border); }
+    .wizard { margin-bottom: 1.25rem; padding: 1rem 1.1rem; border-color: var(--app-primary-soft-border); }
     .wizard-head {
       display: flex;
       justify-content: space-between;
@@ -200,6 +156,9 @@ interface Message {
     }
     .wizard-title { font-weight: 800; color: var(--lime-700); }
     .wizard-question { margin: 0 0 1rem; font-size: 1.02rem; font-weight: 500; }
+    .profile-context { display: flex; align-items: center; gap: .65rem; flex-wrap: wrap; margin-bottom: 1rem; padding: .7rem .8rem; border-radius: var(--radius-md); background: var(--app-primary-soft); color: var(--text-muted); font-size: .85rem; }
+    .profile-context strong { color: var(--lime-700); }
+    .profile-context a { margin-left: auto; color: var(--lime-700); font-weight: 700; }
 
     .body-types { display: flex; flex-direction: column; gap: 0.6rem; }
     .body-card {
@@ -227,11 +186,18 @@ interface Message {
     .unit { color: var(--text-muted); font-size: 0.75rem; }
     .wizard-actions {
       display: flex;
-      justify-content: space-between;
+      justify-content: flex-end;
       align-items: center;
       gap: 0.6rem;
       margin-top: 1.25rem;
       flex-wrap: wrap;
+    }
+    @media (max-width: 559px) {
+      .wizard { padding: .8rem; }
+      .wizard-head { margin-bottom: .8rem; }
+      .wizard-question { font-size: .95rem; line-height: 1.4; }
+      .wizard-actions > .btn { width: 100%; }
+      .profile-context a { width: 100%; margin-left: 0; }
     }
 
     .messages-area {
@@ -309,6 +275,7 @@ export class MentorComponent implements OnInit {
   durationMinutes = 60;
   dailyActivity = '';
   injuries = '';
+  currentDiscomfort = '';
   generating = false;
   generatedRoutineId?: number;
   generatedRoutineName = '';
@@ -324,6 +291,7 @@ export class MentorComponent implements OnInit {
 
   constructor(
     private mentorService: MentorService,
+    private profileService: MemberProfileService,
     private router: Router,
     private sanitizer: DomSanitizer,
   ) { }
@@ -345,6 +313,14 @@ export class MentorComponent implements OnInit {
   get bodyTypeLabel(): string {
     const found = this.bodyTypes.find(b => b.value === this.bodyType);
     return found ? found.label : this.bodyType;
+  }
+
+  private normalizeBodyType(value: string | null | undefined): string {
+    const normalized = (value || '').trim().toLowerCase();
+    const aliases: Record<string, string> = {
+      ectomorfo: 'ectomorph', mesomorfo: 'mesomorph', endomorfo: 'endomorph'
+    };
+    return aliases[normalized] || normalized;
   }
 
   private addMessage(text: string): void {
@@ -386,18 +362,28 @@ export class MentorComponent implements OnInit {
   openWizard(): void {
     if (this.loading || this.generating) { return; }
     this.showWizard = true;
-    this.mentorService.getProfile().subscribe({
+    this.profileService.get().subscribe({
       next: (profile) => {
-        if (profile.body_type) { this.bodyType = profile.body_type; }
+        this.bodyType = this.normalizeBodyType(profile.body_type);
         if (profile.height_cm) { this.heightCm = profile.height_cm; }
-        if (profile.weight_kg) { this.weightKg = profile.weight_kg; }
         if (profile.age) { this.age = profile.age; }
+        else if (profile.birth_date) { this.age = Math.max(0, new Date().getFullYear() - new Date(profile.birth_date).getFullYear()); }
         if (profile.sex) { this.sex = profile.sex; }
         if (profile.daily_activity) { this.dailyActivity = profile.daily_activity; }
         if (profile.injuries) { this.injuries = profile.injuries; }
-        this.wizardStep = this.bodyType ? 'physical' : 'body';
+        if (profile.goal) { this.goal = profile.goal; }
+        const profileComplete = !!(this.bodyType && this.heightCm && this.age && this.sex);
+        if (!profileComplete) {
+          this.showWizard = false;
+          this.router.navigate(['/mi-perfil']);
+          return;
+        }
+        this.wizardStep = 'training';
       },
-      error: () => { this.wizardStep = 'body'; }
+      error: () => {
+        this.showWizard = false;
+        this.router.navigate(['/mi-perfil']);
+      }
     });
   }
 
@@ -426,10 +412,9 @@ export class MentorComponent implements OnInit {
       age: this.age ?? undefined,
       sex: this.sex || undefined,
       daily_activity: this.dailyActivity || undefined,
-      injuries: this.injuries || undefined,
+      injuries: this.currentDiscomfort || undefined,
       goal: this.goal,
       days_per_week: this.daysPerWeek,
-      equipment: this.equipment,
       experience: this.experience,
       duration_minutes: this.durationMinutes
       ,training_type: this.trainingType
@@ -438,8 +423,10 @@ export class MentorComponent implements OnInit {
         this.generating = false;
         this.showWizard = false;
         if (res.ask_body_type) {
-          this.wizardStep = 'body';
-          this.showWizard = true;
+          this.showWizard = false;
+          this.router.navigate(['/mi-perfil']);
+          this.addMessage('Tu perfil necesita actualizarse antes de generar la rutina. Revisa el tipo de cuerpo en Mi perfil.');
+          return;
         }
         this.addMessage(res.reply);
         if (res.ok && res.routine_id) {

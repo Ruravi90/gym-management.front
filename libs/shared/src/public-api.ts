@@ -23,6 +23,7 @@ export * from './services/measurement.service';
 export * from './services/qr.service';
 export * from './services/tenant.service';
 export * from './services/billing.service';
+export * from './services/member-profile.service';
 export * from './models/billing.model';
 export * from './components/measurements/measurements.component';
 export * from './components/landing/landing.component';

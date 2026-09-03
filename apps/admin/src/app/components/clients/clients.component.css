@@ -86,9 +86,20 @@
     .client-card .card-actions { justify-content:flex-end; padding:0; border:0; }
 }
 
+/* El contenido útil se reduce cuando el menú lateral está abierto; las
+   tarjetas no deben conservar una cuadrícula de escritorio rígida. */
+@media (min-width: 769px) and (max-width: 1100px) {
+    .client-card { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 10px 16px; }
+    .client-card .card-actions { grid-column: 1 / -1; justify-content: flex-start; padding-top: 10px; border-top: 1px solid var(--app-border,#dbe3ef); }
+}
+
 /* --- Form Grids --- */
 .compact-form { display: flex; flex-direction: column; gap: 1.25rem; }
-.form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.25rem; }
+.form-grid { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 1.25rem; }
+.form-group { min-width: 0; }
+.form-group .app-input { max-width: 100%; box-sizing: border-box; }
+.full-row { grid-column: 1 / -1; }
+.form-group textarea.app-input { display: block; width: 100%; min-height: 5.5rem; resize: vertical; }
 .form-group label { display: block; font-size: 0.75rem; font-weight: 700; color: var(--text-muted); margin-bottom: 6px; text-transform: uppercase; }
 
 /* En pantallas pequeñas, evita que las acciones del modal desborden el viewport. */
@@ -96,7 +107,11 @@
     .modal-backdrop { padding: 0; }
     .modal-card { max-height: 92vh; border-radius: 18px 18px 0 0; }
     .modal-body { padding: 1rem; }
-    .form-grid { grid-template-columns: 1fr; gap: 1rem; }
+    .form-grid { grid-template-columns: minmax(0, 1fr) !important; gap: 0.9rem; }
+    .form-grid .form-group,
+    .form-grid .full-row { grid-column: 1; }
+    .form-grid input[type="date"].app-input { min-width: 0; width: 100%; text-align: left; }
+    .form-grid input[type="date"].app-input::-webkit-date-and-time-value { text-align: left; }
 
     .modal-actions {
         flex-wrap: wrap;

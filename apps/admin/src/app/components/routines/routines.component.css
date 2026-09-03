@@ -195,6 +195,11 @@
   color: var(--slate-600);
 }
 
+@media (min-width: 700px) {
+  .ai-preferences { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: .75rem; align-items: stretch; }
+  .ai-preferences label { min-width: 0; }
+}
+
 .grow {
   flex: 1;
 }

@@ -57,6 +57,10 @@
         <span class="nav-label">Mi Progreso</span>
       </a>
 
+      <a routerLink="/mi-perfil" routerLinkActive="active" class="nav-item" [title]="sidebarCollapsed ? 'Mi perfil' : ''" (click)="onNavItemClick()">
+        <span class="nav-icon" aria-hidden="true">👤</span><span class="nav-label">Mi perfil</span>
+      </a>
+
       <a routerLink="/mejora-continua" routerLinkActive="active"
         class="nav-item" [title]="sidebarCollapsed ? 'Mejora Continua' : ''" (click)="onNavItemClick()">
         <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">

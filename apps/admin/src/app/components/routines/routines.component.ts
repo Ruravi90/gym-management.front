@@ -72,17 +72,36 @@ export class RoutinesComponent implements OnInit {
     this.aiForm = {
       ...this.aiForm,
       client_id: clientId,
-      body_type: client?.body_type || 'mesomorph',
+      name: client?.name || '', email: client?.email || '', phone: client?.phone || '',
+      birth_date: client?.birth_date || null, sex: client?.sex || '', height_cm: client?.height_cm || null,
+      emergency_contact: client?.emergency_contact || '', body_type: client?.body_type || '',
       goal: client?.goal || 'general',
+      daily_activity: client?.daily_activity || '', restrictions: client?.restrictions || '',
+      experience: this.aiForm.experience || 'beginner', duration_minutes: this.aiForm.duration_minutes || 60,
       injuries: [client?.injuries, client?.restrictions].filter(Boolean).join('; ')
     };
     this.showAiModal = true;
   }
   closeAiModal(): void { if (!this.aiGenerating) this.showAiModal = false; }
+  onAiClientChange(clientId: number | null): void {
+    const client = clientId ? this.clients.find(item => item.id === Number(clientId)) : undefined;
+    if (!client) return;
+    this.aiForm = {
+      ...this.aiForm, client_id: client.id, name: client.name, email: client.email,
+      phone: client.phone || '', birth_date: client.birth_date || null, sex: client.sex || '',
+      emergency_contact: client.emergency_contact || '', height_cm: client.height_cm || null,
+      body_type: client.body_type || '', goal: client.goal || 'general',
+      daily_activity: client.daily_activity || '', restrictions: client.restrictions || '',
+      injuries: client.injuries || ''
+    };
+  }
   generateWithAi(): void {
     if (!this.aiForm.client_id) return;
     this.aiGenerating = true;
-    this.mentorService.generateRoutine(this.aiForm).subscribe({
+    this.mentorService.generateRoutine({
+      ...this.aiForm,
+      injuries: this.aiForm.current_discomfort || undefined,
+    }).subscribe({
       next: (result) => { this.aiGenerating = false; this.showAiModal = false; this.loadData(); void Swal.fire({ icon: 'success', title: 'Rutina generada', text: result.reply || 'Rutina generada correctamente.', timer: 2200, showConfirmButton: false }); },
       error: (err) => { this.aiGenerating = false; void Swal.fire({ icon: 'error', title: 'No se pudo generar la rutina', text: err?.error?.detail || 'Intenta nuevamente.' }); }
     });

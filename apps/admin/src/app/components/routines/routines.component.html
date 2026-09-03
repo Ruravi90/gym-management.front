@@ -57,17 +57,17 @@
 <div class="modal-overlay" *ngIf="showAiModal" (click.self)="closeAiModal()">
   <div class="modal modal-wide">
     <div class="modal-heading"><h2>Generar rutina con IA</h2><button class="modal-close" (click)="closeAiModal()">&times;</button></div>
-    <p>Selecciona el cliente y las modalidades que quieres combinar.</p>
+    <p>Selecciona el cliente y las preferencias específicas de esta rutina. Los datos del perfil se reutilizan automáticamente.</p>
     <div class="form-row">
-      <label class="grow">Cliente *<select class="app-input" [(ngModel)]="aiForm.client_id"><option [ngValue]="null">Selecciona...</option><option *ngFor="let client of clients" [ngValue]="client.id">{{ client.name }}</option></select></label>
-      <label>Tipo de cuerpo *<select class="app-input" [(ngModel)]="aiForm.body_type"><option *ngFor="let type of bodyTypes" [value]="type.value">{{ type.label }}</option></select></label>
-      <label>Objetivo<select class="app-input" [(ngModel)]="aiForm.goal"><option value="general">General</option><option value="muscle">Ganar músculo</option><option value="strength">Fuerza</option><option value="fat_loss">Pérdida de grasa</option></select></label>
+      <label class="grow">Cliente *<select class="app-input" [(ngModel)]="aiForm.client_id" (ngModelChange)="onAiClientChange($event)"><option [ngValue]="null">Selecciona...</option><option *ngFor="let client of clients" [ngValue]="client.id">{{ client.name }}</option></select></label>
     </div>
-    <div class="form-row">
+    <div class="form-row ai-preferences">
       <label class="grow">Modalidades (puedes combinar)<select class="app-input" [(ngModel)]="aiForm.training_type"><option value="gym">Gimnasio</option><option value="crossfit">CrossFit</option><option value="calisthenics">Calistenia</option><option value="gym,crossfit">Gimnasio + CrossFit</option><option value="gym,calisthenics">Gimnasio + Calistenia</option><option value="crossfit,calisthenics">CrossFit + Calistenia</option><option value="gym,crossfit,calisthenics">Las tres</option></select></label>
-      <label>Días/semana<input class="app-input" type="number" min="1" max="6" [(ngModel)]="aiForm.days_per_week"></label>
+      <label>Días por semana<select class="app-input" [(ngModel)]="aiForm.days_per_week"><option [ngValue]="2">2 días</option><option [ngValue]="3">3 días</option><option [ngValue]="4">4 días</option><option [ngValue]="5">5 días</option><option [ngValue]="6">6 días</option></select></label>
+      <label>Experiencia<select class="app-input" [(ngModel)]="aiForm.experience"><option value="beginner">Principiante</option><option value="intermediate">Intermedio</option><option value="advanced">Avanzado</option></select></label>
+      <label>Duración por sesión<select class="app-input" [(ngModel)]="aiForm.duration_minutes"><option [ngValue]="30">30 min</option><option [ngValue]="45">45 min</option><option [ngValue]="60">60 min</option><option [ngValue]="90">90 min</option></select></label>
     </div>
-    <label class="field">Lesiones o limitaciones (opcional)<textarea class="app-input" rows="2" [(ngModel)]="aiForm.injuries"></textarea></label>
+    <label class="field">Molestia actual para esta rutina (opcional)<textarea class="app-input" rows="2" [(ngModel)]="aiForm.current_discomfort"></textarea></label>
     <div class="modal-actions"><button class="btn btn-secondary" (click)="closeAiModal()">Cancelar</button><button class="btn btn-primary" [disabled]="aiGenerating || !aiForm.client_id" (click)="generateWithAi()">{{ aiGenerating ? 'Diseñando...' : '🤖 Generar rutina' }}</button></div>
   </div>
 </div>

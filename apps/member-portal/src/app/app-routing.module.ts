@@ -11,6 +11,7 @@ import { QrComponent } from './components/qr/qr.component';
 import { ProgressComponent } from './components/progress/progress.component';
 import { ActivateAccountComponent } from './components/activate-account/activate-account.component';
 import { ForgotPasswordComponent } from './components/forgot-password/forgot-password.component';
+import { ProfileComponent } from './components/profile/profile.component';
 
 const routes: Routes = [
   { path: '', component: SharedLandingComponent, data: { appType: 'member' } },
@@ -31,6 +32,7 @@ const routes: Routes = [
       { path: 'mejora-continua', loadChildren: () => import('./components/kaizen/kaizen.module').then(m => m.KaizenModule) },
       { path: 'rutinas', loadChildren: () => import('./components/routines/routines.module').then(m => m.RoutinesModule) },
       { path: 'mi-progreso', component: ProgressComponent }
+      ,{ path: 'mi-perfil', component: ProfileComponent }
     ]
   }
 ];
