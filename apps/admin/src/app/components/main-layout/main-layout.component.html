@@ -96,7 +96,7 @@
 
     <div class="sidebar-footer">
       <div class="status-indicator" *ngIf="!sidebarCollapsed">
-        <span class="status-dot">●</span> Sistema Activo
+        Sistema Activo
         <small class="version-text" *ngIf="versionService.currentVersion">v{{ versionService.currentVersion }}</small>
       </div>
       <button class="btn-logout-premium" (click)="logout()" [title]="sidebarCollapsed ? 'Cerrar Sesión' : ''">

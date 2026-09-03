@@ -45,7 +45,7 @@ import { ForgotPasswordComponent } from './components/forgot-password/forgot-pas
     ProgressModule,
     ServiceWorkerModule.register('ngsw-worker.js', {
       enabled: environment.production,
-      registrationStrategy: 'registerWhenStable:30000'
+      registrationStrategy: 'registerImmediately'
     })
   ],
   providers: [

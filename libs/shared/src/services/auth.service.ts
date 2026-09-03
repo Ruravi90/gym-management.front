@@ -45,11 +45,19 @@ export class AuthService {
   }
 
   login(email: string, password: string): Observable<LoginResponse> {
+    return this.loginAt('/login', email, password);
+  }
+
+  loginMember(email: string, password: string): Observable<LoginResponse> {
+    return this.loginAt('/member/login', email, password);
+  }
+
+  private loginAt(path: string, email: string, password: string): Observable<LoginResponse> {
     const body = new URLSearchParams();
     body.set('username', email);
     body.set('password', password);
 
-    return this.http.post<LoginResponse>(`${this.apiUrl}/login`, body.toString(), {
+    return this.http.post<LoginResponse>(`${this.apiUrl}${path}`, body.toString(), {
       headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
       withCredentials: true
     });
@@ -65,6 +73,12 @@ export class AuthService {
 
   logout(): void {
     this.http.post(`${this.apiUrl}/logout`, {}, { withCredentials: true }).subscribe({
+      complete: () => this.clearSession()
+    });
+  }
+
+  logoutMember(): void {
+    this.http.post(`${this.apiUrl}/member/logout`, {}, { withCredentials: true }).subscribe({
       complete: () => this.clearSession()
     });
   }
@@ -112,6 +126,12 @@ export class AuthService {
     );
   }
 
+  fetchCurrentMember(): Observable<any> {
+    return this.http.get<any>(`${environment.apiUrl}/member/me`, { withCredentials: true }).pipe(
+      tap(member => this.setCurrentUser(member))
+    );
+  }
+
   fetchUserInfo(): Observable<User> {
     const storedUser = this.storage.getItem('currentUser');
     if (storedUser) {
@@ -126,5 +146,9 @@ export class AuthService {
 
   refreshSession(): Observable<unknown> {
     return this.http.post(`${this.apiUrl}/refresh`, {}, { withCredentials: true });
+  }
+
+  refreshMemberSession(): Observable<unknown> {
+    return this.http.post(`${this.apiUrl}/member/refresh`, {}, { withCredentials: true });
   }
 }

@@ -184,8 +184,6 @@
     border-radius: 50%;
 }
 
-.status-dot { color: #10b981; font-size: 1.2em; line-height: 0; }
-
 .version-text {
     color: #94a3b8; font-size: 0.7em; margin-left: auto;
     opacity: 0.8; font-family: 'JetBrains Mono', monospace;

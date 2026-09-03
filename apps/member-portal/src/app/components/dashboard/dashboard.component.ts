@@ -383,7 +383,7 @@ export class DashboardComponent implements OnInit {
     // Load attendance for checkins this month
     const user = this.authService.getCurrentUser();
     if (user) {
-      this.attendanceService.getAttendanceHistory(user.id).subscribe({
+      this.attendanceService.getMemberAttendance().subscribe({
         next: (history) => {
           const now = new Date();
           this.checkinsThisMonth = (history || []).filter((a: any) => {

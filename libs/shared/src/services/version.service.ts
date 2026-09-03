@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
+import { SwUpdate } from '@angular/service-worker';
 import { first } from 'rxjs/operators';
 import { BehaviorSubject, interval } from 'rxjs';
 
@@ -19,12 +20,12 @@ export class VersionService {
   updateAvailable$ = this.updateAvailableSubject.asObservable();
   private versionUrl = 'assets/version.json';
 
-  constructor(private http: HttpClient) {
+  constructor(private http: HttpClient, private swUpdate: SwUpdate) {
     // Initial check
     this.checkForUpdate();
     
-    // Check every 5 minutes
-    interval(5 * 60 * 1000).subscribe(() => {
+    // Check frequently enough to make deployed updates visible promptly.
+    interval(60 * 1000).subscribe(() => {
       this.checkForUpdate();
     });
   }
@@ -54,7 +55,14 @@ export class VersionService {
       });
   }
 
-  applyUpdate(): void {
+  async applyUpdate(): Promise<void> {
+    if (this.swUpdate.isEnabled) {
+      try {
+        await this.swUpdate.activateUpdate();
+      } catch (err) {
+        console.error('Error activating update', err);
+      }
+    }
     window.location.reload();
   }
 }

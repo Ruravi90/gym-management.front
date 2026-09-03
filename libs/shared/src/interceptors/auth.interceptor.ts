@@ -22,13 +22,13 @@ export class AuthInterceptor implements HttpInterceptor {
     request = request.clone({ withCredentials: true });
 
     // Skip refresh on login/register to avoid double-cookie issues
-    if (request.url.includes('/auth/login') || request.url.includes('/auth/register')) {
+    if (request.url.includes('/auth/login') || request.url.includes('/auth/member/login') || request.url.includes('/auth/register')) {
       return next.handle(request);
     }
 
     return next.handle(request).pipe(
       catchError((error: HttpErrorResponse) => {
-        if (error.status === 401 && request.url.includes('/auth/refresh')) {
+        if (error.status === 401 && (request.url.includes('/auth/refresh') || request.url.includes('/auth/member/refresh'))) {
           this.emitLogout();
           return throwError(() => error);
         }
@@ -75,11 +75,15 @@ export class AuthInterceptor implements HttpInterceptor {
 
   private httpPostRefresh(): Observable<unknown> {
     const authService = this.injector.get(AuthService);
-    return authService.refreshSession();
+    const currentUser = authService.getCurrentUser() as any;
+    return currentUser && !currentUser.role
+      ? authService.refreshMemberSession()
+      : authService.refreshSession();
   }
 
   private emitLogout(): void {
     const authService = this.injector.get(AuthService);
-    authService.logout();
+    const currentUser = authService.getCurrentUser() as any;
+    currentUser && !currentUser.role ? authService.logoutMember() : authService.logout();
   }
 }

@@ -21,6 +21,10 @@ export class AttendanceService {
     return this.http.get<any[]>(`${this.apiUrl}/client/${clientId}`, { withCredentials: true });
   }
 
+  getMemberAttendance(): Observable<any[]> {
+    return this.http.get<any[]>(`${environment.apiUrl}/member/attendance`, { withCredentials: true });
+  }
+
   checkInManual(clientId: number): Observable<any> {
     return this.http.post(`${this.apiUrl}/manual/${clientId}`, {}, { withCredentials: true });
   }

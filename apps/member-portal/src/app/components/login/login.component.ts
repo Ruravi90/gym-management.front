@@ -105,9 +105,9 @@ export class LoginComponent {
 
   onLogin() {
     this.loading = true;
-    this.authService.login(this.email, this.password).subscribe({
+    this.authService.loginMember(this.email, this.password).subscribe({
       next: () => {
-        this.authService.fetchCurrentUser().subscribe({
+        this.authService.fetchCurrentMember().subscribe({
           next: () => this.router.navigate(['/dashboard']),
           error: () => this.router.navigate(['/dashboard'])
         });

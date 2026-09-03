@@ -55,6 +55,6 @@ export class MemberLayoutComponent implements OnInit, OnDestroy {
   }
 
   logout() {
-    this.authService.logout();
+    this.authService.logoutMember();
   }
 }
