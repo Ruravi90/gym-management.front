@@ -23,6 +23,7 @@ import { PlatformInvoicesComponent } from './components/platform-invoices/platfo
 import { PlatformAuditComponent } from './components/platform-audit/platform-audit.component';
 import { PlatformWahaSettingsComponent } from './components/platform-waha-settings/platform-waha-settings.component';
 import { ActivateAccountComponent } from './components/activate-account/activate-account.component';
+import { TenantWhatsappComponent } from './components/tenant-whatsapp/tenant-whatsapp.component';
 
 const routes: Routes = [
   { path: '', component: SharedLandingComponent, data: { appType: 'admin' } },
@@ -35,6 +36,7 @@ const routes: Routes = [
     children: [
       { path: 'dashboard', component: DashboardComponent },
       { path: 'checkin', component: FacialCheckinComponent },
+      { path: 'whatsapp', component: TenantWhatsappComponent, canActivate: [AdminGuard] },
       { path: 'membership-types', component: MembershipTypesComponent, canActivate: [AdminGuard] },
       { path: 'admin/users', component: UsersAdminComponent, canActivate: [AdminGuard] },
       { path: 'clients', component: ClientsComponent },

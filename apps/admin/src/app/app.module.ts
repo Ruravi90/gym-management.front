@@ -36,6 +36,7 @@ import { PlatformSubscriptionsComponent } from './components/platform-subscripti
 import { PlatformInvoicesComponent } from './components/platform-invoices/platform-invoices.component';
 import { PlatformAuditComponent } from './components/platform-audit/platform-audit.component';
 import { PlatformWahaSettingsComponent } from './components/platform-waha-settings/platform-waha-settings.component';
+import { TenantWhatsappComponent } from './components/tenant-whatsapp/tenant-whatsapp.component';
 import { ActivateAccountComponent } from './components/activate-account/activate-account.component';
 import { MeasurementsComponent, SharedLandingComponent } from '@shared';
 
@@ -69,6 +70,7 @@ import { ServiceWorkerModule } from '@angular/service-worker';
     PlatformInvoicesComponent,
     PlatformAuditComponent,
     PlatformWahaSettingsComponent,
+    TenantWhatsappComponent,
     ActivateAccountComponent
   ],
   imports: [

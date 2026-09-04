@@ -22,6 +22,7 @@ export * from './services/mentor.service';
 export * from './services/measurement.service';
 export * from './services/qr.service';
 export * from './services/tenant.service';
+export * from './services/tenant-whatsapp.service';
 export * from './services/billing.service';
 export * from './services/member-profile.service';
 export * from './models/billing.model';
