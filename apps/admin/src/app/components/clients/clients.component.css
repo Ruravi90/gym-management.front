@@ -132,6 +132,17 @@
     }
 }
 
+/* iPad/iPhone en orientación o viewport amplio: el modal debe conservar
+   márgenes simétricos sin dejar una franja extra a la derecha. */
+@media (min-width: 601px) and (max-width: 768px) {
+    .modal-backdrop { padding: 0.5rem; box-sizing: border-box; }
+    .modal-card { width: 100%; max-width: 100%; box-sizing: border-box; }
+    .modal-body { box-sizing: border-box; overflow-x: hidden; }
+    .form-grid { grid-template-columns: minmax(0, 1fr) !important; }
+    .form-grid .form-group,
+    .form-grid .full-row { grid-column: 1; }
+}
+
 /* --- Face Scan Special --- */
 .tech-modal .centered { text-align: center; }
 .viewfinder-wrapper {
