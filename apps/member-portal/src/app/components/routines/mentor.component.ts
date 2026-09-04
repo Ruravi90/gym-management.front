@@ -367,7 +367,11 @@ export class MentorComponent implements OnInit {
         this.bodyType = this.normalizeBodyType(profile.body_type);
         if (profile.height_cm) { this.heightCm = profile.height_cm; }
         if (profile.age) { this.age = profile.age; }
-        else if (profile.birth_date) { this.age = Math.max(0, new Date().getFullYear() - new Date(profile.birth_date).getFullYear()); }
+        else if (profile.birth_date) {
+          // Birth dates are date-only values. Avoid Date parsing, which may shift the day by timezone.
+          const birthYear = Number(profile.birth_date.split('T')[0].split('-')[0]);
+          this.age = Number.isFinite(birthYear) ? Math.max(0, new Date().getFullYear() - birthYear) : null;
+        }
         if (profile.sex) { this.sex = profile.sex; }
         if (profile.daily_activity) { this.dailyActivity = profile.daily_activity; }
         if (profile.injuries) { this.injuries = profile.injuries; }

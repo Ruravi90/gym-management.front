@@ -151,9 +151,13 @@ export class ClientsComponent implements OnInit, OnDestroy {
       email: client.email,
       phone: client.phone || '',
       membership_type: client.membership_type,
-      status: client.status, birth_date: client.birth_date ? client.birth_date.slice(0, 10) : '', body_type: client.body_type || '', height_cm: client.height_cm || null, sex: client.sex || '', injuries: client.injuries || '', goal: client.goal || '', daily_activity: client.daily_activity || '', restrictions: client.restrictions || '', emergency_contact: client.emergency_contact || ''
+      status: client.status, birth_date: this.toDateInputValue(client.birth_date), body_type: client.body_type || '', height_cm: client.height_cm || null, sex: client.sex || '', injuries: client.injuries || '', goal: client.goal || '', daily_activity: client.daily_activity || '', restrictions: client.restrictions || '', emergency_contact: client.emergency_contact || ''
     };
     this.showClientModal = true;
+  }
+
+  private toDateInputValue(value: string | null | undefined): string {
+    return value ? value.split('T')[0] : '';
   }
 
   closeClientModal() {
@@ -190,7 +194,7 @@ export class ClientsComponent implements OnInit, OnDestroy {
   updateClient() {
     if (!this.editingClient) return;
 
-    this.clientService.updateClient(this.editingClient.id, this.clientForm).subscribe({
+    this.clientService.updateClient(this.editingClient.id, { ...this.clientForm, birth_date: this.toDateInputValue(this.clientForm.birth_date) }).subscribe({
       next: (res) => {
         void Swal.fire({ icon: 'success', title: 'Cliente actualizado', timer: 1800, showConfirmButton: false });
         this.closeClientModal();

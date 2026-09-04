@@ -12,7 +12,14 @@ export class ProfileComponent implements OnInit {
   bodyTypes = BODY_TYPES; goals = TRAINING_GOALS; activityLevels = ACTIVITY_LEVELS; saving = false;
   constructor(private service: MemberProfileService) {}
   get selectedBody() { return this.bodyTypes.find(t => t.value === this.profile.body_type); }
-  ngOnInit(): void { this.service.get().subscribe({ next: p => this.profile = { ...p, birth_date: p.birth_date ? p.birth_date.slice(0, 10) : null, body_type: this.normalizeBodyType(p.body_type) }, error: () => void Swal.fire('Error', 'No se pudo cargar tu perfil.', 'error') }); }
+  ngOnInit(): void { this.service.get().subscribe({ next: p => this.setProfile(p), error: () => void Swal.fire('Error', 'No se pudo cargar tu perfil.', 'error') }); }
+  private setProfile(profile: Client): void {
+    this.profile = { ...profile, birth_date: this.toDateInputValue(profile.birth_date), body_type: this.normalizeBodyType(profile.body_type) };
+  }
+  /** Keep date-only values as strings; parsing them as Date can shift them by timezone. */
+  private toDateInputValue(value: string | null | undefined): string | null {
+    return value ? value.split('T')[0] : null;
+  }
   private normalizeBodyType(value: string | null | undefined): string | null { const v = (value || '').trim().toLowerCase(); return ({ ectomorfo: 'ectomorph', mesomorfo: 'mesomorph', endomorfo: 'endomorph' } as Record<string, string>)[v] || (v || null); }
-  save(): void { this.saving = true; this.service.update(this.profile).subscribe({ next: p => { this.profile = p; this.saving = false; void Swal.fire('Perfil actualizado', 'Tus datos se guardaron correctamente.', 'success'); }, error: err => { this.saving = false; void Swal.fire('No se pudo guardar', err?.error?.detail || 'Revisa los datos e inténtalo nuevamente.', 'error'); } }); }
+  save(): void { this.saving = true; this.service.update({ ...this.profile, birth_date: this.toDateInputValue(this.profile.birth_date) }).subscribe({ next: p => { this.setProfile(p); this.saving = false; void Swal.fire('Perfil actualizado', 'Tus datos se guardaron correctamente.', 'success'); }, error: err => { this.saving = false; void Swal.fire('No se pudo guardar', err?.error?.detail || 'Revisa los datos e inténtalo nuevamente.', 'error'); } }); }
 }
