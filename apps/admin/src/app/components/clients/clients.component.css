@@ -104,9 +104,6 @@
 
 /* En pantallas pequeñas, evita que las acciones del modal desborden el viewport. */
 @media (max-width: 600px) {
-.modal-backdrop { padding: 0; }
-    .modal-card { width: calc(100% - 1rem); max-width: calc(100% - 1rem); max-height: 92vh; box-sizing: border-box; border-radius: 18px 18px 0 0; overflow-x: hidden; }
-    .modal-body { padding: 1rem; box-sizing: border-box; overflow-x: hidden; }
     .form-grid { grid-template-columns: minmax(0, 1fr) !important; gap: 0.9rem; }
     .form-grid .form-group,
     .form-grid .full-row { grid-column: 1; }
@@ -130,17 +127,6 @@
     .modal-actions .app-btn:not(:first-child) {
         flex: 1 1 calc(50% - 0.325rem);
     }
-}
-
-/* iPad/iPhone en orientación o viewport amplio: el modal debe conservar
-   márgenes simétricos sin dejar una franja extra a la derecha. */
-@media (min-width: 601px) and (max-width: 768px) {
-    .modal-backdrop { padding: 0.5rem; box-sizing: border-box; }
-    .modal-card { width: 100%; max-width: 100%; box-sizing: border-box; }
-    .modal-body { box-sizing: border-box; overflow-x: hidden; }
-    .form-grid { grid-template-columns: minmax(0, 1fr) !important; }
-    .form-grid .form-group,
-    .form-grid .full-row { grid-column: 1; }
 }
 
 /* --- Face Scan Special --- */
