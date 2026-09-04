@@ -110,8 +110,8 @@
     .form-grid { grid-template-columns: minmax(0, 1fr) !important; gap: 0.9rem; }
     .form-grid .form-group,
     .form-grid .full-row { grid-column: 1; }
-    .form-grid input[type="date"].app-input { min-width: 0; width: 100%; text-align: left; }
-    .form-grid input[type="date"].app-input::-webkit-date-and-time-value { text-align: left; }
+    .form-grid input[type="date"].app-input { display: block; min-width: 0; width: 100%; max-width: 100%; box-sizing: border-box; text-align: left; -webkit-appearance: none; appearance: none; }
+    .form-grid input[type="date"].app-input::-webkit-date-and-time-value { min-width: 0; width: 100%; text-align: left; }
     .form-group, .form-group .app-input { min-width: 0; max-width: 100%; }
 
     .modal-actions {
